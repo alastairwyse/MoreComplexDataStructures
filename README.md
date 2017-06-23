@@ -3,7 +3,7 @@ MoreComplexDataStructures
 
 MoreComplexDataStructures is a class library containing a collection of data structures more complex than those found in the standard .NET framework.
 
-#### Contents
+### Contents
 **WeightBalancedTree** - An implementation of a [weight-balanced tree](https://en.wikipedia.org/wiki/Weight-balanced_tree).  Although self-balancing is not yet implemented, the tree maintains counts of the nodes in each node's subtrees.  This allows methods GetCountGreaterThan(T item) and GetCountLessThan(T item) (which return the number of items greater than and less than a specified item) to return with order O(log(n)) time complexity.  The class also provides methods to perform pre, post, and in-order depth-first search, and breadth-first search.
 
 **MinHeap** - A tree-based implementation of a [min heap](https://en.wikipedia.org/wiki/Heap_(data_structure)).  Insert() and ExtractMin() methods return with order O(log(n)) time complexity.  Also provides a method to traverse the nodes of the underlying tree via a breadth-first search.
@@ -14,13 +14,13 @@ MoreComplexDataStructures is a class library containing a collection of data str
 
 **ListRandomizer** - Randomizes a List or Array using the [Fisher/Yates/Knuth algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle) (O(n) time complexity).
 
-#### Future Enhancements
+### Future Enhancements
 - Implement self-balancing in the WeightBalancedTree class.
 - Refactor methods Insert() and ExtractMax()/ExtractMin() on the MaxHeap/MinHeap classes into the HeapBase class.
 - Abstract use of IComparable<T>.CompareTo() in heap classes to make code easier to read.
 - Add a trie.
 
-#### Release History
+### Release History
 
 <table>
   <tr>
