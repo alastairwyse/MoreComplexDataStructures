@@ -41,6 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefaultRandomGenerator.cs" />
+    <Compile Include="DoublyLinkedTreeNode.cs" />
+    <Compile Include="HeapBase.cs" />
+    <Compile Include="IRandomIntegerGenerator.cs" />
+    <Compile Include="LongIntegerStatusStorer.cs" />
+    <Compile Include="ListRandomizer.cs" />
+    <Compile Include="TreeBasedListRandomizer.cs" />
+    <Compile Include="MaxHeap.cs" />
+    <Compile Include="MinHeap.cs" />
+    <Compile Include="TreeNodeBase.cs" />
     <Compile Include="WeightBalancedTree.cs" />
     <Compile Include="WeightBalancedTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

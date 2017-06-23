@@ -33,8 +33,8 @@ namespace MoreComplexDataStructures
         protected WeightBalancedTreeNode<T> rootNode;
         /// <summary>The depth of nodes in the tree.</summary>
         protected Int32 depth;
-        /// <summary>Determines whether an item has been deleted from the tree.  The Depth property is not maintained after an item is deleted.</summary>
-        protected Boolean itemDeleted;
+        /// <summary>Determines whether an item has been removed from the tree.  The Depth property is must be calculated by full traversal after an item has been removed.</summary>
+        protected Boolean itemHasBeenRemoved;
         /// <summary>Random number generator to use for the GetRandomItem() method.</summary>
         protected Random randomGenerator;
         /// <summary>Used when removing items from the tree, to decide whether to use the next less than or next greater than when swapping a lower node's value with the one to be removed.</summary>
@@ -61,18 +61,18 @@ namespace MoreComplexDataStructures
         /// <summary>
         /// The depth of nodes in the tree.
         /// </summary>
-        /// <exception cref="System.InvalidOperationException">The property is retrieved after the Remove(T item) method is called.  The depth is not maintained after items have been removed.</exception>
+        /// <remarks>If the Remove() method has not been called on the tree since initialising or clearing, the depth is maintained in an internal variable and can be returned with O(1) time complexity.  If the Remove() method has been called, the depth is found via a depth first search and hence consumes O(n) time complexity (where 'n' is the number of items currently held by the tree).</remarks>
         public Int32 Depth
         {
             get
             {
-                if (itemDeleted == false)
+                if (itemHasBeenRemoved == false)
                 {
                     return depth;
                 }
                 else
                 {
-                    throw new InvalidOperationException("The Depth property cannot be retrieved after nodes are removed from the tree.");
+                    return GetDepthViaDepthFirstSearch();
                 }
             }
         }
@@ -84,9 +84,22 @@ namespace MoreComplexDataStructures
         {
             rootNode = null;
             depth = -1;
-            itemDeleted = false;
+            itemHasBeenRemoved = false;
             randomGenerator = new Random();
             swapNextLessThanOnRemove = true;
+        }
+
+        /// <summary>
+        /// Initialises a new instance of the MoreComplexDataStructures.WeightBalancedTree class that contains elements copied from the specified collection.
+        /// </summary>
+        /// <param name="collection">The collection whose elements are copied to the new WeightBalancedTree.</param>
+        public WeightBalancedTree(IEnumerable<T> collection)
+            : this()
+        {
+            foreach (T currentElement in collection)
+            {
+                Add(currentElement);
+            }
         }
 
         /// <summary>
@@ -96,6 +109,8 @@ namespace MoreComplexDataStructures
         {
             rootNode = null;
             depth = -1;
+            itemHasBeenRemoved = false;
+            swapNextLessThanOnRemove = true;
         }
 
         /// <summary>
@@ -274,7 +289,7 @@ namespace MoreComplexDataStructures
                                 RemoveNode(currentNode);
                                 nodeContainingItemToDelete.Item = currentNode.Item;
                             }
-                            itemDeleted = true;
+                            itemHasBeenRemoved = true;
                             removed = true;
                         }
                         else if (comparisonResult < 0)
@@ -595,7 +610,7 @@ namespace MoreComplexDataStructures
         /// Returns a random item from the tree.
         /// </summary>
         /// <returns>A random item.</returns>
-        /// <remarks>Finds a random tree node by successive random left/right traversals.</remarks>
+        /// <remarks>Finds a random tree node by successive random left/right traversals.  Uniform distribution of the results should not be assumed.  Items towards the root potentially have a greater probability of being returned.</remarks>
         public T GetRandomItem()
         {
             WeightBalancedTreeNode<T> currentNode = rootNode;
@@ -605,8 +620,7 @@ namespace MoreComplexDataStructures
                 throw new Exception("The tree is empty.");
             }
 
-            // Use a random number to set a probablity of 1 / (depth + 1) of stopping at this node... e.g. if depth is 4 (5 nodes inclusive from root to deepest leaf) we want a 1/5 probability of stopping.
-            Int32 stopTraversingIndicator = randomGenerator.Next(depth + 1);
+            Int32 stopTraversingIndicator = CalculateRandomStopTraversingIndicator();
             while(stopTraversingIndicator != 0)
             {
                 Int32 moveLeft = randomGenerator.Next(2);
@@ -633,7 +647,7 @@ namespace MoreComplexDataStructures
                     }
                 }
 
-                stopTraversingIndicator = randomGenerator.Next(depth + 1);
+                stopTraversingIndicator = CalculateRandomStopTraversingIndicator();
             }
 
             return currentNode.Item;
@@ -961,10 +975,71 @@ namespace MoreComplexDataStructures
                 }
             }
 
-            // Nullify all the references from the deleted node (not required, but might speed up garbage collection)
+            // Nullify all the references from the deleted node
             node.ParentNode = null;
             node.LeftChildNode = null;
             node.RightChildNode = null;
+        }
+
+        /// <summary>
+        /// Retrieves the depth of the tree via a pre-order depth-first search.
+        /// </summary>
+        /// <returns>The depth of the tree.</returns>
+        protected Int32 GetDepthViaDepthFirstSearch()
+        {
+            if (rootNode == null)
+            {
+                return -1;
+            }
+
+            Int32 depth = -1;
+            Stack<NodeRecursionStatus<T>> recursionStack = new Stack<NodeRecursionStatus<T>>();
+
+            recursionStack.Push(new NodeRecursionStatus<T>(rootNode));
+            while (recursionStack.Count > 0)
+            {
+                if ((recursionStack.Count - 1) > depth) depth = (recursionStack.Count - 1);
+
+                NodeRecursionStatus<T> currentNodeRecursionStatus = recursionStack.Peek();
+                if (currentNodeRecursionStatus.LeftChildTreeProcessed == false && currentNodeRecursionStatus.Node.LeftChildNode != null)
+                {
+                    currentNodeRecursionStatus.LeftChildTreeProcessed = true;
+                    NodeRecursionStatus<T> leftChildNodeRecursionStatus = new NodeRecursionStatus<T>(currentNodeRecursionStatus.Node.LeftChildNode);
+                    recursionStack.Push(leftChildNodeRecursionStatus);
+                }
+                else if (currentNodeRecursionStatus.RightChildTreeProcessed == false && currentNodeRecursionStatus.Node.RightChildNode != null)
+                {
+                    currentNodeRecursionStatus.RightChildTreeProcessed = true;
+                    NodeRecursionStatus<T> rightChildNodeRecursionStatus = new NodeRecursionStatus<T>(currentNodeRecursionStatus.Node.RightChildNode);
+                    recursionStack.Push(rightChildNodeRecursionStatus);
+                }
+                else
+                {
+                    recursionStack.Pop();
+                }
+            }
+
+            return depth;
+        }
+
+        /// <summary>
+        /// Generates a number to indicate whether downward traversal should stop during a call to the GetRandomItem() method.
+        /// </summary>
+        /// <returns>A random integer greater than or equal to 0, and less than the exact or estimated depth of the tree (depending on whether the Remove() method has been previously called).</returns>
+        protected Int32 CalculateRandomStopTraversingIndicator()
+        {
+            if (itemHasBeenRemoved == false)
+            {
+                // Use the known depth to calculate a probablity of 1 / (depth + 1) of stopping at the current node... e.g. if depth is 4 (5 nodes inclusive from root to deepest leaf) we want a 1/5 probability of stopping.
+                return randomGenerator.Next(depth + 1);
+            }
+            else
+            {
+                // Depth is not known, so use the assumption that depth approaches 2 * sqrt(pi * n) (sourced from paper by Flajolet and Odlyzko)
+                Double estimatedDepthDouble =  2 * Math.Sqrt(Math.PI * Count);
+                Int32 estimatedDepth = Convert.ToInt32(Math.Round(estimatedDepthDouble));
+                return randomGenerator.Next(estimatedDepth);
+            }
         }
 
         # endregion

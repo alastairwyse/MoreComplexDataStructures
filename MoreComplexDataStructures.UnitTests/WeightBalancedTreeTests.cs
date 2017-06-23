@@ -364,25 +364,6 @@ namespace MoreComplexDataStructures.UnitTests
         }
 
         /// <summary>
-        /// Tests that an exception is thrown if the Depth property is gotten after the Remove() method is called.
-        /// </summary>
-        [Test]
-        public void Depth_CalledAfterRemove()
-        {
-            Int32 result = testWeightBalancedTree.Depth;
-            testWeightBalancedTree.Add(3);
-            testWeightBalancedTree.Add(2);
-            testWeightBalancedTree.Remove(2);
-
-            InvalidOperationException e = Assert.Throws<InvalidOperationException>(delegate
-            {
-                result = testWeightBalancedTree.Depth;
-            });
-
-            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The Depth property cannot be retrieved after nodes are removed from the tree."));
-        }
-
-        /// <summary>
         /// Success tests for the Depth property.
         /// </summary>
         [Test]
@@ -423,6 +404,118 @@ namespace MoreComplexDataStructures.UnitTests
             }
 
             Assert.AreEqual(6, testWeightBalancedTree.Depth);
+        }
+
+        /// <summary>
+        /// Success tests for the Depth property after the Remove() method has been called.
+        /// </summary>
+        [Test]
+        public void Depth_CalledAfterRemove()
+        {
+            // First call Remove() on the tree to force depth-first search
+            testWeightBalancedTree.Add(30);
+            testWeightBalancedTree.Remove(30);
+
+            Assert.AreEqual(-1, testWeightBalancedTree.Depth);
+
+            // Test adding a single node
+            testWeightBalancedTree.Add(5);
+            Assert.AreEqual(0, testWeightBalancedTree.Depth);
+
+
+            // Test the following tree...
+            //       5
+            //      /  
+            //     4 
+            //    / 
+            //   3 
+            testWeightBalancedTree.Add(4);
+            testWeightBalancedTree.Add(3);
+            Assert.AreEqual(2, testWeightBalancedTree.Depth);
+
+
+            // Test the following tree...
+            //  5
+            //   \  
+            //    6 
+            //     \ 
+            //      7 
+            testWeightBalancedTree.Remove(3);
+            testWeightBalancedTree.Remove(4);
+            testWeightBalancedTree.Add(6);
+            testWeightBalancedTree.Add(7);
+            Assert.AreEqual(2, testWeightBalancedTree.Depth);
+
+
+            // Test the following tree...
+            //     5
+            //    /  
+            //   3 
+            //    \
+            //     4
+            testWeightBalancedTree.Remove(7);
+            testWeightBalancedTree.Remove(6);
+            testWeightBalancedTree.Add(3);
+            testWeightBalancedTree.Add(4);
+            Assert.AreEqual(2, testWeightBalancedTree.Depth);
+
+
+            // Test the following tree...
+            //   5
+            //    \  
+            //     7 
+            //    /
+            //   6
+            testWeightBalancedTree.Remove(4);
+            testWeightBalancedTree.Remove(3);
+            testWeightBalancedTree.Add(7);
+            testWeightBalancedTree.Add(6);
+            Assert.AreEqual(2, testWeightBalancedTree.Depth);
+
+
+            // Create the following tree...
+            //      4
+            //     / \
+            //   1     6
+            //  / \   / \
+            // 0   2 5   7
+            testWeightBalancedTree.Remove(6);
+            testWeightBalancedTree.Remove(7);
+            testWeightBalancedTree.Remove(5);
+            Int32[] treeItems = new Int32[] { 4, 1, 6, 0, 2, 5, 7 };
+            foreach (Int32 currentItem in treeItems)
+            {
+                testWeightBalancedTree.Add(currentItem);
+            }
+            Assert.AreEqual(2, testWeightBalancedTree.Depth);
+
+
+            // Create the following tree...
+            //       4
+            //     /   \
+            //   1       6
+            //  / \     / \
+            // 0   2   5   7
+            //      \
+            //       3
+            testWeightBalancedTree.Add(3);
+            Assert.AreEqual(3, testWeightBalancedTree.Depth);
+
+
+            // Remove all except the root
+            testWeightBalancedTree.Remove(3);
+            testWeightBalancedTree.Remove(0);
+            testWeightBalancedTree.Remove(2);
+            testWeightBalancedTree.Remove(5);
+            testWeightBalancedTree.Remove(7);
+            testWeightBalancedTree.Remove(1);
+            testWeightBalancedTree.Remove(6);
+            Assert.AreEqual(0, testWeightBalancedTree.Depth);
+
+
+            // Remove all 
+            testWeightBalancedTree.Remove(4);
+            Assert.AreEqual(-1, testWeightBalancedTree.Depth);
         }
 
         /// <summary>
@@ -834,6 +927,37 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual(33, testWeightBalancedTree.GetCountLessThan(50));
             Assert.AreEqual(0, testWeightBalancedTree.GetCountLessThan(-1));
             Assert.AreEqual(6, testWeightBalancedTree.GetCountLessThan(7));
+        }
+
+        /// <summary>
+        /// Success tests for the GetCountGreaterThan() method.
+        /// </summary>
+        [Test]
+        public void GetCountGreaterThan()
+        {
+            // Test case when the tree is empty
+            Int32 result = testWeightBalancedTree.GetCountGreaterThan(Int32.MaxValue);
+            Assert.AreEqual(0, result);
+
+            // Create the following tree...
+            //                  10
+            //           /              \
+            //      4                          34
+            //    /   \                     /      \
+            //  1       6               28            45
+            //   \     / \            /    \       /      \
+            //    2   5   8         21      33    39      48
+            //     \       \       /  \     /    /  \    /  \
+            //      3       9     14  27   30   38  40  46  49
+            //                   /  \           /    \   \
+            //                 11    19        36    43  47
+            //                   \   /        /  \   /
+            //                   13 15       35  37 42
+            Int32[] treeItems = new Int32[] { 10, 4, 34, 1, 6, 28, 45, 2, 5, 8, 21, 33, 39, 48, 3, 9, 14, 27, 30, 38, 40, 46, 49, 11, 19, 36, 43, 47, 13, 15, 35, 37, 42 };
+            foreach (Int32 currentItem in treeItems)
+            {
+                testWeightBalancedTree.Add(currentItem);
+            }
 
             Assert.AreEqual(11, testWeightBalancedTree.GetCountGreaterThan(36));
             Assert.AreEqual(32, testWeightBalancedTree.GetCountGreaterThan(1));

@@ -23,21 +23,19 @@ using System.Threading.Tasks;
 namespace MoreComplexDataStructures
 {
     /// <summary>
-    /// An individual node of a weight-balanced tree.  Includes a reference to the parent node, and the size of the left and right subtrees.
+    /// An individual node of a tree which includes a reference to the parent node.
     /// </summary>
     /// <typeparam name="T">Specifies the type of item held by the node.</typeparam>
-    public class WeightBalancedTreeNode<T> : TreeNodeBase<T> where T : IComparable<T>
+    public class DoublyLinkedTreeNode<T> : TreeNodeBase<T> where T : IComparable<T>
     {
-        private WeightBalancedTreeNode<T> parentNode;
-        private WeightBalancedTreeNode<T> leftChildNode;
-        private WeightBalancedTreeNode<T> rightChildNode;
-        private Int32 leftSubtreeSize;
-        private Int32 rightSubtreeSize;
+        private DoublyLinkedTreeNode<T> parentNode;
+        private DoublyLinkedTreeNode<T> leftChildNode;
+        private DoublyLinkedTreeNode<T> rightChildNode;
 
         /// <summary>
         /// The parent node of this node.
         /// </summary>
-        public WeightBalancedTreeNode<T> ParentNode
+        public DoublyLinkedTreeNode<T> ParentNode
         {
             get
             {
@@ -52,7 +50,7 @@ namespace MoreComplexDataStructures
         /// <summary>
         /// The left child node of this node.
         /// </summary>
-        public WeightBalancedTreeNode<T> LeftChildNode
+        public DoublyLinkedTreeNode<T> LeftChildNode
         {
             get
             {
@@ -67,7 +65,7 @@ namespace MoreComplexDataStructures
         /// <summary>
         /// The right child node of this node.
         /// </summary>
-        public WeightBalancedTreeNode<T> RightChildNode
+        public DoublyLinkedTreeNode<T> RightChildNode
         {
             get
             {
@@ -80,48 +78,16 @@ namespace MoreComplexDataStructures
         }
 
         /// <summary>
-        /// The number of nodes in the left subtree of this node.
-        /// </summary>
-        public Int32 LeftSubtreeSize
-        {
-            get
-            {
-                return leftSubtreeSize;
-            }
-            set
-            {
-                leftSubtreeSize = value;
-            }
-        }
-
-        /// <summary>
-        /// The number of nodes in the right subtree of this node.
-        /// </summary>
-        public Int32 RightSubtreeSize
-        {
-            get
-            {
-                return rightSubtreeSize;
-            }
-            set
-            {
-                rightSubtreeSize = value;
-            }
-        }
-
-        /// <summary>
-        /// Initialises a new instance of the MoreComplexDataStructures.WeightBalancedTreeNode class.
+        /// Initialises a new instance of the MoreComplexDataStructures.DoublyLinkedTreeNode class.
         /// </summary>
         /// <param name="item">The item held by the node.</param>
         /// <param name="parentNode">The parent node of this node.</param>
-        public WeightBalancedTreeNode(T item, WeightBalancedTreeNode<T> parentNode)
+        public DoublyLinkedTreeNode(T item, DoublyLinkedTreeNode<T> parentNode)
             : base(item)
         {
             this.parentNode = parentNode;
             leftChildNode = null;
             rightChildNode = null;
-            leftSubtreeSize = 0;
-            rightSubtreeSize = 0;
         }
     }
 }
