@@ -155,8 +155,8 @@ namespace MoreComplexDataStructures
                     }
                     else
                     {
-                        rangeToModify.StartValue = rangeToModify.StartValue + 1;
                         rangeToModify.Length = rangeToModify.Length - 1;
+                        rangeToModify.StartValue = rangeToModify.StartValue + 1;
                     }
                 }
                 // Handle the case where the inputted integer is at the end of the range to modify
@@ -254,77 +254,6 @@ namespace MoreComplexDataStructures
                 }
             }
             return false;
-        }
-
-        #endregion
-
-        # region Nested Classes
-
-        /// <summary>
-        /// Container class used to represent a contiguous range of long integer values (i.e. a sequence of integers which is an arithmetic progression with a common difference of 1).
-        /// </summary>
-        protected class LongIntegerRange : IComparable<LongIntegerRange>
-        {
-            /// <summary>The first value in the range.</summary>
-            private Int64 startValue;
-            /// <summary>The inclusive length of the range (e.g the range containing values { 2, 3, 4, 5 } would have length 4).</summary>
-            private Int64 length;
-
-            /// <summary>
-            /// The first value in the range.
-            /// </summary>
-            public Int64 StartValue
-            {
-                get
-                {
-                    return startValue;
-                }
-                set
-                {
-                    startValue = value;
-                }
-            }
-
-            /// <summary>
-            /// The inclusive length of the range (e.g the range containing values { 2, 3, 4, 5 } would have length 4).
-            /// </summary>
-            public Int64 Length
-            {
-                get
-                {
-                    return length;
-                }
-                set
-                {
-                    CheckLengthValue(value);
-                    length = value;
-                }
-            }
-
-            /// <summary>
-            /// Initialises a new instance of the MoreComplexDataStructures.LongIntegerStatusStorer+LongIntegerRange class.
-            /// </summary>
-            /// <param name="startValue">The first value in the range.</param>
-            /// <param name="length">The inclusive length of the range (e.g the range containing values { 2, 3, 4, 5 } would have length 4).</param>
-            public LongIntegerRange(Int64 startValue, Int64 length)
-            {
-                CheckLengthValue(length);
-                this.startValue = startValue;
-                this.length = length;
-            }
-
-            public Int32 CompareTo(LongIntegerRange other)
-            {
-                return startValue.CompareTo(other.startValue);
-            }
-
-            private void CheckLengthValue(Int64 inputLength)
-            {
-                if (inputLength < 1)
-                {
-                    throw new ArgumentException("Parameter 'length' must be greater than or equal to 1.", "length");
-                }
-            }
         }
 
         #endregion

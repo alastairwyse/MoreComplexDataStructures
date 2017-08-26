@@ -25,7 +25,7 @@ namespace MoreComplexDataStructures
     /// <summary>
     /// An implementation of the IRandomIntegerGenerator interface, using the .NET System.Random class.
     /// </summary>
-    class DefaultRandomGenerator : IRandomIntegerGenerator
+    public class DefaultRandomGenerator : IRandomIntegerGenerator
     {
         /// <summary>The underlying random number generator.</summary>
         private Random randomGenerator;
@@ -38,9 +38,23 @@ namespace MoreComplexDataStructures
             randomGenerator = new Random();
         }
 
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IRandomIntegerGenerator.Next(System.Int32)"]/*'/>
         public Int32 Next(Int32 maxValue)
         {
             return randomGenerator.Next(maxValue);
+        }
+
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IRandomIntegerGenerator.Next(System.Int64)"]/*'/>
+        public Int64 Next(Int64 maxValue)
+        {
+            // Using the method of generating an Int64 suggested in Microsoft's Random class documentation (https://msdn.microsoft.com/en-us/library/system.random(v=vs.110).aspx#Long).
+            Int64 returnValue = Convert.ToInt64(randomGenerator.NextDouble() * maxValue);
+            // Found from testing that occurrence of 0 and maxValue was about half of all other values, hence map maxValue back to 0 to give even distribution.
+            if (returnValue == maxValue)
+            {
+                return 0;
+            }
+            return returnValue;
         }
     }
 }

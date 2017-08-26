@@ -14,6 +14,25 @@ MoreComplexDataStructures is a class library containing a collection of data str
 
 **ListRandomizer** - Randomizes a List or Array using the [Fisher/Yates/Knuth algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle) (O(n) time complexity).
 
+**WeightedRandomGenerator** - Returns items randomly based on configured weightings.  The underlying implementation uses a tree, so the Generate() method returns with order O(log(n)) time complexity (where n is the number of weightings defined).  The items and weightings can be defined as follows...
+
+    WeightedRandomGenerator<Char> weightedRandomGenerator = new WeightedRandomGenerator<Char>();
+    List<Tuple<Char, Int64>> weightings = new List<Tuple<Char, Int64>>()
+    {
+        new Tuple<Char, Int64>('a', 1), 
+        new Tuple<Char, Int64>('b', 2),
+        new Tuple<Char, Int64>('c', 3),
+        new Tuple<Char, Int64>('d', 4)
+    };
+    weightedRandomGenerator.SetWeightings(weightings);
+
+...then calling the Generate() method 100,000 times would result in a distribution similar to the following...
+
+    a : 10022
+    b : 19694
+    c : 30456
+    d : 39828
+
 ### Future Enhancements
 - Implement self-balancing in the WeightBalancedTree class.
 - Refactor methods Insert() and ExtractMax()/ExtractMin() on the MaxHeap/MinHeap classes into the HeapBase class.
@@ -26,6 +45,12 @@ MoreComplexDataStructures is a class library containing a collection of data str
   <tr>
     <td><b>Version</b></td>
     <td><b>Changes</b></td>
+  </tr>
+  <tr>
+    <td valign="top">1.2.0.0</td>
+    <td>
+      Added WeightedRandomGenerator.<br />
+    </td>
   </tr>
   <tr>
     <td valign="top">1.1.0.0</td>

@@ -52,8 +52,16 @@ namespace MoreComplexDataStructures
         /// Randomizes the elements of the specified collection implementing interface IList&lt;T&gt;.
         /// </summary>
         /// <param name="inputCollection">The IList to randomize the elements of.</param>
+        /// <exception cref="System.ArgumentException">The 'inputCollection' parameter contains a list exceeding the maximum supported size (Int32.MaxValue - 1 elements).</exception>
         public void Randomize(IList inputCollection)
         {
+            // Need to throw an exception of the inputted collection contains Int32.MaxValue elements.
+            //   In this case we can never randomly select the last value in the list (as the IRandomIntegerGenerator.Next() 'maxValue' parameter is exclusive).
+            if (inputCollection.Count == Int32.MaxValue)
+            {
+                throw new ArgumentException("The maximum collection size supported by the ListRandomizer is " + (Int32.MaxValue - 1) + ".", "inputCollection");
+            }
+
             Int32 randomizedPortionDividerIndex = inputCollection.Count;
             while (randomizedPortionDividerIndex > 0)
             {

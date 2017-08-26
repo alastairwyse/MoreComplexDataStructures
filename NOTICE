@@ -23,3 +23,26 @@ limitations under the License.
 
 
 ================================================================================
+MoreComplexDataStructures includes NMock2 version 2.1.3641.19651 which is 
+released under the "Apache License, Version 2.0" 
+(http://www.apache.org/licenses/LICENSE-2.0).
+
+https://sourceforge.net/projects/nmock2/
+
+For a copy of the license, please see the 'LICENSE' file.
+
+Details of bundled components
+-----------------------------
+
+   NMock2 - Dynamic Mock Object Framework
+   Copyright 2009 NMock2 development team
+
+   This product includes software developed at
+   NMock2 (http://www.sourceforge.net/projects/nmock2).
+
+   Proxy creation support is provided by the CASTLE project
+   licensed under Apache 2.0 license. Therefore the components
+   Castle.Core and Castle.DynamicProxy2 has been used. The original
+   source code is available from
+      https://svn.castleproject.org/svn/castle/branches/net-2.0-trunk/
+

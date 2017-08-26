@@ -27,11 +27,10 @@ namespace MoreComplexDataStructures
     /// </summary>
     public interface IRandomIntegerGenerator
     {
-        /// <summary>
-        /// Returns a non-negative random integer that is less than the specified maximum.
-        /// </summary>
-        /// <param name="maxValue">The exclusive upper bound of the random number to be generated. maxValue must be greater than or equal to 0.</param>
-        /// <returns>A 32-bit signed integer that is greater than or equal to 0, and less than maxValue; that is, the range of return values ordinarily includes 0 but not maxValue. However, if maxValue equals 0, maxValue is returned.</returns>
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IRandomIntegerGenerator.Next(System.Int32)"]/*'/>
         Int32 Next(Int32 maxValue);
+
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IRandomIntegerGenerator.Next(System.Int64)"]/*'/>
+        Int64 Next(Int64 maxValue);
     }
 }

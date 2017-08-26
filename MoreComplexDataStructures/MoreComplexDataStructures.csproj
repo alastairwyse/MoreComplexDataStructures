@@ -45,6 +45,7 @@
     <Compile Include="DoublyLinkedTreeNode.cs" />
     <Compile Include="HeapBase.cs" />
     <Compile Include="IRandomIntegerGenerator.cs" />
+    <Compile Include="LongIntegerRange.cs" />
     <Compile Include="LongIntegerStatusStorer.cs" />
     <Compile Include="ListRandomizer.cs" />
     <Compile Include="TreeBasedListRandomizer.cs" />
@@ -54,6 +55,10 @@
     <Compile Include="WeightBalancedTree.cs" />
     <Compile Include="WeightBalancedTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WeightedRandomGenerator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="InterfaceDocumentationComments.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
