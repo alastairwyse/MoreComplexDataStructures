@@ -27,7 +27,7 @@ namespace MoreComplexDataStructures
     /// </summary>
     /// <typeparam name="T">Specifies the type of items held by nodes of the tree.</typeparam>
     /// <remarks>Weight-balanced trees are generally self balancing, however this class does not implement any auto-balancing at this stage.</remarks>
-    public class WeightBalancedTree<T> where T : IComparable<T>
+    public class WeightBalancedTree<T> : IBinarySearchTree<T> where T : IComparable<T>
     {
         /// <summary>The root node of the tree.</summary>
         protected WeightBalancedTreeNode<T> rootNode;
@@ -39,10 +39,8 @@ namespace MoreComplexDataStructures
         protected Random randomGenerator;
         /// <summary>Used when removing items from the tree, to decide whether to use the next less than or next greater than when swapping a lower node's value with the one to be removed.</summary>
         protected Boolean swapNextLessThanOnRemove;
-        
-        /// <summary>
-        /// The total number of items stored in the tree.
-        /// </summary>
+
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="P:MoreComplexDataStructures.IBinarySearchTree`1.Count"]/*'/>
         public Int32 Count
         {
             get
@@ -59,7 +57,7 @@ namespace MoreComplexDataStructures
         }
 
         /// <summary>
-        /// The depth of nodes in the tree.
+        /// The depth of nodes in the tree (0-based).
         /// </summary>
         /// <remarks>If the Remove() method has not been called on the tree since initialising or clearing, the depth is maintained in an internal variable and can be returned with O(1) time complexity.  If the Remove() method has been called, the depth is found via a depth first search and hence consumes O(n) time complexity (where 'n' is the number of items currently held by the tree).</remarks>
         public Int32 Depth
@@ -102,9 +100,7 @@ namespace MoreComplexDataStructures
             }
         }
 
-        /// <summary>
-        /// Removes all items from the tree.
-        /// </summary>
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.Clear"]/*'/>
         public void Clear()
         {
             rootNode = null;
@@ -113,11 +109,7 @@ namespace MoreComplexDataStructures
             swapNextLessThanOnRemove = true;
         }
 
-        /// <summary>
-        /// Adds the specified item to the tree.
-        /// </summary>
-        /// <param name="item">The item to add.</param>
-        /// <exception cref="System.ArgumentException">The specified item already exists in the tree.</exception>
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.Add(`0)"]/*'/>
         public void Add(T item)
         {
             if (rootNode == null)
@@ -192,11 +184,7 @@ namespace MoreComplexDataStructures
             }
         }
 
-        /// <summary>
-        /// Removes the specified item from the tree.
-        /// </summary>
-        /// <param name="item">The item to remove.</param>
-        /// <exception cref="System.ArgumentException">The specified item does not exist in the tree.</exception>
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.Remove(`0)"]/*'/>
         public void Remove(T item)
         {
             if (rootNode == null)
@@ -345,11 +333,7 @@ namespace MoreComplexDataStructures
             }
         }
 
-        /// <summary>
-        /// Determines whether the tree contains the specified item.
-        /// </summary>
-        /// <param name="item">The item to locate in the tree.</param>
-        /// <returns>True if the tree contains the specified item, otherwise false.</returns>
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.Contains(`0)"]/*'/>
         public Boolean Contains(T item)
         {
             WeightBalancedTreeNode<T> itemNode = TraverseDownToNodeHoldingItem(item);
@@ -605,12 +589,12 @@ namespace MoreComplexDataStructures
 
             return count;
         }
-
+        
         /// <summary>
         /// Returns a random item from the tree.
         /// </summary>
         /// <returns>A random item.</returns>
-        /// <remarks>Finds a random tree node by successive random left/right traversals.  Uniform distribution of the results should not be assumed.  Items towards the root potentially have a greater probability of being returned.</remarks>
+        /// <exception cref="System.Exception">The tree is empty.</exception>
         public T GetRandomItem()
         {
             WeightBalancedTreeNode<T> currentNode = rootNode;
@@ -620,43 +604,45 @@ namespace MoreComplexDataStructures
                 throw new Exception("The tree is empty.");
             }
 
-            Int32 stopTraversingIndicator = CalculateRandomStopTraversingIndicator();
-            while(stopTraversingIndicator != 0)
+            while (true)
             {
-                Int32 moveLeft = randomGenerator.Next(2);
-                if (moveLeft == 1)
+                // Decide whether to stop at this node
+                Int32 stopIndicator = randomGenerator.Next(1 + currentNode.LeftSubtreeSize + currentNode.RightSubtreeSize);
+                if (stopIndicator == 0)
                 {
-                    if (currentNode.LeftChildNode != null)
+                    break;
+                }
+
+                // Decide whether to move left or right
+                Int32 directionIndicator = randomGenerator.Next(currentNode.LeftSubtreeSize + currentNode.RightSubtreeSize);
+                if (directionIndicator < currentNode.LeftSubtreeSize)
+                {
+                    if (currentNode.LeftChildNode == null)
                     {
-                        currentNode = currentNode.LeftChildNode;
+                        break;
                     }
                     else
                     {
-                        return currentNode.Item;
+                        currentNode = currentNode.LeftChildNode;
                     }
                 }
                 else
                 {
-                    if (currentNode.RightChildNode != null)
+                    if (currentNode.RightChildNode == null)
                     {
-                        currentNode = currentNode.RightChildNode;
+                        break;
                     }
                     else
                     {
-                        return currentNode.Item;
+                        currentNode = currentNode.RightChildNode;
                     }
                 }
-
-                stopTraversingIndicator = CalculateRandomStopTraversingIndicator();
             }
 
             return currentNode.Item;
         }
 
-        /// <summary>
-        /// Performs a pre-order depth-first search of the tree, invoking the specified action at each node.
-        /// </summary>
-        /// <param name="nodeAction">The action to perform at each node.  Accepts a single parameter which is the current node to perform the action on.</param>
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.PreOrderDepthFirstSearch(System.Action{MoreComplexDataStructures.WeightBalancedTreeNode{`0}})"]/*'/>
         public void PreOrderDepthFirstSearch(Action<WeightBalancedTreeNode<T>> nodeAction)
         {
             // Stack to hold the nodes to recurse to
@@ -679,10 +665,7 @@ namespace MoreComplexDataStructures
             }
         }
 
-        /// <summary>
-        /// Performs an in-order depth-first search of the tree, invoking the specified action at each node.
-        /// </summary>
-        /// <param name="nodeAction">The action to perform at each node.  Accepts a single parameter which is the current node to perform the action on.</param>
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.InOrderDepthFirstSearch(System.Action{MoreComplexDataStructures.WeightBalancedTreeNode{`0}})"]/*'/>
         public void InOrderDepthFirstSearch(Action<WeightBalancedTreeNode<T>> nodeAction)
         {
             // Stack to hold the nodes to recurse to
@@ -713,10 +696,7 @@ namespace MoreComplexDataStructures
             }
         }
 
-        /// <summary>
-        /// Performs a post-order depth-first search of the tree, invoking the specified action at each node.
-        /// </summary>
-        /// <param name="nodeAction">The action to perform at each node.  Accepts a single parameter which is the current node to perform the action on.</param>
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.PostOrderDepthFirstSearch(System.Action{MoreComplexDataStructures.WeightBalancedTreeNode{`0}})"]/*'/>
         public void PostOrderDepthFirstSearch(Action<WeightBalancedTreeNode<T>> nodeAction)
         {
             // TODO: Looked at many suggested algorithms for post-order search online, but couldn't find any nice implementation (e.g. some involved storing all nodes in the tree in a stack, others modified the stack while traversing).
@@ -756,10 +736,7 @@ namespace MoreComplexDataStructures
             }
         }
 
-        /// <summary>
-        /// Performs breadth-first search of the tree, invoking the specified action at each node.
-        /// </summary>
-        /// <param name="nodeAction">The action to perform at each node.  Accepts a single parameter which is the current node to perform the action on.</param>
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.BreadthFirstSearch(System.Action{MoreComplexDataStructures.WeightBalancedTreeNode{`0}})"]/*'/>
         public void BreadthFirstSearch(Action<WeightBalancedTreeNode<T>> nodeAction)
         {
             Queue<WeightBalancedTreeNode<T>> traversalQueue = new Queue<WeightBalancedTreeNode<T>>();
@@ -1021,27 +998,7 @@ namespace MoreComplexDataStructures
 
             return depth;
         }
-
-        /// <summary>
-        /// Generates a number to indicate whether downward traversal should stop during a call to the GetRandomItem() method.
-        /// </summary>
-        /// <returns>A random integer greater than or equal to 0, and less than the exact or estimated depth of the tree (depending on whether the Remove() method has been previously called).</returns>
-        protected Int32 CalculateRandomStopTraversingIndicator()
-        {
-            if (itemHasBeenRemoved == false)
-            {
-                // Use the known depth to calculate a probablity of 1 / (depth + 1) of stopping at the current node... e.g. if depth is 4 (5 nodes inclusive from root to deepest leaf) we want a 1/5 probability of stopping.
-                return randomGenerator.Next(depth + 1);
-            }
-            else
-            {
-                // Depth is not known, so use the assumption that depth approaches 2 * sqrt(pi * n) (sourced from paper by Flajolet and Odlyzko)
-                Double estimatedDepthDouble =  2 * Math.Sqrt(Math.PI * Count);
-                Int32 estimatedDepth = Convert.ToInt32(Math.Round(estimatedDepthDouble));
-                return randomGenerator.Next(estimatedDepth);
-            }
-        }
-
+        
         # endregion
 
         # region Nested Classes

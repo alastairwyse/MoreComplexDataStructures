@@ -179,8 +179,11 @@ namespace MoreComplexDataStructures.UnitTests
 
             // Test with a single weighting of 1
             //   First expect on mockRandomIntegerGenerator is for the call to SetWeightings(), second expect is for the call to Generate()
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1L).Will(Return.Value(0L));
+            using (mockery.Ordered)
+            {
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1L).Will(Return.Value(0L));
+            }
             testWeightedRandomGenerator.SetWeightings(new List<Tuple<Char, Int64>>() { new Tuple<Char, Int64>('a', 1) });
             Char result = testWeightedRandomGenerator.Generate();
 
@@ -195,11 +198,14 @@ namespace MoreComplexDataStructures.UnitTests
                 new Tuple<Char, Int64>('a', 1), 
                 new Tuple<Char, Int64>('b', Int64.MaxValue - 1)
             };
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(2).Will(Return.Value(1));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(0L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(1L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(Int64.MaxValue - 1));
+            using (mockery.Ordered)
+            {
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(2).Will(Return.Value(1));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(0L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(1L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(Int64.MaxValue - 1));
+            }
             testWeightedRandomGenerator.SetWeightings(weightings);
 
             result = testWeightedRandomGenerator.Generate();
@@ -218,11 +224,14 @@ namespace MoreComplexDataStructures.UnitTests
                 new Tuple<Char, Int64>('a', Int64.MaxValue - 1), 
                 new Tuple<Char, Int64>('b', 1) 
             };
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(2).Will(Return.Value(1));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(0L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(Int64.MaxValue - 2));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(Int64.MaxValue - 1));
+            using (mockery.Ordered)
+            {
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(2).Will(Return.Value(1));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(0L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(Int64.MaxValue - 2));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(Int64.MaxValue - 1));
+            }
             testWeightedRandomGenerator.SetWeightings(weightings);
 
             result = testWeightedRandomGenerator.Generate();
@@ -242,16 +251,19 @@ namespace MoreComplexDataStructures.UnitTests
                 new Tuple<Char, Int64>('b', 2), 
                 new Tuple<Char, Int64>('c', 4)
             };
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(3).Will(Return.Value(1));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(2).Will(Return.Value(2));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(0L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(1L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(2L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(3L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(4L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(5L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(6L));
+            using (mockery.Ordered)
+            {
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(3).Will(Return.Value(1));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(2).Will(Return.Value(2));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(0L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(1L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(2L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(3L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(4L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(5L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(6L));
+            }
             testWeightedRandomGenerator.SetWeightings(weightings);
 
             result = testWeightedRandomGenerator.Generate();
@@ -306,12 +318,15 @@ namespace MoreComplexDataStructures.UnitTests
             //   0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18
             //        | |     |   |          |              |
             //   a     b c     d   e          f
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(6).Will(Return.Value(3));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(5).Will(Return.Value(1));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(4).Will(Return.Value(3));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(3).Will(Return.Value(0));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(2).Will(Return.Value(0));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
+            using (mockery.Ordered)
+            {
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(6).Will(Return.Value(3));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(5).Will(Return.Value(1));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(4).Will(Return.Value(3));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(3).Will(Return.Value(0));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(2).Will(Return.Value(0));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
+            }
             testWeightedRandomGenerator.SetWeightings(new List<Tuple<Char, Int64>>()
             { 
                 new Tuple<Char, Int64>('a', 3), 
@@ -341,15 +356,18 @@ namespace MoreComplexDataStructures.UnitTests
 
             // Test that the Generate() method still works correctly
             mockery.ClearExpectation(mockRandomIntegerGenerator);
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(14L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(10L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(9L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(6L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(5L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(4L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(3L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(2L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(0L));
+            using (mockery.Ordered)
+            {
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(14L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(10L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(9L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(6L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(5L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(4L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(3L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(2L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(15L).Will(Return.Value(0L));
+            }
 
             Char result = testWeightedRandomGenerator.Generate();
             Assert.AreEqual('f', result);
@@ -388,13 +406,16 @@ namespace MoreComplexDataStructures.UnitTests
 
             // Test that the Generate() method still works correctly
             mockery.ClearExpectation(mockRandomIntegerGenerator);
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(12L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(8L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(7L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(4L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(3L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(2L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(0L));
+            using (mockery.Ordered)
+            {
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(12L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(8L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(7L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(4L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(3L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(2L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(13L).Will(Return.Value(0L));
+            }
 
             result = testWeightedRandomGenerator.Generate();
             Assert.AreEqual('f', result);
@@ -428,11 +449,14 @@ namespace MoreComplexDataStructures.UnitTests
 
             // Test that the Generate() method still works correctly
             mockery.ClearExpectation(mockRandomIntegerGenerator);
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(10L).Will(Return.Value(9L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(10L).Will(Return.Value(5L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(10L).Will(Return.Value(4L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(10L).Will(Return.Value(1L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(10L).Will(Return.Value(0L));
+            using (mockery.Ordered)
+            {
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(10L).Will(Return.Value(9L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(10L).Will(Return.Value(5L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(10L).Will(Return.Value(4L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(10L).Will(Return.Value(1L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(10L).Will(Return.Value(0L));
+            }
 
             result = testWeightedRandomGenerator.Generate();
             Assert.AreEqual('f', result);
@@ -461,9 +485,12 @@ namespace MoreComplexDataStructures.UnitTests
 
             // Test that the Generate() method still works correctly
             mockery.ClearExpectation(mockRandomIntegerGenerator);
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(5L).Will(Return.Value(4L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(5L).Will(Return.Value(1L));
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(5L).Will(Return.Value(0L));
+            using (mockery.Ordered)
+            {
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(5L).Will(Return.Value(4L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(5L).Will(Return.Value(1L));
+                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(5L).Will(Return.Value(0L));
+            }
 
             result = testWeightedRandomGenerator.Generate();
             Assert.AreEqual('e', result);

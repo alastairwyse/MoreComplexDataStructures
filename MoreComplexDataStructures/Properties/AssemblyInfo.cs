@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("MoreComplexDataStructures")]
-[assembly: AssemblyDescription("A collection of data structures, more complex than the standard LinkedList, Stack, Queue, etc... included with .NET.")]
+[assembly: AssemblyDescription("A collection of data structures (plus related utility classes), more complex than the standard LinkedList, Stack, Queue, etc... included with .NET.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("MoreComplexDataStructures")]

@@ -1,7 +1,7 @@
 MoreComplexDataStructures
 -------------------------
 
-MoreComplexDataStructures is a class library containing a collection of data structures more complex than those found in the standard .NET framework.
+MoreComplexDataStructures is a class library containing a collection of data structures (plus related utility classes) more complex than those found in the standard .NET framework.
 
 ### Contents
 **WeightBalancedTree** - An implementation of a [weight-balanced tree](https://en.wikipedia.org/wiki/Weight-balanced_tree).  Although self-balancing is not yet implemented, the tree maintains counts of the nodes in each node's subtrees.  This allows methods GetCountGreaterThan(T item) and GetCountLessThan(T item) (which return the number of items greater than and less than a specified item) to return with order O(log(n)) time complexity.  The class also provides methods to perform pre, post, and in-order depth-first search, and breadth-first search.
@@ -33,11 +33,17 @@ MoreComplexDataStructures is a class library containing a collection of data str
     c : 30456
     d : 39828
 
+**Trie** - An implementation of [trie / prefix tree](https://en.wikipedia.org/wiki/Trie).  Nodes of the trie maintain a count of the number of sequences in each subtree, hence the GetCountOfSequencesWithPrefix() method returns a list of sequences with the specified prefix with order O(n) time complexity (where n is the number of elements in the prefix sequence).
+
+**FrequencyTable** - A simple (Dictionary-based) frequency table, which stores the frequency of occurrence of objects.
+
+**BinarySearchTreeBalancedInserter** - Inserts a set of items into a binary search tree, ensuring that the tree is balanced, and depth is minimized.
+
+
 ### Future Enhancements
 - Implement self-balancing in the WeightBalancedTree class.
 - Refactor methods Insert() and ExtractMax()/ExtractMin() on the MaxHeap/MinHeap classes into the HeapBase class.
 - Abstract use of IComparable<T>.CompareTo() in heap classes to make code easier to read.
-- Add a trie.
 
 ### Release History
 
@@ -45,6 +51,14 @@ MoreComplexDataStructures is a class library containing a collection of data str
   <tr>
     <td><b>Version</b></td>
     <td><b>Changes</b></td>
+  </tr>
+  <tr>
+    <td valign="top">1.3.0.0</td>
+    <td>
+      Added Trie, FrequencyTable, and BinarySearchTreeBalancedInserter.<br />
+      WeightBalancedTree.GetRandomItem() method now returns random items with even distribution.<br />
+      WeightBalancedTree now implements interface IBinarySearchTree&lt;T&gt;.<br />
+    </td>
   </tr>
   <tr>
     <td valign="top">1.2.0.0</td>
@@ -57,7 +71,7 @@ MoreComplexDataStructures is a class library containing a collection of data str
     <td>
       Added MinHeap, MaxHeap, LongIntegerStatusStorer, and ListRandomizer.<br />
       Allowed the WeightBalancedTree 'Depth' property to return without an exception if called after an item has been removed from the tree.<br />
-      Added additional constructor to WeightBalancedTree to accept an IEnumerable<T> object, whose contents are added to the tree.<br />
+      Added additional constructor to WeightBalancedTree to accept an IEnumerable&lt;T&gt; object, whose contents are added to the tree.<br />
     </td>
   </tr>
   <tr>

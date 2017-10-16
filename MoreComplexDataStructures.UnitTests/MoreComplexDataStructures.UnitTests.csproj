@@ -46,12 +46,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinarySearchTreeBalancedInserterTests.cs" />
+    <Compile Include="FrequencyTableTests.cs" />
     <Compile Include="HeapTestBase.cs" />
     <Compile Include="LongIntegerRangeTests.cs" />
     <Compile Include="LongIntegerStatusStorerTests.cs" />
     <Compile Include="MaxHeapTests.cs" />
     <Compile Include="MinHeapTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SequenceTerminatorTrieNodeTests.cs" />
+    <Compile Include="TrieNodeTests.cs" />
+    <Compile Include="TrieTests.cs" />
     <Compile Include="WeightBalancedTreeTests.cs" />
     <Compile Include="WeightedRandomGeneratorTests.cs" />
   </ItemGroup>

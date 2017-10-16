@@ -89,6 +89,11 @@ namespace MoreComplexDataStructures
             return startValue.CompareTo(other.startValue);
         }
 
+        /// <summary>
+        /// Indicates whether the current object is equal to another MoreComplexDataStructures.LongIntegerRange object.
+        /// </summary>
+        /// <param name="obj">The LongIntegerRange to compare with the current.</param>
+        /// <returns>True if the specified LongIntegerRange is equal to the current, otherwise false.</returns>
         public override Boolean Equals(object obj)
         {
             if (!(obj is LongIntegerRange))
@@ -105,7 +110,7 @@ namespace MoreComplexDataStructures
         /// Indicates whether the current object is equal to another MoreComplexDataStructures.LongIntegerRange object.
         /// </summary>
         /// <param name="other">The LongIntegerRange to compare.</param>
-        /// <returns></returns>
+        /// <returns>True if the specified LongIntegerRange is equal to the current, otherwise false.</returns>
         public Boolean Equals(LongIntegerRange other)
         {
             if (startValue == other.startValue && length == other.length)
@@ -118,6 +123,10 @@ namespace MoreComplexDataStructures
             }
         }
 
+        /// <summary>
+        /// The hash function for the current LongIntegerRange.
+        /// </summary>
+        /// <returns>A hash code for this LongIntegerRange.</returns>
         public override Int32 GetHashCode()
         {
             return Convert.ToInt32((startValue * length * 31) % Int32.MaxValue);

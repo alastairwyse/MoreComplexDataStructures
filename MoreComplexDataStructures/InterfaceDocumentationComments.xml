@@ -18,5 +18,60 @@
       <param name="maxValue">The exclusive upper bound of the random number to be generated. maxValue must be greater than or equal to 0.</param>
       <returns>A 64-bit signed integer that is greater than or equal to 0, and less than maxValue; that is, the range of return values ordinarily includes 0 but not maxValue. However, if maxValue equals 0, maxValue is returned.</returns>
     </member>
+    <member name="M:MoreComplexDataStructures.IBinarySearchTree`1.Clear">
+      <summary>
+        Removes all items from the tree.
+      </summary>
+    </member>
+    <member name="M:MoreComplexDataStructures.IBinarySearchTree`1.Add(`0)">
+      <summary>
+        Adds the specified item to the tree.
+      </summary>
+      <param name="item">The item to add.</param>
+      <exception cref="T:System.ArgumentException">The specified item already exists in the tree.</exception>
+    </member>
+    <member name="M:MoreComplexDataStructures.IBinarySearchTree`1.Remove(`0)">
+      <summary>
+        Removes the specified item from the tree.
+      </summary>
+      <param name="item">The item to remove.</param>
+      <exception cref="T:System.ArgumentException">The specified item does not exist in the tree.</exception>
+    </member>
+    <member name="M:MoreComplexDataStructures.IBinarySearchTree`1.Contains(`0)">
+      <summary>
+        Determines whether the tree contains the specified item.
+      </summary>
+      <param name="item">The item to locate in the tree.</param>
+      <returns>True if the tree contains the specified item, otherwise false.</returns>
+    </member>
+    <member name="M:MoreComplexDataStructures.IBinarySearchTree`1.PreOrderDepthFirstSearch(System.Action{MoreComplexDataStructures.WeightBalancedTreeNode{`0}})">
+      <summary>
+        Performs a pre-order depth-first search of the tree, invoking the specified action at each node.
+      </summary>
+      <param name="nodeAction">The action to perform at each node.  Accepts a single parameter which is the current node to perform the action on.</param>
+    </member>
+    <member name="M:MoreComplexDataStructures.IBinarySearchTree`1.InOrderDepthFirstSearch(System.Action{MoreComplexDataStructures.WeightBalancedTreeNode{`0}})">
+      <summary>
+        Performs an in-order depth-first search of the tree, invoking the specified action at each node.
+      </summary>
+      <param name="nodeAction">The action to perform at each node.  Accepts a single parameter which is the current node to perform the action on.</param>
+    </member>
+    <member name="M:MoreComplexDataStructures.IBinarySearchTree`1.PostOrderDepthFirstSearch(System.Action{MoreComplexDataStructures.WeightBalancedTreeNode{`0}})">
+      <summary>
+        Performs a post-order depth-first search of the tree, invoking the specified action at each node.
+      </summary>
+      <param name="nodeAction">The action to perform at each node.  Accepts a single parameter which is the current node to perform the action on.</param>
+    </member>
+    <member name="M:MoreComplexDataStructures.IBinarySearchTree`1.BreadthFirstSearch(System.Action{MoreComplexDataStructures.WeightBalancedTreeNode{`0}})">
+      <summary>
+        Performs breadth-first search of the tree, invoking the specified action at each node.
+      </summary>
+      <param name="nodeAction">The action to perform at each node.  Accepts a single parameter which is the current node to perform the action on.</param>
+    </member>
+    <member name="P:MoreComplexDataStructures.IBinarySearchTree`1.Count">
+      <summary>
+        The total number of items stored in the tree.
+      </summary>
+    </member>
   </members>
 </doc>

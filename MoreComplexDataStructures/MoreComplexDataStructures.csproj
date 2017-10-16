@@ -41,17 +41,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinarySearchTreeBalancedInserter.cs" />
     <Compile Include="DefaultRandomGenerator.cs" />
     <Compile Include="DoublyLinkedTreeNode.cs" />
     <Compile Include="HeapBase.cs" />
+    <Compile Include="FrequencyTable.cs" />
+    <Compile Include="IBinarySearchTree.cs" />
     <Compile Include="IRandomIntegerGenerator.cs" />
     <Compile Include="LongIntegerRange.cs" />
     <Compile Include="LongIntegerStatusStorer.cs" />
     <Compile Include="ListRandomizer.cs" />
+    <Compile Include="SequenceTerminatorTrieNode.cs" />
     <Compile Include="TreeBasedListRandomizer.cs" />
     <Compile Include="MaxHeap.cs" />
     <Compile Include="MinHeap.cs" />
     <Compile Include="TreeNodeBase.cs" />
+    <Compile Include="Trie.cs" />
+    <Compile Include="TrieNode.cs" />
     <Compile Include="WeightBalancedTree.cs" />
     <Compile Include="WeightBalancedTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
