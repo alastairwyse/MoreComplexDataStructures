@@ -41,8 +41,8 @@ MoreComplexDataStructures is a class library containing a collection of data str
 
 
 ### Future Enhancements
-- Add methods GetAllLessThan(T item) and GetAllGreaterThan(T item) returning IEnumerable&lt;T&gt;, to the WeightBalancedTree class.
 - Implement self-balancing in the WeightBalancedTree class.
+- Refactor to remove inefficiency of traversing to the start node twice in GetAllLessThan(T item) and GetAllGreaterThan(T item) in the WeightBalancedTree class.
 - Refactor methods Insert() and ExtractMax()/ExtractMin() on the MaxHeap/MinHeap classes into the HeapBase class.
 - Abstract use of IComparable<T>.CompareTo() in heap classes to make code easier to read.
 
@@ -52,6 +52,12 @@ MoreComplexDataStructures is a class library containing a collection of data str
   <tr>
     <td><b>Version</b></td>
     <td><b>Changes</b></td>
+  </tr>
+  <tr>
+    <td valign="top">1.4.0.0</td>
+    <td>
+      Added GetAllLessThan(T item) and GetAllGreaterThan(T item) methods to WeightBalancedTree.<br />
+    </td>
   </tr>
   <tr>
     <td valign="top">1.3.0.0</td>

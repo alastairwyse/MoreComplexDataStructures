@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2017 Alastair Wyse (https://github.com/alastairwyse/MoreComplexDataStructures/)
+ * Copyright 2018 Alastair Wyse (https://github.com/alastairwyse/MoreComplexDataStructures/)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -968,6 +968,144 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual(0, testWeightBalancedTree.GetCountGreaterThan(50));
             Assert.AreEqual(33, testWeightBalancedTree.GetCountGreaterThan(-1));
             Assert.AreEqual(27, testWeightBalancedTree.GetCountGreaterThan(7));
+        }
+
+        /// <summary>
+        /// Success tests for the GetAllLessThan() method.
+        /// </summary>
+        [Test]
+        public void GetAllLessThan()
+        {
+            // Test case when the tree is empty
+            IEnumerable<Int32> result = testWeightBalancedTree.GetAllLessThan(5);
+            Assert.Zero(result.Count<Int32>());
+
+            // Create the following tree which allows for testing of all code paths...
+            //       10
+            //     /    \
+            //    8     15
+            //   / \    /
+            //  6   9  11
+            //          \
+            //           14
+            Int32[] treeItems = new Int32[] { 10, 8, 15, 6, 9, 11, 14 };
+            foreach (Int32 currentItem in treeItems)
+            {
+                testWeightBalancedTree.Add(currentItem);
+            }
+
+            // Test case where specified item doesn't exist and there are no lower items
+            result = testWeightBalancedTree.GetAllLessThan(5);
+            Assert.Zero(result.Count<Int32>());
+
+            // Test case where specified item exists but there are no lower items
+            result = testWeightBalancedTree.GetAllLessThan(6);
+            Assert.Zero(result.Count<Int32>());
+
+            // Test case where specified item doesn't exist but there are lower items
+            List<Int32> listResult = new List<Int32>(testWeightBalancedTree.GetAllLessThan(12));
+            Assert.AreEqual(5, listResult.Count);
+            Assert.AreEqual(11, listResult[0]);
+            Assert.AreEqual(10, listResult[1]);
+            Assert.AreEqual(9, listResult[2]);
+            Assert.AreEqual(8, listResult[3]);
+            Assert.AreEqual(6, listResult[4]);
+
+            // Test case where specified item exists and there are lower items
+            listResult = new List<Int32>(testWeightBalancedTree.GetAllLessThan(14));
+            Assert.AreEqual(5, listResult.Count);
+            Assert.AreEqual(11, listResult[0]);
+            Assert.AreEqual(10, listResult[1]);
+            Assert.AreEqual(9, listResult[2]);
+            Assert.AreEqual(8, listResult[3]);
+            Assert.AreEqual(6, listResult[4]);
+
+            listResult = new List<Int32>(testWeightBalancedTree.GetAllLessThan(11));
+            Assert.AreEqual(4, listResult.Count);
+            Assert.AreEqual(10, listResult[0]);
+            Assert.AreEqual(9, listResult[1]);
+            Assert.AreEqual(8, listResult[2]);
+            Assert.AreEqual(6, listResult[3]);
+
+            // Test case where specified item is higher than the largest item
+            listResult = new List<Int32>(testWeightBalancedTree.GetAllLessThan(20));
+            Assert.AreEqual(7, listResult.Count);
+            Assert.AreEqual(15, listResult[0]);
+            Assert.AreEqual(14, listResult[1]);
+            Assert.AreEqual(11, listResult[2]);
+            Assert.AreEqual(10, listResult[3]);
+            Assert.AreEqual(9, listResult[4]);
+            Assert.AreEqual(8, listResult[5]);
+            Assert.AreEqual(6, listResult[6]);
+        }
+
+        /// <summary>
+        /// Success tests for the GetAllGreaterThan() method.
+        /// </summary>
+        [Test]
+        public void GetAllGreaterThan()
+        {
+            // Test case when the tree is empty
+            IEnumerable<Int32> result = testWeightBalancedTree.GetAllGreaterThan(5);
+            Assert.Zero(result.Count<Int32>());
+
+            // Create the following tree which allows for testing of all code paths...
+            //       10
+            //     /    \
+            //    2     15
+            //     \   /  \
+            //      7 13  18
+            //     /
+            //    5
+            Int32[] treeItems = new Int32[] { 10, 2, 15, 7, 13, 18, 5 };
+            foreach (Int32 currentItem in treeItems)
+            {
+                testWeightBalancedTree.Add(currentItem);
+            }
+
+            // Test case where specified item doesn't exist and there are no greater items
+            result = testWeightBalancedTree.GetAllGreaterThan(19);
+            Assert.Zero(result.Count<Int32>());
+
+            // Test case where specified item exists but there are no greater items
+            result = testWeightBalancedTree.GetAllGreaterThan(18);
+            Assert.Zero(result.Count<Int32>());
+
+            // Test case where specified item doesn't exist but there are greater items
+            List<Int32> listResult = new List<Int32>(testWeightBalancedTree.GetAllGreaterThan(6));
+            Assert.AreEqual(5, listResult.Count);
+            Assert.AreEqual(7, listResult[0]);
+            Assert.AreEqual(10, listResult[1]);
+            Assert.AreEqual(13, listResult[2]);
+            Assert.AreEqual(15, listResult[3]);
+            Assert.AreEqual(18, listResult[4]);
+
+            // Test case where specified item exists and there are greater items
+            listResult = new List<Int32>(testWeightBalancedTree.GetAllGreaterThan(5));
+            Assert.AreEqual(5, listResult.Count);
+            Assert.AreEqual(7, listResult[0]);
+            Assert.AreEqual(10, listResult[1]);
+            Assert.AreEqual(13, listResult[2]);
+            Assert.AreEqual(15, listResult[3]);
+            Assert.AreEqual(18, listResult[4]);
+
+            listResult = new List<Int32>(testWeightBalancedTree.GetAllGreaterThan(7));
+            Assert.AreEqual(4, listResult.Count);
+            Assert.AreEqual(10, listResult[0]);
+            Assert.AreEqual(13, listResult[1]);
+            Assert.AreEqual(15, listResult[2]);
+            Assert.AreEqual(18, listResult[3]);
+
+            // Test case where specified item is lower than the lowest item
+            listResult = new List<Int32>(testWeightBalancedTree.GetAllGreaterThan(1));
+            Assert.AreEqual(7, listResult.Count);
+            Assert.AreEqual(2, listResult[0]);
+            Assert.AreEqual(5, listResult[1]);
+            Assert.AreEqual(7, listResult[2]);
+            Assert.AreEqual(10, listResult[3]);
+            Assert.AreEqual(13, listResult[4]);
+            Assert.AreEqual(15, listResult[5]);
+            Assert.AreEqual(18, listResult[6]);
         }
 
         /// <summary>

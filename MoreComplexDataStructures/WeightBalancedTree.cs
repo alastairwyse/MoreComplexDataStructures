@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2017 Alastair Wyse (https://github.com/alastairwyse/MoreComplexDataStructures/)
+ * Copyright 2018 Alastair Wyse (https://github.com/alastairwyse/MoreComplexDataStructures/)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,10 @@ namespace MoreComplexDataStructures
         protected Random randomGenerator;
         /// <summary>Used when removing items from the tree, to decide whether to use the next less than or next greater than when swapping a lower node's value with the one to be removed.</summary>
         protected Boolean swapNextLessThanOnRemove;
+        /// <summary>Used when searching up the tree for a node containing a next lower value.  Passed to the TraverseUpToNode() method.</summary>
+        protected Func<WeightBalancedTreeNode<T>, Nullable<Boolean>, Boolean> getNextLessThanTraverseUpAction;
+        /// <summary>Used when searching up the tree for a node containing a next greater value.  Passed to the TraverseUpToNode() method.</summary>
+        protected Func<WeightBalancedTreeNode<T>, Nullable<Boolean>, Boolean> getNextGreaterThanTraverseUpAction;
 
         /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="P:MoreComplexDataStructures.IBinarySearchTree`1.Count"]/*'/>
         public Int32 Count
@@ -85,6 +89,50 @@ namespace MoreComplexDataStructures
             itemHasBeenRemoved = false;
             randomGenerator = new Random();
             swapNextLessThanOnRemove = true;
+
+            getNextLessThanTraverseUpAction = (node, traversedFromLeft) =>
+            {
+                if (node.ParentNode == null)
+                {
+                    // This is the root, so stop traversing
+                    return false;
+                }
+                else
+                {
+                    // We want to keep moving up until the last move was from the right (i.e. until we encounter the parent of a right child)
+                    //   Null value means this is the first node traversed to
+                    if (traversedFromLeft == null || traversedFromLeft == true)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            };
+
+            getNextGreaterThanTraverseUpAction = (node, traversedFromLeft) =>
+            {
+                if (node.ParentNode == null)
+                {
+                    // This is the root, so stop traversing
+                    return false;
+                }
+                else
+                {
+                    // We want to keep moving up until the last move was from the left (i.e. until we encounter the parent of a left child)
+                    //   Null value means this is the first node traversed to
+                    if (traversedFromLeft == null || traversedFromLeft == false)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            };
         }
 
         /// <summary>
@@ -360,27 +408,6 @@ namespace MoreComplexDataStructures
                 return new Tuple<Boolean, T>(false, default (T));
             }
 
-            Func<WeightBalancedTreeNode<T>, Nullable<Boolean>, Boolean> traverseUpAction = (node, traversedFromLeft) =>
-            {
-                if (node.ParentNode == null)
-                {
-                    // This is the root, so stop traversing
-                    return false;
-                }
-                else
-                {
-                    // We want to keep moving up until the last move was from the right (i.e. until we encounter the parent of a right child)
-                    //   Null value means this is the first node traversed to
-                    if (traversedFromLeft == null  || traversedFromLeft == true)
-                    {
-                        return true;
-                    }
-                    else 
-                    {
-                        return false;
-                    }
-                }
-            };
             Tuple<Boolean, WeightBalancedTreeNode<T>> searchResult = TraverseDownToNodeHoldingItemOrParent(item, (node) => { });
 
             if (searchResult.Item1 == false)
@@ -395,7 +422,7 @@ namespace MoreComplexDataStructures
                 else
                 {
                     // result item > item 
-                    WeightBalancedTreeNode<T> returnNode = TraverseUpToNode(searchResult.Item2, traverseUpAction);
+                    WeightBalancedTreeNode<T> returnNode = TraverseUpToNode(searchResult.Item2, getNextLessThanTraverseUpAction);
                     // TraverseUpToNode() will not move past the root node, so need to check whether the returned node is actually less than parameter item
                     if (returnNode.Item.CompareTo(item) < 0)
                     {
@@ -410,29 +437,14 @@ namespace MoreComplexDataStructures
             }
             else
             {
-                if (searchResult.Item2.LeftChildNode != null)
+                WeightBalancedTreeNode<T> returnNode = GetNextLessThan(searchResult.Item2);
+                if (returnNode == null)
                 {
-                    // Move left once, and then move as far right as possible... resulting node contains the next lowest item
-                    WeightBalancedTreeNode<T> currentNode = searchResult.Item2.LeftChildNode;
-                    while (currentNode.RightChildNode != null)
-                    {
-                        currentNode = currentNode.RightChildNode;
-                    }
-                    return new Tuple<Boolean, T>(true, currentNode.Item);
+                    return new Tuple<Boolean, T>(false, default(T));
                 }
                 else
                 {
-                    WeightBalancedTreeNode<T> returnNode = TraverseUpToNode(searchResult.Item2, traverseUpAction);
-                    // TraverseUpToNode() will not move past the root node, so need to check whether the returned node is actually less than parameter item
-                    if (returnNode.Item.CompareTo(item) < 0)
-                    {
-                        return new Tuple<Boolean, T>(true, returnNode.Item);
-                    }
-                    else
-                    {
-                        // There are no lower items in the tree
-                        return new Tuple<Boolean, T>(false, default (T));
-                    }
+                    return new Tuple<Boolean, T>(true, returnNode.Item);
                 }
             }
         }
@@ -449,27 +461,6 @@ namespace MoreComplexDataStructures
                 return new Tuple<Boolean, T>(false, default(T));
             }
 
-            Func<WeightBalancedTreeNode<T>, Nullable<Boolean>, Boolean> traverseUpAction = (node, traversedFromLeft) =>
-            {
-                if (node.ParentNode == null)
-                {
-                    // This is the root, so stop traversing
-                    return false;
-                }
-                else
-                {
-                    // We want to keep moving up until the last move was from the left (i.e. until we encounter the parent of a left child)
-                    //   Null value means this is the first node traversed to
-                    if (traversedFromLeft == null || traversedFromLeft == false)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            };
             Tuple<Boolean, WeightBalancedTreeNode<T>> searchResult = TraverseDownToNodeHoldingItemOrParent(item, (node) => { });
 
             if (searchResult.Item1 == false)
@@ -479,7 +470,7 @@ namespace MoreComplexDataStructures
                 if (comparisonResult < 0)
                 {
                     // result item < item 
-                    WeightBalancedTreeNode<T> returnNode = TraverseUpToNode(searchResult.Item2, traverseUpAction);
+                    WeightBalancedTreeNode<T> returnNode = TraverseUpToNode(searchResult.Item2, getNextGreaterThanTraverseUpAction);
                     // TraverseUpToNode() will not move past the root node, so need to check whether the returned node is actually greater than parameter item
                     if (returnNode.Item.CompareTo(item) > 0)
                     {
@@ -499,29 +490,14 @@ namespace MoreComplexDataStructures
             }
             else
             {
-                if (searchResult.Item2.RightChildNode != null)
+                WeightBalancedTreeNode<T> returnNode = GetNextGreaterThan(searchResult.Item2);
+                if (returnNode == null)
                 {
-                    // Move right once, and then move as far left as possible... resulting node contains the next greater item
-                    WeightBalancedTreeNode<T> currentNode = searchResult.Item2.RightChildNode;
-                    while (currentNode.LeftChildNode != null)
-                    {
-                        currentNode = currentNode.LeftChildNode;
-                    }
-                    return new Tuple<Boolean, T>(true, currentNode.Item);
+                    return new Tuple<Boolean, T>(false, default(T));
                 }
                 else
                 {
-                    WeightBalancedTreeNode<T> returnNode = TraverseUpToNode(searchResult.Item2, traverseUpAction);
-                    // TraverseUpToNode() will not move past the root node, so need to check whether the returned node is actually greater than parameter item
-                    if (returnNode.Item.CompareTo(item) > 0)
-                    {
-                        return new Tuple<Boolean, T>(true, returnNode.Item);
-                    }
-                    else
-                    {
-                        // There are no greater items in the tree
-                        return new Tuple<Boolean, T>(false, default(T));
-                    }
+                    return new Tuple<Boolean, T>(true, returnNode.Item);
                 }
             }
         }
@@ -590,6 +566,48 @@ namespace MoreComplexDataStructures
             return count;
         }
         
+        /// <summary>
+        /// Returns an enumerator containing all items in the tree less than the specified item.
+        /// </summary>
+        /// <param name="item">The item to retrieve all items greater than.</param>
+        /// <returns>An enumerator containing all items in the tree less than the specified item.</returns>
+        public IEnumerable<T> GetAllLessThan(T item)
+        {
+            Tuple<Boolean, T> firstNodeResult = GetNextLessThan(item);
+            if (firstNodeResult.Item1 == true)
+            {
+                // TODO: Could improve efficiency here by not traversing to the first node twice
+                //   Could refactor a private version of GetNextLessThan(T item) which returns Tuple<Boolean, WeightBalancedTreeNode<T>> rather than Tuple<Boolean, T>
+                WeightBalancedTreeNode<T> currentNode = TraverseDownToNodeHoldingItem(firstNodeResult.Item2);
+                while (currentNode != null)
+                {
+                    yield return currentNode.Item;
+                    currentNode = GetNextLessThan(currentNode);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns an enumerator containing all items in the tree greater than the specified item.
+        /// </summary>
+        /// <param name="item">The item to retrieve all items less than.</param>
+        /// <returns>An enumerator containing all items in the tree greater than the specified item.</returns>
+        public IEnumerable<T> GetAllGreaterThan(T item)
+        {
+            Tuple<Boolean, T> firstNodeResult = GetNextGreaterThan(item);
+            if (firstNodeResult.Item1 == true)
+            {
+                // TODO: Could improve efficiency here by not traversing to the first node twice
+                //   Could refactor a private version of GetNextGreaterThan(T item) which returns Tuple<Boolean, WeightBalancedTreeNode<T>> rather than Tuple<Boolean, T>
+                WeightBalancedTreeNode<T> currentNode = TraverseDownToNodeHoldingItem(firstNodeResult.Item2);
+                while (currentNode != null)
+                {
+                    yield return currentNode.Item;
+                    currentNode = GetNextGreaterThan(currentNode);
+                }
+            }
+        }
+
         /// <summary>
         /// Returns a random item from the tree.
         /// </summary>
@@ -761,6 +779,76 @@ namespace MoreComplexDataStructures
         }
 
         # region Private/Protected Methods
+
+        /// <summary>
+        /// Gets the node in the tree with the next value less than the value of the specified start node.
+        /// </summary>
+        /// <param name="item">The node to retrieve the next less of.</param>
+        /// <returns>The node with the next value less, or null if no lower value exists.</returns>
+        private WeightBalancedTreeNode<T> GetNextLessThan(WeightBalancedTreeNode<T> startNode)
+        {
+            T startNodeItem = startNode.Item;
+
+            if (startNode.LeftChildNode != null)
+            {
+                // Move left once, and then move as far right as possible... resulting node contains the next lowest item
+                WeightBalancedTreeNode<T> currentNode = startNode.LeftChildNode;
+                while (currentNode.RightChildNode != null)
+                {
+                    currentNode = currentNode.RightChildNode;
+                }
+                return currentNode;
+            }
+            else
+            {
+                WeightBalancedTreeNode<T> returnNode = TraverseUpToNode(startNode, getNextLessThanTraverseUpAction);
+                // TraverseUpToNode() will not move past the root node, so need to check whether the returned node is actually less than parameter item
+                if (returnNode.Item.CompareTo(startNodeItem) < 0)
+                {
+                    return returnNode;
+                }
+                else
+                {
+                    // There are no lower items in the tree
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the node in the tree with the next value greater than the value of the specified start node.
+        /// </summary>
+        /// <param name="startNode">The node to retrieve the next greater of.</param>
+        /// <returns>The node with the next value greater, or null if no greater value exists.</returns>
+        private WeightBalancedTreeNode<T> GetNextGreaterThan(WeightBalancedTreeNode<T> startNode)
+        {
+            T startNodeItem = startNode.Item;
+
+            if (startNode.RightChildNode != null)
+            {
+                // Move right once, and then move as far left as possible... resulting node contains the next greater item
+                WeightBalancedTreeNode<T> currentNode = startNode.RightChildNode;
+                while (currentNode.LeftChildNode != null)
+                {
+                    currentNode = currentNode.LeftChildNode;
+                }
+                return currentNode;
+            }
+            else
+            {
+                WeightBalancedTreeNode<T> returnNode = TraverseUpToNode(startNode, getNextGreaterThanTraverseUpAction);
+                // TraverseUpToNode() will not move past the root node, so need to check whether the returned node is actually greater than parameter item
+                if (returnNode.Item.CompareTo(startNodeItem) > 0)
+                {
+                    return returnNode;
+                }
+                else
+                {
+                    // There are no greater items in the tree
+                    return null;
+                }
+            }
+        }
 
         /// <summary>
         /// Traverses up the tree from the specified node to the root, invoking an action at each node.
