@@ -33,7 +33,7 @@ MoreComplexDataStructures is a class library containing a collection of data str
     c : 30456
     d : 39828
 
-**Trie** - An implementation of [trie / prefix tree](https://en.wikipedia.org/wiki/Trie).  Nodes of the trie maintain a count of the number of sequences in each subtree, hence the GetCountOfSequencesWithPrefix() method returns a list of sequences with the specified prefix with order O(n) time complexity (where n is the number of elements in the prefix sequence).
+**Trie** - An implementation of [trie / prefix tree](https://en.wikipedia.org/wiki/Trie).  Nodes of the trie maintain a count of the number of sequences in each subtree, hence the GetCountOfSequencesWithPrefix() method returns a count of sequences with the specified prefix with order O(n) time complexity (where n is the number of elements in the prefix sequence).
 
 **FrequencyTable** - A simple (Dictionary-based) frequency table, which stores the frequency of occurrence of objects.
 
