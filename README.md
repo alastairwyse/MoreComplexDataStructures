@@ -45,6 +45,8 @@ MoreComplexDataStructures is a class library containing a collection of data str
 - Refactor to remove inefficiency of traversing to the start node twice in GetAllLessThan(T item) and GetAllGreaterThan(T item) in the WeightBalancedTree class.
 - Refactor methods Insert() and ExtractMax()/ExtractMin() on the MaxHeap/MinHeap classes into the HeapBase class.
 - Abstract use of IComparable<T>.CompareTo() in heap classes to make code easier to read.
+- WeightBalancedTree.Remove() method should select next lower or higher node to swap with removed node based on the number of children on each side (take from heavier side to better preserve balancing).  Currently it is decided randomly.
+- Create UniqueRandomGenerator class based on tree storing integer ranges.
 
 ### Release History
 
