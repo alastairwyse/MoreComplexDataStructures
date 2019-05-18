@@ -26,7 +26,6 @@ namespace MoreComplexDataStructures
     /// A weight-balanced binary search tree where each node maintains the size of its left and right subtrees.
     /// </summary>
     /// <typeparam name="T">Specifies the type of items held by nodes of the tree.</typeparam>
-    /// <remarks>Weight-balanced trees are generally self balancing, however this class does not implement any auto-balancing at this stage.</remarks>
     public class WeightBalancedTree<T> : IBinarySearchTree<T> where T : IComparable<T>
     {
         /// <summary>The root node of the tree.</summary>
