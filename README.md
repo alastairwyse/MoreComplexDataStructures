@@ -41,7 +41,7 @@ Note that the current balancing algorithm can result in unbalanced trees for cer
 
 **BinarySearchTreeBalancedInserter** - Inserts a set of items into a binary search tree, ensuring that the tree is balanced, and depth is minimized (although this class is now somewhat redundant since balancing has been implemented in WeightBalancedTree).
 
-**CharacterTrie** - Effectively a Trie<Char>, but with special implementations of the Insert(), Delete(), and Contains() methods which accept String parameters (and avoid the overhead of having to call String.ToCharArray() as is required with a Trie<Char>).
+**CharacterTrie** - Effectively a Trie&lt;Char&gt;, but with special implementations of the Insert(), Delete(), and Contains() methods which accept String parameters (and avoid the overhead of having to call String.ToCharArray() as is required with a Trie&lt;Char&gt;).
 
 **LRUCache** - A simple implementation of a [least-recently-used](https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)) [cache](https://en.wikipedia.org/wiki/Cache_(computing)) using an underlying Dictionary and LinkedList.  By default the cache stores a fixed number of items (defined by constructor parameter 'itemLimit'), but it optionally allows overriding the routine to check whether the cache is full (e.g. to decide instead based on total memory usage, etc...).
 
@@ -54,11 +54,11 @@ Note - Another (more simple) way to generate a range of unique random numbers is
 ### Future Enhancements
 - Enhance WeightBalancedTree balancing algorithm to handle sequences of input values which currently result in an unbalanced tree (e.g. Int32 tree with insert sequence 1, 7, 2, 6, 3, 5, 4).
 - Enhance any methods which return an IEnumerable to throw an InvalidOperationException if the object structure is changed while enumerating.
-- Remove inefficiency of converting List<Char> to String in CharacterTrie.GetAllStringsWithPrefix().
+- Remove inefficiency of converting List&lt;Char&gt; to String in CharacterTrie.GetAllStringsWithPrefix().
 - Remove redundant / unused conditional branches in WeightBalancedTree.GetRandomItem() method (e.g. 'if (currentNode.LeftChildNode == null)')
 - Refactor to remove inefficiency of traversing to the start node twice in GetAllLessThan(T item) and GetAllGreaterThan(T item) in the WeightBalancedTree class.
 - Refactor methods Insert() and ExtractMax()/ExtractMin() on the MaxHeap/MinHeap classes into the HeapBase class.
-- Abstract use of IComparable<T>.CompareTo() in heap classes to make code easier to read.
+- Abstract use of IComparable&lt;T&gt;.CompareTo() in heap classes to make code easier to read.
 - Consider adding a linked list implementation which supports Contains(T item) ( O(1) ), by additionally storing list data in a HashSet.
 - Consider adding a [priority queue](https://en.wikipedia.org/wiki/Priority_queue).
 - Consider adding a [skip list](https://en.wikipedia.org/wiki/Skip_list).
@@ -79,10 +79,10 @@ Note - Another (more simple) way to generate a range of unique random numbers is
       Implemented automatic balancing in WeightBalancedTree.<br />
       Added Min and Max properties to WeightBalancedTree.<br />
       Added method Get() to WeightBalancedTree to return a specified node item (useful when the node items are container classes which hold additional data to that used in the IComparable<T> implementation... i.e. allowing the tree to be used as a treemap).<br />
-      Trie.GetAllSequencesWithPrefix() now returns IEnumerable<List<T>>.<br />
+      Trie.GetAllSequencesWithPrefix() now returns IEnumerable&lt;List&lt;T&gt;&gt;.<br />
       Added an additional Trie constructor which returns the root node via an 'out' parameter (to allow custom traversals).<br />
       Added method FrequencyTable.Clear().<br />
-      Refactored WeightedRandomGenerator to remove Dictionary member 'weightingToItemMap' and instead store data in ItemAndWeighting<T> as each tree node item.<br />
+      Refactored WeightedRandomGenerator to remove Dictionary member 'weightingToItemMap' and instead store data in ItemAndWeighting&lt;T&gt; as each tree node item.<br />
       Removed TreeBasedListRandomizer class.<br />
     </td>
   </tr>
