@@ -66,6 +66,17 @@ namespace MoreComplexDataStructures
         }
 
         /// <summary>
+        /// The last (inclusive) value in the range.
+        /// </summary>
+        public Int64 EndValue
+        {
+            get
+            {
+                return startValue + length - 1;
+            }
+        }
+
+        /// <summary>
         /// Initialises a new instance of the MoreComplexDataStructures.LongIntegerRange class.
         /// </summary>
         /// <param name="startValue">The first value in the range.</param>

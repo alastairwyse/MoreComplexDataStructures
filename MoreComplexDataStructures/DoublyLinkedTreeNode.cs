@@ -28,9 +28,12 @@ namespace MoreComplexDataStructures
     /// <typeparam name="T">Specifies the type of item held by the node.</typeparam>
     public class DoublyLinkedTreeNode<T> : TreeNodeBase<T> where T : IComparable<T>
     {
-        private DoublyLinkedTreeNode<T> parentNode;
-        private DoublyLinkedTreeNode<T> leftChildNode;
-        private DoublyLinkedTreeNode<T> rightChildNode;
+        /// <summary>The parent node of this node.</summary>
+        protected DoublyLinkedTreeNode<T> parentNode;
+        /// <summary>The left child node of this node.</summary>
+        protected DoublyLinkedTreeNode<T> leftChildNode;
+        /// <summary>The right child node of this node.</summary>
+        protected DoublyLinkedTreeNode<T> rightChildNode;
 
         /// <summary>
         /// The parent node of this node.

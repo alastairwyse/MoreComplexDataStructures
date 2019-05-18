@@ -223,5 +223,30 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual(2, enumerationResults['b']);
             Assert.AreEqual(2, enumerationResults['c']);
         }
+
+        /// <summary>
+        /// Success tests for the Clear() method.
+        /// </summary>
+        [Test]
+        public void Clear()
+        {
+            testFrequencyTable.Increment('a');
+            testFrequencyTable.IncrementBy('b', 2);
+            testFrequencyTable.Increment('c');
+            testFrequencyTable.Increment('c');
+            Assert.AreEqual(3, testFrequencyTable.ItemCount);
+            Assert.AreEqual(5, testFrequencyTable.FrequencyCount);
+            Assert.AreEqual(1, testFrequencyTable.GetFrequency('a'));
+            Assert.AreEqual(2, testFrequencyTable.GetFrequency('b'));
+            Assert.AreEqual(2, testFrequencyTable.GetFrequency('c'));
+
+            testFrequencyTable.Clear();
+
+            Assert.AreEqual(0, testFrequencyTable.ItemCount);
+            Assert.AreEqual(0, testFrequencyTable.FrequencyCount);
+            Assert.AreEqual(0, testFrequencyTable.GetFrequency('a'));
+            Assert.AreEqual(0, testFrequencyTable.GetFrequency('b'));
+            Assert.AreEqual(0, testFrequencyTable.GetFrequency('c'));
+        }
     }
 }

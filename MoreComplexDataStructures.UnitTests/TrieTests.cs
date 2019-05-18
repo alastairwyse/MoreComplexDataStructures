@@ -43,7 +43,7 @@ namespace MoreComplexDataStructures.UnitTests
         [Test]
         public void Insert()
         {
-            // Test insert of several words into an empty tree
+            // Test insert of several words into an empty trie
             // Then GetAllNodes() should form a list of lists with the following values (x-axis is outer list index, y-axis is inner list index)
             //
             //    0 1 2 3 4 5
@@ -149,12 +149,12 @@ namespace MoreComplexDataStructures.UnitTests
         }
 
         /// <summary>
-        /// Tests that an exception is thrown if the Insert() method is called with a sequence which already exists in the tree.
+        /// Tests that an exception is thrown if the Insert() method is called with a sequence which already exists in the trie.
         /// </summary>
         [Test]
         public void Insert_SequenceAlreadyExists()
         {
-            // Insert several words into an empty tree
+            // Insert several words into an empty trie
             // Then GetAllNodes() should form a list of lists with the following values (x-axis is outer list index, y-axis is inner list index)
             //
             //    0 1 2 3 4 5
@@ -306,7 +306,7 @@ namespace MoreComplexDataStructures.UnitTests
         [Test]
         public void Delete()
         {
-            // Insert several words into an empty tree
+            // Insert several words into an empty trie
             // Then GetAllNodes() should form a list of lists with the following values (x-axis is outer list index, y-axis is inner list index)
             //
             //    0 1 2 3 4 5
@@ -662,6 +662,46 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual(0, testTrie.Count);
         }
 
+        /// <summary>
+        /// Success tests for the constructor which provides a reference to the root node of the trie.
+        /// </summary>
+        [Test]
+        public void Constructor_RootNodeReference()
+        {
+            TrieNode<Char> rootNode = null;
+
+            testTrie = new Trie<Char>(out rootNode);
+            foreach (Char[] currentTestWord in new List<Char[]> { "cop".ToCharArray(), "d".ToCharArray(), "apple".ToCharArray(), "apps".ToCharArray(), "app".ToCharArray() })
+            {
+                testTrie.Insert(currentTestWord);
+            }
+
+            Assert.AreEqual(3, rootNode.ChildNodes.Count());
+            Assert.IsTrue(rootNode.ChildNodeExists('a'));
+            Assert.IsTrue(rootNode.ChildNodeExists('c'));
+            Assert.IsTrue(rootNode.ChildNodeExists('d'));
+        }
+
+        /// <summary>
+        /// Tests that an external reference to the root node is maintained after the Clear() method is called.
+        /// </summary>
+        [Test]
+        public void Constructor_RootNodeReferenceMaintainedAfterClearIsCalled()
+        {
+            TrieNode<Char> rootNode = null;
+
+            testTrie = new Trie<Char>(out rootNode);
+            foreach (Char[] currentTestWord in new List<Char[]> { "cop".ToCharArray(), "d".ToCharArray(), "apple".ToCharArray(), "apps".ToCharArray(), "app".ToCharArray() })
+            {
+                testTrie.Insert(currentTestWord);
+            }
+            testTrie.Clear();
+            testTrie.Insert("apple".ToCharArray());
+
+            Assert.AreEqual(1, rootNode.ChildNodes.Count());
+            Assert.IsTrue(rootNode.ChildNodeExists('a'));
+        }
+
         #region Private Methods
 
         /// <summary>
@@ -669,7 +709,7 @@ namespace MoreComplexDataStructures.UnitTests
         /// </summary>
         /// <typeparam name="T">Specifies the type of item held by the trie.</typeparam>
         /// <param name="inputTrie">the trie to retrieve the nodes from.</param>
-        /// <returns>A list of lists of nodes.  Each list contains all the nodes at a single (0-based) depth level of the tree.</returns>
+        /// <returns>A list of lists of nodes.  Each list contains all the nodes at a single (0-based) depth level of the trie.</returns>
         private List<List<TrieNode<T>>> GetAllNodes<T>(Trie<T> inputTrie)
         {
             // TODO: Child nodes in a TrieNode are held in a Dictionary, which does not preserve ordering.  Hence the order of the children of any node which has multiple children is not deterministic.
@@ -690,11 +730,11 @@ namespace MoreComplexDataStructures.UnitTests
         }
 
         /// <summary>
-        /// Converts a list of character lists into a HashSet of strings.
+        /// Converts an enumerable of character lists into a HashSet of strings.
         /// </summary>
-        /// <param name="inputLists">The list to convert.</param>
-        /// <returns>A HashSet containing strings equivalent to the contents of the inputted list.</returns>
-        private HashSet<String> PutCharacterListsIntoHashSet(List<List<Char>> inputLists)
+        /// <param name="inputLists">The enumerable to convert.</param>
+        /// <returns>A HashSet containing strings equivalent to the contents of the inputted enumerable.</returns>
+        private HashSet<String> PutCharacterListsIntoHashSet(IEnumerable<List<Char>> inputLists)
         {
             HashSet<String> returnSet = new HashSet<String>();
             foreach (List<Char> currentCharacterList in inputLists)

@@ -1,16 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreComplexDataStructures", "MoreComplexDataStructures\MoreComplexDataStructures.csproj", "{4710C825-6CF0-4056-99CF-0B8F3025B7F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreComplexDataStructures", "MoreComplexDataStructures\MoreComplexDataStructures.csproj", "{843BC8D0-8320-46CD-B400-2E833C8A886C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2D1643BE-9E75-4750-8ACF-64496A66E4FF}"
-	ProjectSection(SolutionItems) = preProject
-		SolutionInfo.cs = SolutionInfo.cs
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreComplexDataStructures.UnitTests", "MoreComplexDataStructures.UnitTests\MoreComplexDataStructures.UnitTests.csproj", "{9535F632-9A8B-41AD-91DB-1DB4CF3A49CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreComplexDataStructures.UnitTests", "MoreComplexDataStructures.UnitTests\MoreComplexDataStructures.UnitTests.csproj", "{357742E2-0248-4760-B65E-BF3B63435A52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,16 +13,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4710C825-6CF0-4056-99CF-0B8F3025B7F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4710C825-6CF0-4056-99CF-0B8F3025B7F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4710C825-6CF0-4056-99CF-0B8F3025B7F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4710C825-6CF0-4056-99CF-0B8F3025B7F7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9535F632-9A8B-41AD-91DB-1DB4CF3A49CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9535F632-9A8B-41AD-91DB-1DB4CF3A49CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9535F632-9A8B-41AD-91DB-1DB4CF3A49CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9535F632-9A8B-41AD-91DB-1DB4CF3A49CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{843BC8D0-8320-46CD-B400-2E833C8A886C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{843BC8D0-8320-46CD-B400-2E833C8A886C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{843BC8D0-8320-46CD-B400-2E833C8A886C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{843BC8D0-8320-46CD-B400-2E833C8A886C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{357742E2-0248-4760-B65E-BF3B63435A52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{357742E2-0248-4760-B65E-BF3B63435A52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{357742E2-0248-4760-B65E-BF3B63435A52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{357742E2-0248-4760-B65E-BF3B63435A52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52163DE4-9DDE-4E92-89F2-9585AA383311}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52163DE4-9DDE-4E92-89F2-9585AA383311}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52163DE4-9DDE-4E92-89F2-9585AA383311}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52163DE4-9DDE-4E92-89F2-9585AA383311}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BF89145A-6EBB-4AC6-B8A4-CCFEFCDAA676}
 	EndGlobalSection
 EndGlobal

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2018 Alastair Wyse (https://github.com/alastairwyse/MoreComplexDataStructures/)
+ * Copyright 2019 Alastair Wyse (https://github.com/alastairwyse/MoreComplexDataStructures/)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,12 +33,12 @@ namespace MoreComplexDataStructures
         protected WeightBalancedTreeNode<T> rootNode;
         /// <summary>The depth of nodes in the tree.</summary>
         protected Int32 depth;
-        /// <summary>Determines whether an item has been removed from the tree.  The Depth property is must be calculated by full traversal after an item has been removed.</summary>
-        protected Boolean itemHasBeenRemoved;
+        /// <summary>Determines whether the 'depth' member is accurate.  Accuracy can only be maintained in an unbalanced tree where no items have been removed.  In other cases the Depth property is must be calculated by full traversal.</summary>
+        protected Boolean depthIsValid;
+        /// <summary>Determines whether balance of the tree should be maintained when adding or removing items.</summary>
+        protected Boolean maintainBalance;
         /// <summary>Random number generator to use for the GetRandomItem() method.</summary>
         protected Random randomGenerator;
-        /// <summary>Used when removing items from the tree, to decide whether to use the next less than or next greater than when swapping a lower node's value with the one to be removed.</summary>
-        protected Boolean swapNextLessThanOnRemove;
         /// <summary>Used when searching up the tree for a node containing a next lower value.  Passed to the TraverseUpToNode() method.</summary>
         protected Func<WeightBalancedTreeNode<T>, Nullable<Boolean>, Boolean> getNextLessThanTraverseUpAction;
         /// <summary>Used when searching up the tree for a node containing a next greater value.  Passed to the TraverseUpToNode() method.</summary>
@@ -63,12 +63,12 @@ namespace MoreComplexDataStructures
         /// <summary>
         /// The depth of nodes in the tree (0-based).
         /// </summary>
-        /// <remarks>If the Remove() method has not been called on the tree since initialising or clearing, the depth is maintained in an internal variable and can be returned with O(1) time complexity.  If the Remove() method has been called, the depth is found via a depth first search and hence consumes O(n) time complexity (where 'n' is the number of items currently held by the tree).</remarks>
+        /// <remarks>If the tree is not balanced, and the Remove() method has not been called on the tree since initialising or clearing, the depth is maintained in an internal variable and can be returned with O(1) time complexity.  In a balanced tree, and/or where the Remove() method has been called, the depth is found via a depth first search and hence consumes O(n) time complexity (where 'n' is the number of items currently held by the tree).</remarks>
         public Int32 Depth
         {
             get
             {
-                if (itemHasBeenRemoved == false)
+                if (depthIsValid == true)
                 {
                     return depth;
                 }
@@ -79,16 +79,63 @@ namespace MoreComplexDataStructures
             }
         }
 
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="P:MoreComplexDataStructures.IBinarySearchTree`1.Min"]/*'/>
+        /// <exception cref="System.InvalidOperationException">The tree is empty.</exception>
+        /// <remarks>A persistent reference to the minimum-valued node is not maintained, so accessing this property costs O(log(n)) time complexity (where 'n' is the number of items currently held by the tree)</remarks>
+        public T Min
+        {
+            get
+            {
+                ThrowExceptionIfTreeIsEmpty();
+
+                WeightBalancedTreeNode<T> currentNode = rootNode;
+                while (currentNode.LeftChildNode != null)
+                {
+                    currentNode = currentNode.LeftChildNode;
+                }
+
+                return currentNode.Item;
+            }
+        }
+
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="P:MoreComplexDataStructures.IBinarySearchTree`1.Max"]/*'/>
+        /// <exception cref="System.InvalidOperationException">The tree is empty.</exception>
+        /// <remarks>A persistent reference to the maximum-valued node is not maintained, so accessing this property costs O(log(n)) time complexity (where 'n' is the number of items currently held by the tree)</remarks>
+        public T Max
+        {
+            get
+            {
+                ThrowExceptionIfTreeIsEmpty();
+
+                WeightBalancedTreeNode<T> currentNode = rootNode;
+                while (currentNode.RightChildNode != null)
+                {
+                    currentNode = currentNode.RightChildNode;
+                }
+
+                return currentNode.Item;
+            }
+        }
+
         /// <summary>
         /// Initialises a new instance of the MoreComplexDataStructures.WeightBalancedTree class.
         /// </summary>
         public WeightBalancedTree()
+            : this(true)
+        {
+        }
+
+        /// <summary>
+        /// Initialises a new instance of the MoreComplexDataStructures.WeightBalancedTree class.
+        /// </summary>
+        /// <param name="maintainBalance">Determines whether balance of the tree should be maintained when adding or removing items.</param>
+        public WeightBalancedTree(Boolean maintainBalance)
         {
             rootNode = null;
             depth = -1;
-            itemHasBeenRemoved = false;
+            depthIsValid = !maintainBalance;
+            this.maintainBalance = maintainBalance;
             randomGenerator = new Random();
-            swapNextLessThanOnRemove = true;
 
             getNextLessThanTraverseUpAction = (node, traversedFromLeft) =>
             {
@@ -140,7 +187,17 @@ namespace MoreComplexDataStructures
         /// </summary>
         /// <param name="collection">The collection whose elements are copied to the new WeightBalancedTree.</param>
         public WeightBalancedTree(IEnumerable<T> collection)
-            : this()
+            : this(collection, true)
+        {
+        }
+
+        /// <summary>
+        /// Initialises a new instance of the MoreComplexDataStructures.WeightBalancedTree class that contains elements copied from the specified collection.
+        /// </summary>
+        /// <param name="collection">The collection whose elements are copied to the new WeightBalancedTree.</param>
+        /// <param name="maintainBalance">Determines whether balance of the tree should be maintained when adding or removing items.</param>
+        public WeightBalancedTree(IEnumerable<T> collection, Boolean maintainBalance)
+            : this(maintainBalance)
         {
             foreach (T currentElement in collection)
             {
@@ -153,8 +210,7 @@ namespace MoreComplexDataStructures
         {
             rootNode = null;
             depth = -1;
-            itemHasBeenRemoved = false;
-            swapNextLessThanOnRemove = true;
+            depthIsValid = !maintainBalance;
         }
 
         /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.Add(`0)"]/*'/>
@@ -206,6 +262,10 @@ namespace MoreComplexDataStructures
                             currentNode.RightChildNode = new WeightBalancedTreeNode<T>(item, currentNode);
                             if (currentDepth > depth) depth = currentDepth;
                             added = true;
+                            if (maintainBalance == true)
+                            {
+                                BalanceTreeUpFromNode(currentNode);
+                            }
                         }
                         else
                         {
@@ -222,6 +282,10 @@ namespace MoreComplexDataStructures
                             currentNode.LeftChildNode = new WeightBalancedTreeNode<T>(item, currentNode);
                             if (currentDepth > depth) depth = currentDepth;
                             added = true;
+                            if (maintainBalance == true)
+                            {
+                                BalanceTreeUpFromNode(currentNode);
+                            }
                         }
                         else
                         {
@@ -252,6 +316,7 @@ namespace MoreComplexDataStructures
                         Int32 comparisonResult = currentNode.Item.CompareTo(item);
                         if (comparisonResult == 0)
                         {
+                            WeightBalancedTreeNode<T> removedNodesParent = null;
                             if (currentNode.LeftChildNode == null && currentNode.RightChildNode == null)
                             {
                                 // The current node can be deleted
@@ -262,6 +327,7 @@ namespace MoreComplexDataStructures
                                 }
                                 else
                                 {
+                                    removedNodesParent = currentNode.ParentNode;
                                     RemoveNode(currentNode);
                                 }
                             }
@@ -276,6 +342,7 @@ namespace MoreComplexDataStructures
                                 }
                                 else
                                 {
+                                    removedNodesParent = currentNode.ParentNode;
                                     RemoveNode(currentNode);
                                 }
                             }
@@ -290,14 +357,15 @@ namespace MoreComplexDataStructures
                                 }
                                 else
                                 {
+                                    removedNodesParent = currentNode.ParentNode;
                                     RemoveNode(currentNode);
                                 }
                             }
                             else
                             {
-                                // The current node has left and right children, so we have to swap the current node with its next less than, or next greater than.
+                                // The current node has left and right children, so swap the current node with its next less than, or next greater than depending on which is within the larger subtree.
                                 WeightBalancedTreeNode<T> nodeContainingItemToDelete = currentNode;
-                                if (swapNextLessThanOnRemove == true)
+                                if (currentNode.LeftSubtreeSize > currentNode.RightSubtreeSize)
                                 {
                                     // Swap with the next less than... find the next less than by moving left and then as far right as possible
                                     currentNode.LeftSubtreeSize--;
@@ -307,7 +375,6 @@ namespace MoreComplexDataStructures
                                         currentNode.RightSubtreeSize--;
                                         currentNode = currentNode.RightChildNode;
                                     }
-                                    swapNextLessThanOnRemove = false;
                                 }
                                 else
                                 {
@@ -319,14 +386,18 @@ namespace MoreComplexDataStructures
                                         currentNode.LeftSubtreeSize--;
                                         currentNode = currentNode.LeftChildNode;
                                     }
-                                    swapNextLessThanOnRemove = true;
                                 }
                                 // Swap the node items
+                                removedNodesParent = currentNode.ParentNode;
                                 RemoveNode(currentNode);
                                 nodeContainingItemToDelete.Item = currentNode.Item;
                             }
-                            itemHasBeenRemoved = true;
+                            depthIsValid = false;
                             removed = true;
+                            if (maintainBalance == true && removedNodesParent != null)
+                            {
+                                BalanceTreeUpFromNode(removedNodesParent);
+                            }
                         }
                         else if (comparisonResult < 0)
                         {
@@ -378,6 +449,20 @@ namespace MoreComplexDataStructures
 
                     throw;
                 }
+            }
+        }
+
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.Get(`0)"]/*'/>
+        public T Get(T item)
+        {
+            Tuple<Boolean, WeightBalancedTreeNode<T>> searchResult = TraverseDownToNodeHoldingItemOrParent(item, (node) => { });
+            if (searchResult.Item1 == false)
+            {
+                throw new ArgumentException("The specified item ('" + item.ToString() + "') does not exist in the tree.", "item");
+            }
+            else
+            {
+                return searchResult.Item2.Item;
             }
         }
 
@@ -717,7 +802,7 @@ namespace MoreComplexDataStructures
         /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.PostOrderDepthFirstSearch(System.Action{MoreComplexDataStructures.WeightBalancedTreeNode{`0}})"]/*'/>
         public void PostOrderDepthFirstSearch(Action<WeightBalancedTreeNode<T>> nodeAction)
         {
-            // TODO: Looked at many suggested algorithms for post-order search online, but couldn't find any nice implementation (e.g. some involved storing all nodes in the tree in a stack, others modified the stack while traversing).
+            // TODO: Looked at many suggested algorithms for post-order search online, but couldn't find any nice implementation (e.g. some involved storing all nodes in the tree in a stack, others modified the tree while traversing).
             //   Below implementation mimics recursion... easier to understand at the expense of having to create wrapping NodeRecursionStatus objects.
             //   For the case of a balanced tree, wrapping objects are negligable, as there will only be as many wrapping objects as a single path through the tree.
             //   For completely unbalanced, below implementation is a bit costly in terms of memory, as wrapping objects will be created for every node in the tree.
@@ -783,9 +868,9 @@ namespace MoreComplexDataStructures
         /// <summary>
         /// Gets the node in the tree with the next value less than the value of the specified start node.
         /// </summary>
-        /// <param name="item">The node to retrieve the next less of.</param>
+        /// <param name="startNode">The node to retrieve the next less of.</param>
         /// <returns>The node with the next value less, or null if no lower value exists.</returns>
-        private WeightBalancedTreeNode<T> GetNextLessThan(WeightBalancedTreeNode<T> startNode)
+        protected WeightBalancedTreeNode<T> GetNextLessThan(WeightBalancedTreeNode<T> startNode)
         {
             T startNodeItem = startNode.Item;
 
@@ -820,7 +905,7 @@ namespace MoreComplexDataStructures
         /// </summary>
         /// <param name="startNode">The node to retrieve the next greater of.</param>
         /// <returns>The node with the next value greater, or null if no greater value exists.</returns>
-        private WeightBalancedTreeNode<T> GetNextGreaterThan(WeightBalancedTreeNode<T> startNode)
+        protected WeightBalancedTreeNode<T> GetNextGreaterThan(WeightBalancedTreeNode<T> startNode)
         {
             T startNodeItem = startNode.Item;
 
@@ -1086,10 +1171,143 @@ namespace MoreComplexDataStructures
 
             return depth;
         }
-        
-        # endregion
 
-        # region Nested Classes
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.WeightBalancedTree`1.RotateNodeLeft(MoreComplexDataStructures.WeightBalancedTreeNode{`0})"]/*'/>
+        protected virtual void RotateNodeLeft(WeightBalancedTreeNode<T> inputNode)
+        {
+            if (inputNode.RightChildNode == null)
+                throw new InvalidOperationException("The node containing item '" + inputNode.Item.ToString() + "' cannot be left-rotated as its right child is null.");
+            
+            // Handle the input node's parent
+            if (inputNode.ParentNode != null)
+            {
+                if (inputNode.ParentNode.LeftChildNode == inputNode)
+                {
+                    inputNode.ParentNode.LeftChildNode = inputNode.RightChildNode;
+                }
+                else
+                {
+                    inputNode.ParentNode.RightChildNode = inputNode.RightChildNode;
+                }
+                inputNode.RightChildNode.ParentNode = inputNode.ParentNode;
+            }
+            else
+            {
+                inputNode.RightChildNode.ParentNode = null;
+            }
+            // Rotate the node
+            WeightBalancedTreeNode<T> nodesRightChildsLeftChild = inputNode.RightChildNode.LeftChildNode;
+            inputNode.RightChildNode.LeftChildNode = inputNode;
+            inputNode.ParentNode = inputNode.RightChildNode;
+            inputNode.RightChildNode.LeftSubtreeSize = inputNode.LeftSubtreeSize + 1;
+            inputNode.RightChildNode = nodesRightChildsLeftChild;
+            if (nodesRightChildsLeftChild != null)
+            {
+                nodesRightChildsLeftChild.ParentNode = inputNode;
+                inputNode.RightSubtreeSize = nodesRightChildsLeftChild.LeftSubtreeSize + nodesRightChildsLeftChild.RightSubtreeSize + 1;
+            }
+            else
+            {
+                inputNode.RightSubtreeSize = 0;
+            }
+            inputNode.ParentNode.LeftSubtreeSize = inputNode.LeftSubtreeSize + inputNode.RightSubtreeSize + 1;
+        }
+
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.WeightBalancedTree`1.RotateNodeRight(MoreComplexDataStructures.WeightBalancedTreeNode{`0})"]/*'/>
+        protected virtual void RotateNodeRight(WeightBalancedTreeNode<T> inputNode)
+        {
+            if (inputNode.LeftChildNode == null)
+                throw new InvalidOperationException("The node containing item '" + inputNode.Item.ToString() + "' cannot be right-rotated as its left child is null.");
+
+            // Handle the input node's parent
+            if (inputNode.ParentNode != null)
+            {
+                if (inputNode.ParentNode.LeftChildNode == inputNode)
+                {
+                    inputNode.ParentNode.LeftChildNode = inputNode.LeftChildNode;
+                }
+                else
+                {
+                    inputNode.ParentNode.RightChildNode = inputNode.LeftChildNode;
+                }
+                inputNode.LeftChildNode.ParentNode = inputNode.ParentNode;
+            }
+            else
+            {
+                inputNode.LeftChildNode.ParentNode = null;
+            }
+            // Rotate the node
+            WeightBalancedTreeNode<T> nodesLeftChildsRightChild = inputNode.LeftChildNode.RightChildNode;
+            inputNode.LeftChildNode.RightChildNode = inputNode;
+            inputNode.ParentNode = inputNode.LeftChildNode;
+            inputNode.LeftChildNode.RightSubtreeSize = inputNode.RightSubtreeSize + 1;
+            inputNode.LeftChildNode = nodesLeftChildsRightChild;
+            if (nodesLeftChildsRightChild != null)
+            {
+                nodesLeftChildsRightChild.ParentNode = inputNode;
+                inputNode.LeftSubtreeSize = nodesLeftChildsRightChild.LeftSubtreeSize + nodesLeftChildsRightChild.RightSubtreeSize + 1;
+            }
+            else
+            {
+                inputNode.LeftSubtreeSize = 0;
+            }
+            inputNode.ParentNode.RightSubtreeSize = inputNode.LeftSubtreeSize + inputNode.RightSubtreeSize + 1;
+        }
+
+        /// <summary>
+        /// Traverses upwards from the specified node, performing node rotations to balance the tree.
+        /// </summary>
+        /// <param name="inputNode">The node at which to start balancing.</param>
+        protected void BalanceTreeUpFromNode(WeightBalancedTreeNode<T> inputNode)
+        {
+            WeightBalancedTreeNode<T> nextNode = inputNode;
+            while (nextNode != null)
+            {
+                WeightBalancedTreeNode<T> currentNode = nextNode;
+                nextNode = nextNode.ParentNode;
+                if (currentNode.LeftSubtreeSize > currentNode.RightSubtreeSize)
+                {
+                    // Calculate whether performing a right-rotation will result in a better subtree balance
+                    Int32 leftChildsRightSubtreeSize = currentNode.LeftChildNode.RightSubtreeSize;
+                    Int32 newLeftSubtreeSize = currentNode.LeftSubtreeSize - 1 - leftChildsRightSubtreeSize;
+                    Int32 newRightSubtreeSize = currentNode.RightSubtreeSize + 1 + leftChildsRightSubtreeSize;
+                    if ((currentNode.LeftSubtreeSize - currentNode.RightSubtreeSize) > (newRightSubtreeSize - newLeftSubtreeSize))
+                    {
+                        RotateNodeRight(currentNode);
+                        if (currentNode == rootNode)
+                            rootNode = rootNode.ParentNode;
+                    }
+                }
+                else if (currentNode.LeftSubtreeSize < currentNode.RightSubtreeSize)
+                {
+                    // Calculate whether performing a left-rotation will result in a better subtree balance
+                    Int32 rightChildsLeftSubtreeSize = currentNode.RightChildNode.LeftSubtreeSize;
+                    Int32 newLeftSubtreeSize = currentNode.LeftSubtreeSize + 1 + rightChildsLeftSubtreeSize;
+                    Int32 newRightSubtreeSize = currentNode.RightSubtreeSize - 1 - rightChildsLeftSubtreeSize;
+                    if ((currentNode.RightSubtreeSize - currentNode.LeftSubtreeSize) > (newLeftSubtreeSize - newRightSubtreeSize))
+                    {
+                        RotateNodeLeft(currentNode);
+                        if (currentNode == rootNode)
+                            rootNode = rootNode.ParentNode;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Throws an InvalidOperationException if the tree is empty.
+        /// </summary>
+        protected void ThrowExceptionIfTreeIsEmpty()
+        {
+            if (rootNode == null)
+                throw new InvalidOperationException("The tree is empty.");
+        }
+
+        #endregion
+
+        #region Nested Classes
+
+        #pragma warning disable 0693
 
         /// <summary>
         /// Container class used when recursing through the tree for depth first search.
@@ -1154,6 +1372,8 @@ namespace MoreComplexDataStructures
             }
         }
 
-        # endregion
+        #pragma warning restore 0693
+
+        #endregion
     }
 }

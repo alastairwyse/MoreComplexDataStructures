@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2017 Alastair Wyse (https://github.com/alastairwyse/MoreComplexDataStructures/)
+ * Copyright 2019 Alastair Wyse (https://github.com/alastairwyse/MoreComplexDataStructures/)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,14 @@ namespace MoreComplexDataStructures
         public FrequencyTable()
         {
             frequencyStore = new Dictionary<T, Int32>();
+        }
+
+        /// <summary>
+        /// Resets all frequency counts to 0.
+        /// </summary>
+        public void Clear()
+        {
+            frequencyStore.Clear();
         }
 
         /// <summary>

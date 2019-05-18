@@ -28,11 +28,16 @@ namespace MoreComplexDataStructures
     /// <typeparam name="T">Specifies the type of item held by the node.</typeparam>
     public class WeightBalancedTreeNode<T> : TreeNodeBase<T> where T : IComparable<T>
     {
-        private WeightBalancedTreeNode<T> parentNode;
-        private WeightBalancedTreeNode<T> leftChildNode;
-        private WeightBalancedTreeNode<T> rightChildNode;
-        private Int32 leftSubtreeSize;
-        private Int32 rightSubtreeSize;
+        /// <summary>The parent node of this node.</summary>
+        protected WeightBalancedTreeNode<T> parentNode;
+        /// <summary>The left child node of this node.</summary>
+        protected WeightBalancedTreeNode<T> leftChildNode;
+        /// <summary>The right child node of this node.</summary>
+        protected WeightBalancedTreeNode<T> rightChildNode;
+        /// <summary>The number of nodes in the left subtree of this node.</summary>
+        protected Int32 leftSubtreeSize;
+        /// <summary>The number of nodes in the right subtree of this node.</summary>
+        protected Int32 rightSubtreeSize;
 
         /// <summary>
         /// The parent node of this node.

@@ -25,7 +25,7 @@ namespace MoreComplexDataStructures
     /// <summary>
     /// Stores a boolean status for a complete set of long integers, using a tree of number ranges as the underlying storage mechanism.
     /// </summary>
-    /// <remarks>Example use case is to store a yes/no status against a large set of numeric key values (e.g. is a given key active?).  O(1) solution would require multiple arrays, and woule be prohibitive in terms of memory usage.  This implementation uses objects representing ranges of numbers (to reduce memory usage) in a tree (hence O(log(n)) time complexity for status set/retrieve operations).</remarks>
+    /// <remarks>Example use case is to store a yes/no status against a large set of numeric key values (e.g. is a given key active?).  O(1) solution would require multiple arrays, and would be prohibitive in terms of memory usage.  This implementation uses objects representing ranges of numbers (to reduce memory usage) in a tree (hence O(log(n)) time complexity for status set/retrieve operations).  Note that the maximum count of numbers whose status can be set to true is Int64.MaxValue.</remarks>
     public class LongIntegerStatusStorer
     {
         /// <summary>Holds ranges of integers which have been set to true.</summary>
@@ -41,6 +41,40 @@ namespace MoreComplexDataStructures
             get
             {
                 return count;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves a copy of the minimum number range in the underlying tree.
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">The underlying tree is empty.</exception>
+        /// <remarks>Note that a copy/clone of the actual minimum range is returned to prevent modification/invalidation of the underlying tree structure.</remarks>
+        public LongIntegerRange MinimumRange
+        {
+            get
+            {
+                if (rangeStatuses.Count == 0)
+                    throw new InvalidOperationException("The underlying tree is empty.");
+
+                LongIntegerRange underlyingMinumumRange = rangeStatuses.Min;
+                return new LongIntegerRange(underlyingMinumumRange.StartValue, underlyingMinumumRange.Length);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves a copy of the maximum number range in the underlying tree.
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">The underlying tree is empty.</exception>
+        /// <remarks>Note that a copy/clone of the actual maximum range is returned to prevent modification/invalidation of the underlying tree structure.</remarks>
+        public LongIntegerRange MaximumRange
+        {
+            get
+            {
+                if (rangeStatuses.Count == 0)
+                    throw new InvalidOperationException("The underlying tree is empty.");
+
+                LongIntegerRange underlyingMaximumRange = rangeStatuses.Max;
+                return new LongIntegerRange(underlyingMaximumRange.StartValue, underlyingMaximumRange.Length);
             }
         }
 
@@ -63,11 +97,45 @@ namespace MoreComplexDataStructures
         }
 
         /// <summary>
+        /// Sets a contiguous range of statuses to true when all statuses are false. 
+        /// </summary>
+        /// <param name="rangeStart">The inclusive start of the range of integers to set to true.</param>
+        /// <param name="rangeEnd">The inclusive end of the range of integers to set to true.</param>
+        /// <exception cref="System.InvalidOperationException">Statuses for integers have been set to true.</exception>
+        /// <exception cref="System.ArgumentException">Parameter 'rangeEnd' is less than parameter 'rangeStart'.</exception>
+        /// <exception cref="System.ArgumentException">The total inclusive range exceeds Int64.MaxValue.</exception>
+        public void SetRangeTrue(Int64 rangeStart, Int64 rangeEnd)
+        {
+            if (rangeStatuses.Count != 0)
+                throw new InvalidOperationException("A range of statuses can only be set true when all existing statuses are false.");
+            if (rangeEnd < rangeStart)
+                throw new ArgumentException("Parameter 'rangeEnd' must be greater than or equal to parameter 'rangeStart'.", "rangeEnd");
+            if (rangeStart < 1)
+            {
+                if (rangeStart + Int64.MaxValue <= rangeEnd)
+                    throw new ArgumentException("The total inclusive range cannot exceed Int64.MaxValue.", "rangeEnd");
+            }
+            else if (rangeEnd > -2)
+            {
+                if (rangeEnd - Int64.MaxValue >= rangeStart)
+                    throw new ArgumentException("The total inclusive range cannot exceed Int64.MaxValue.", "rangeEnd");
+            }
+
+            var newRange = new LongIntegerRange(rangeStart, rangeEnd - rangeStart + 1);
+            rangeStatuses.Add(newRange);
+            count = newRange.Length;
+        }
+
+        /// <summary>
         /// Sets the status for the specified integer to true.
         /// </summary>
         /// <param name="inputInteger">The integer to set the status for.</param>
+        /// <exception cref="System.InvalidOperationException">The class cannot support storing statuses for greater than Int64.MaxValue integers.</exception>
         public void SetStatusTrue(Int64 inputInteger)
         {
+            if (count == Int64.MaxValue)
+                throw new InvalidOperationException("The class cannot support storing statuses for greater than Int64.MaxValue integers.");
+
             // Create an integer range based on the inputted integer
             LongIntegerRange inputIntegerRange = new LongIntegerRange(inputInteger, 1);
 
@@ -201,7 +269,43 @@ namespace MoreComplexDataStructures
 
             return false;
         }
-        
+
+        /// <summary>
+        /// Returns copies of all number ranges in the underlying tree in ascending order.
+        /// </summary>
+        /// <returns>All number ranges in the underlying tree in ascending order.</returns>
+        /// <remarks>Note that copies/clones of the actual ranges are returned to prevent modification/invalidation of the underlying tree structure.</remarks>
+        public IEnumerable<LongIntegerRange> GetAllRangesAscending()
+        {
+            if (rangeStatuses.Count == 0)
+                yield break;
+
+            LongIntegerRange minumumRange = rangeStatuses.Min;
+            yield return new LongIntegerRange(minumumRange.StartValue, minumumRange.Length);
+            foreach (LongIntegerRange currentRange in rangeStatuses.GetAllGreaterThan(minumumRange))
+            {
+                yield return new LongIntegerRange(currentRange.StartValue, currentRange.Length);
+            }
+        }
+
+        /// <summary>
+        /// Returns copies of all number ranges in the underlying tree in descending order.
+        /// </summary>
+        /// <returns>All number ranges in the underlying tree in descending order.</returns>
+        /// <remarks>Note that copies/clones of the actual ranges are returned to prevent modification/invalidation of the underlying tree structure.</remarks>
+        public IEnumerable<LongIntegerRange> GetAllRangesDescending()
+        {
+            if (rangeStatuses.Count == 0)
+                yield break;
+
+            LongIntegerRange maximumRange = rangeStatuses.Max;
+            yield return new LongIntegerRange(maximumRange.StartValue, maximumRange.Length);
+            foreach (LongIntegerRange currentRange in rangeStatuses.GetAllLessThan(maximumRange))
+            {
+                yield return new LongIntegerRange(currentRange.StartValue, currentRange.Length);
+            }
+        }
+
         /// <summary>
         /// Performs a breadth-first search of the underlying tree, invoking the specified action on the start value and length of each range.
         /// </summary>

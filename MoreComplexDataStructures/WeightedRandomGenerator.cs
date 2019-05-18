@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2017 Alastair Wyse (https://github.com/alastairwyse/MoreComplexDataStructures/)
+ * Copyright 2019 Alastair Wyse (https://github.com/alastairwyse/MoreComplexDataStructures/)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,10 @@ namespace MoreComplexDataStructures
     {
         /// <summary>The random number generator to use for selecting random items.</summary>
         protected IRandomIntegerGenerator randomGenerator;
-        /// <summary>Holds ranges of integers which correspond to the random weightings.</summary>
-        protected WeightBalancedTree<LongIntegerRange> weightingRanges;
+        /// <summary>Holds ranges of integers which correspond to the random weightings and the item the weighting maps to.</summary>
+        protected WeightBalancedTree<ItemAndWeighting<T>> weightingRangesAndItems;
         /// <summary>Maps items to weightings.</summary>
         protected Dictionary<T, LongIntegerRange> itemToWeightingMap;
-        /// <summary>Maps weightings to items.</summary>
-        protected Dictionary<LongIntegerRange, T> weightingToItemMap;
         /// <summary>The maximum inclusive value of the combined weightings (i.e. if weightings are { 1, 2, 4 } weightingsTotal will be 7).</summary>
         protected Int64 weightingsTotal;
         /// <summary>The offset from 0 from which the weighting definitions start.</summary>
@@ -48,7 +46,7 @@ namespace MoreComplexDataStructures
         {
             get
             {
-                return weightingRanges.Count;
+                return weightingRangesAndItems.Count;
             }
         }
 
@@ -58,9 +56,8 @@ namespace MoreComplexDataStructures
         public WeightedRandomGenerator()
         {
             randomGenerator = new DefaultRandomGenerator();
-            weightingRanges = new WeightBalancedTree<LongIntegerRange>();
+            weightingRangesAndItems = new WeightBalancedTree<ItemAndWeighting<T>>();
             itemToWeightingMap = new Dictionary<T, LongIntegerRange>();
-            weightingToItemMap = new Dictionary<LongIntegerRange, T>();
             weightingsTotal = 0;
             weightingStartOffset = 0;
         }
@@ -80,9 +77,8 @@ namespace MoreComplexDataStructures
         /// </summary>
         public void Clear()
         {
-            weightingRanges.Clear();
+            weightingRangesAndItems.Clear();
             itemToWeightingMap.Clear();
-            weightingToItemMap.Clear();
             weightingsTotal = 0;
             weightingStartOffset = 0;
         }
@@ -102,8 +98,9 @@ namespace MoreComplexDataStructures
             }
 
             Clear();
-            List<Tuple<T, LongIntegerRange>> weightingsAsRanges = new List<Tuple<T, LongIntegerRange>>(weightings.Count);
+            var weightingsAsRanges = new ItemAndWeighting<T>[weightings.Count];
             Int64 nextRangeStartValue = 0;
+            Int32 currentIndex = 0;
             foreach (Tuple<T, Int64> currentWeighting in weightings)
             {
                 if ((Int64.MaxValue - 1) - nextRangeStartValue < (currentWeighting.Item2 - 1))
@@ -111,25 +108,21 @@ namespace MoreComplexDataStructures
                     throw new ArgumentException("The total of the specified weightings cannot exceed Int64.MaxValue.", "weightings");
                 }
 
-                LongIntegerRange currentRange = new LongIntegerRange(nextRangeStartValue, currentWeighting.Item2);
-                weightingsAsRanges.Add(new Tuple<T, LongIntegerRange>(currentWeighting.Item1, currentRange));
+                var currentRange = new LongIntegerRange(nextRangeStartValue, currentWeighting.Item2);
+                weightingsAsRanges[currentIndex] = new ItemAndWeighting<T>(currentWeighting.Item1, currentRange);
+                currentIndex++;
                 weightingsTotal += (currentWeighting.Item2);
                 nextRangeStartValue += currentWeighting.Item2;
             }
-            // TODO: Currently randomizing the weightings before inserting into the WeightBalancedTree as the tree does not auto-balance.
-            //         When auto-balancing is implemented this can be removed.
-            ListRandomizer listRandomizer = new ListRandomizer(randomGenerator);
-            listRandomizer.Randomize(weightingsAsRanges);
-            foreach (Tuple<T, LongIntegerRange> currentWeighting in weightingsAsRanges)
+            foreach (ItemAndWeighting<T> currentItemAndWeighting in weightingsAsRanges)
             {
-                if (itemToWeightingMap.ContainsKey(currentWeighting.Item1) == true)
+                if (itemToWeightingMap.ContainsKey(currentItemAndWeighting.Item) == true)
                 {
-                    throw new ArgumentException("The specified weightings contain duplicate item with value = '" + currentWeighting.Item1.ToString() + "'.", "weightings");
+                    throw new ArgumentException("The specified weightings contain duplicate item with value = '" + currentItemAndWeighting.Item.ToString() + "'.", "weightings");
                 }
 
-                weightingRanges.Add(currentWeighting.Item2);
-                itemToWeightingMap.Add(currentWeighting.Item1, currentWeighting.Item2);
-                weightingToItemMap.Add(currentWeighting.Item2, currentWeighting.Item1);
+                weightingRangesAndItems.Add(currentItemAndWeighting);
+                itemToWeightingMap.Add(currentItemAndWeighting.Item, currentItemAndWeighting.Weighting);
             }
         }
 
@@ -146,50 +139,43 @@ namespace MoreComplexDataStructures
                 throw new ArgumentException("A weighting for the specified item does not exist.", "item");
             }
 
-            LongIntegerRange rangeToRemove = itemToWeightingMap[item];
-            Int32 numberOfLowerRanges = weightingRanges.GetCountLessThan(rangeToRemove);
-            Int32 numberOfHigherRanges = weightingRanges.GetCountGreaterThan(rangeToRemove);
+            var itemAndWeightingToRemove = new ItemAndWeighting<T>(item, itemToWeightingMap[item]);
+            Int32 numberOfLowerRanges = weightingRangesAndItems.GetCountLessThan(itemAndWeightingToRemove);
+            Int32 numberOfHigherRanges = weightingRangesAndItems.GetCountGreaterThan(itemAndWeightingToRemove);
 
             // Remove the weighting corresponding to the specified item
-            weightingRanges.Remove(rangeToRemove);
+            weightingRangesAndItems.Remove(itemAndWeightingToRemove);
             itemToWeightingMap.Remove(item);
-            weightingToItemMap.Remove(rangeToRemove);
 
             // TODO: Could potentially refactor each half of if statement since most codes lines are the same... abstract GetNextLessThan() and GetNextGreaterThan() behind lambdas (and also have a lambda negating rangeToRemove.Length for -= and += operators)
             if (numberOfLowerRanges < numberOfHigherRanges)
             {
                 // Shuffle up the values of all the ranges lower than the one removed
-                Tuple<Boolean, LongIntegerRange> nextLowerRange = weightingRanges.GetNextLessThan(rangeToRemove);
-                while (nextLowerRange.Item1 == true)
+                Tuple<Boolean, ItemAndWeighting<T>> nextLowerRangeResult = weightingRangesAndItems.GetNextLessThan(itemAndWeightingToRemove);
+                while (nextLowerRangeResult.Item1 == true)
                 {
-                    T currentRangeItem = weightingToItemMap[nextLowerRange.Item2];
-                    weightingToItemMap.Remove(nextLowerRange.Item2);
-                    nextLowerRange.Item2.StartValue += rangeToRemove.Length;
-                    itemToWeightingMap[currentRangeItem] = nextLowerRange.Item2;
-                    weightingToItemMap.Add(nextLowerRange.Item2, currentRangeItem);
-                    nextLowerRange = weightingRanges.GetNextLessThan(nextLowerRange.Item2);
+                    nextLowerRangeResult.Item2.Weighting.StartValue += itemAndWeightingToRemove.Weighting.Length;
+                    itemToWeightingMap[nextLowerRangeResult.Item2.Item] = nextLowerRangeResult.Item2.Weighting;
+                    nextLowerRangeResult = weightingRangesAndItems.GetNextLessThan(nextLowerRangeResult.Item2);
                 }
 
-                weightingStartOffset += rangeToRemove.Length;
+                weightingStartOffset += itemAndWeightingToRemove.Weighting.Length;
             }
             else
             {
                 // Shuffle down the values of all the ranges higher than the one removed
-                Tuple<Boolean, LongIntegerRange> nextHigherRange = weightingRanges.GetNextGreaterThan(rangeToRemove);
-                while (nextHigherRange.Item1 == true)
+                Tuple<Boolean, ItemAndWeighting<T>> nextHigherRangeResult = weightingRangesAndItems.GetNextGreaterThan(itemAndWeightingToRemove);
+                while (nextHigherRangeResult.Item1 == true)
                 {
-                    T currentRangeItem = weightingToItemMap[nextHigherRange.Item2];
-                    weightingToItemMap.Remove(nextHigherRange.Item2);
-                    nextHigherRange.Item2.StartValue -= rangeToRemove.Length;
-                    itemToWeightingMap[currentRangeItem] = nextHigherRange.Item2;
-                    weightingToItemMap.Add(nextHigherRange.Item2, currentRangeItem);
-                    nextHigherRange = weightingRanges.GetNextGreaterThan(nextHigherRange.Item2);
+                    nextHigherRangeResult.Item2.Weighting.StartValue -= itemAndWeightingToRemove.Weighting.Length;
+                    itemToWeightingMap[nextHigherRangeResult.Item2.Item] = nextHigherRangeResult.Item2.Weighting;
+                    nextHigherRangeResult = weightingRangesAndItems.GetNextGreaterThan(nextHigherRangeResult.Item2);
                 }
             }
 
-            weightingsTotal -= rangeToRemove.Length;
+            weightingsTotal -= itemAndWeightingToRemove.Weighting.Length;
 
-            if (weightingRanges.Count == 0)
+            if (weightingRangesAndItems.Count == 0)
             {
                 weightingStartOffset = 0;
             }
@@ -202,30 +188,28 @@ namespace MoreComplexDataStructures
         /// <exception cref="System.InvalidOperationException">No weightings are defined.</exception>
         public T Generate()
         {
-            if (weightingRanges.Count == 0)
+            if (weightingRangesAndItems.Count == 0)
             {
                 throw new InvalidOperationException("No weightings are defined.");
             }
 
             Int64 randomIndex = randomGenerator.Next(weightingsTotal) + weightingStartOffset;
 
-            // Create an range based on the random index
-            LongIntegerRange randomIndexRange = new LongIntegerRange(randomIndex, 1);
+            // Create an item and weighting with the random index
+            var randomItemAndWeighting = new ItemAndWeighting<T>(default(T), new LongIntegerRange(randomIndex, 1));
 
-            // If a range starting with the random index doesn't exist, get the next lower range (which will include the random index)
-            if (weightingRanges.Contains(randomIndexRange) == true)
+            if (weightingRangesAndItems.Contains(randomItemAndWeighting) == true)
             {
-                if (randomIndex != Int64.MaxValue)
-                {
-                    randomIndexRange = weightingRanges.GetNextLessThan(new LongIntegerRange(randomIndex + 1, 1)).Item2;
-                }
+                // Overwrite 'randomItemAndWeighting' with the actual item and weighting from the tree (which will contain the correct item... not a default)
+                randomItemAndWeighting = weightingRangesAndItems.Get(randomItemAndWeighting);
             }
             else
             {
-                randomIndexRange = weightingRanges.GetNextLessThan(randomIndexRange).Item2;
+                // If a range starting with the random index doesn't exist, get the next lower range (which will include the random index)
+                randomItemAndWeighting = weightingRangesAndItems.GetNextLessThan(randomItemAndWeighting).Item2;
             }
 
-            return weightingToItemMap[randomIndexRange];
+            return randomItemAndWeighting.Item;
         }
 
         /// <summary>
@@ -234,12 +218,148 @@ namespace MoreComplexDataStructures
         /// <param name="rangeAction">The action to perform on each range.  Accepts a two parameters which are the start value and length of the current range.</param>
         public void TraverseTree(Action<Int64, Int64> rangeAction)
         {
-            Action<WeightBalancedTreeNode<LongIntegerRange>> nodeAction = (node) =>
+            Action<WeightBalancedTreeNode<ItemAndWeighting<T>>> nodeAction = (node) =>
             {
-                rangeAction.Invoke(node.Item.StartValue, node.Item.Length);
+                rangeAction.Invoke(node.Item.Weighting.StartValue, node.Item.Weighting.Length);
             };
 
-            weightingRanges.BreadthFirstSearch(nodeAction);
+            weightingRangesAndItems.BreadthFirstSearch(nodeAction);
         }
+
+        #region Nested Classes
+
+        #pragma warning disable 0693
+
+        /// <summary>
+        /// Container class holding an item attached to a weighting, and the weighing represented by in integer range.
+        /// </summary>
+        /// <typeparam name="T">Specifies the type of item attached to the weighting.</typeparam>
+        /// <remarks>Note that the CompareTo() method considers only the weighting, so the class can be used in a binary search tree to order and search by weighting, and map to the corresponding item.</remarks>
+        protected class ItemAndWeighting<T> : IComparable<ItemAndWeighting<T>>
+        {
+            /// <summary>The item attached to the weighting.</summary>
+            protected T item;
+            /// <summary>The weighting.</summary>
+            protected LongIntegerRange weighting;
+
+            /// <summary>The item attached to the weighting.</summary>
+            public T Item
+            {
+                get { return item; }
+            }
+
+            /// <summary>The weighting.</summary>
+            public LongIntegerRange Weighting
+            {
+                get { return weighting; }
+            }
+
+            /// <summary>
+            /// Initialises a new instance of the MoreComplexDataStructures.WeightedRandomGenerator+ItemAndWeighting class.
+            /// </summary>
+            /// <param name="item">The item attached to the weighting.</param>
+            /// <param name="weighting">The weighting.</param>
+            public ItemAndWeighting(T item, LongIntegerRange weighting)
+            {
+                this.item = item;
+                this.weighting = weighting;
+            }
+
+            #pragma warning disable 1591
+            public Int32 CompareTo(ItemAndWeighting<T> other)
+            {
+                return this.weighting.CompareTo(other.weighting);
+            }
+            #pragma warning restore 1591
+        }
+
+        /// <summary>
+        /// Wraps a List&lt;T&gt; object, and implements IBinarySearchTree&lt;T&gt; methods required by the BinarySearchTreeBalancedInserter.Insert() method.  The BinarySearchTreeBalancedInserter class cannot be used directly on the 'weightingRangesAndItems' member of the outer class, as each of the weightings needs to be checked for duplicates before insertion.  Hence this class is used in the outer class SetWeightings() method to first put the weightings into a list in an order which will result in a balanced tree.  Then the weightings can be inserted from the list into the tree with the required duplicate checking and exception handling.  Since it's expected that use-cases for this class will be 'construct once, use many', the performance trade-off of having to insert the weightings in a separate structure is acceptable.
+        /// </summary>
+        /// <typeparam name="T">Specifies the type of items held by the underlying list.</typeparam>
+        protected class BinarySearchTreeListWrapper<T> : IBinarySearchTree<T> where T : IComparable<T>
+        {
+            /// <summary>The list wrapped by the class.</summary>
+            protected List<T> wrappedList;
+
+            /// <summary>
+            /// Initialises a new instance of the MoreComplexDataStructures.WeightedRandomGenerator+BinarySearchTreeListWrapper class.
+            /// </summary>
+            /// <param name="wrappedList">The string wrapped by the class.</param>
+            public BinarySearchTreeListWrapper(List<T> wrappedList)
+            {
+                this.wrappedList = wrappedList;
+            }
+
+            #region IBinarySearchTree<T> methods
+
+            #pragma warning disable 1591
+            public int Count
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public T Min
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public T Max
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public void Clear()
+            {
+                wrappedList.Clear();
+            }
+
+            public void Add(T item)
+            {
+                wrappedList.Add(item);
+            }
+
+            public void Remove(T item)
+            {
+                throw new NotImplementedException();
+            }
+
+            public T Get(T item)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool Contains(T item)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void PreOrderDepthFirstSearch(Action<WeightBalancedTreeNode<T>> nodeAction)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void InOrderDepthFirstSearch(Action<WeightBalancedTreeNode<T>> nodeAction)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void PostOrderDepthFirstSearch(Action<WeightBalancedTreeNode<T>> nodeAction)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void BreadthFirstSearch(Action<WeightBalancedTreeNode<T>> nodeAction)
+            {
+                throw new NotImplementedException();
+            }
+            #pragma warning restore 1591
+
+            #endregion
+        }
+
+        #pragma warning restore 0693
+
+        #endregion
     }
 }

@@ -34,6 +34,18 @@ namespace MoreComplexDataStructures
             get;
         }
 
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="P:MoreComplexDataStructures.IBinarySearchTree`1.Min"]/*'/>
+        T Min
+        {
+            get;
+        }
+
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="P:MoreComplexDataStructures.IBinarySearchTree`1.Max"]/*'/>
+        T Max
+        {
+            get;
+        }
+
         /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.Clear"]/*'/>
         void Clear();
 
@@ -42,6 +54,9 @@ namespace MoreComplexDataStructures
 
         /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.Remove(`0)"]/*'/>
         void Remove(T item);
+
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.Get(`0)"]/*'/>
+        T Get(T item);
 
         /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.IBinarySearchTree`1.Contains(`0)"]/*'/>
         Boolean Contains(T item);

@@ -38,6 +38,114 @@ namespace MoreComplexDataStructures.UnitTests
         }
 
         /// <summary>
+        /// Tests that an exception is thrown when calling the SetStatusTrue() method would result in merging two ranges whose new total range would exceed Int64.MaxValue.
+        /// </summary>
+        [Test]
+        public void SetStatusTrue_MergedRangeTotalExceedsInt64MaxValue()
+        {
+            testLongIntegerStatusStorer.SetRangeTrue(0, 9223372036854775805);
+            testLongIntegerStatusStorer.SetStatusTrue(9223372036854775807);
+
+            InvalidOperationException e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                testLongIntegerStatusStorer.SetStatusTrue(9223372036854775806);
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The class cannot support storing statuses for greater than Int64.MaxValue integers."));
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown when calling the SetStatusTrue() method would result in extending a range upwards whose new total range would exceed Int64.MaxValue.
+        /// </summary>
+        [Test]
+        public void SetStatusTrue_UpwardExtendedRangeTotalExceedsInt64MaxValue()
+        {
+            testLongIntegerStatusStorer.SetRangeTrue(-1, 9223372036854775805);
+
+            InvalidOperationException e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                testLongIntegerStatusStorer.SetStatusTrue(9223372036854775806);
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The class cannot support storing statuses for greater than Int64.MaxValue integers."));
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown when calling the SetStatusTrue() method would result in extending a range downwards whose new total range would exceed Int64.MaxValue.
+        /// </summary>
+        [Test]
+        public void SetStatusTrue_DownwardExtendedRangeTotalExceedsInt64MaxValue()
+        {
+            testLongIntegerStatusStorer.SetRangeTrue(-1, 9223372036854775805);
+
+            InvalidOperationException e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                testLongIntegerStatusStorer.SetStatusTrue(-2);
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The class cannot support storing statuses for greater than Int64.MaxValue integers."));
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown when the SetStatusTrue() method is called, but status has already been set for Int64.MaxValue integers.
+        /// </summary>
+        [Test]
+        public void SetStatusTrue_StatusesStoredForGreaterThanInt64MaxValueIntegers()
+        {
+            testLongIntegerStatusStorer.SetRangeTrue(-9223372036854775808, -4);
+            testLongIntegerStatusStorer.SetStatusTrue(2);
+            testLongIntegerStatusStorer.SetStatusTrue(4);
+
+            InvalidOperationException e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                testLongIntegerStatusStorer.SetStatusTrue(6);
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The class cannot support storing statuses for greater than Int64.MaxValue integers."));
+        }
+
+        /// <summary>
+        /// Success tests for the SetStatusTrue() method extending and merging ranges to become Int64.MaxValue.
+        /// </summary>
+        [Test]
+        public void SetStatusTrue_LargeRanges()
+        {
+            testLongIntegerStatusStorer.SetRangeTrue(0, 9223372036854775804);
+            testLongIntegerStatusStorer.SetStatusTrue(9223372036854775806);
+
+            testLongIntegerStatusStorer.SetStatusTrue(9223372036854775805);
+
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(-1));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(0));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775804));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775805));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775806));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(9223372036854775807));
+
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(-1, 9223372036854775804);
+            testLongIntegerStatusStorer.SetStatusTrue(9223372036854775805);
+
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(-2));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-1));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775804));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775805));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(9223372036854775806));
+
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(-1, 9223372036854775804);
+            testLongIntegerStatusStorer.SetStatusTrue(-2);
+
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(-3));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-2));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-1));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775804));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(9223372036854775805));
+        }
+
+        /// <summary>
         /// Success tests for the SetStatusTrue() method.
         /// </summary>
         [Test]
@@ -324,6 +432,460 @@ namespace MoreComplexDataStructures.UnitTests
 
             testLongIntegerStatusStorer.SetStatusTrue(Int64.MinValue);
             Assert.AreEqual(4, testLongIntegerStatusStorer.Count);
+        }
+
+        /// <summary>
+        /// Success tests for the Count property after calling method SetRangeTrue().
+        /// </summary>
+        [Test]
+        public void Count_SetRangeTrue()
+        {
+            testLongIntegerStatusStorer.SetRangeTrue(1, 1);
+
+            Assert.AreEqual(1, testLongIntegerStatusStorer.Count);
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(-2, 2);
+
+            Assert.AreEqual(5, testLongIntegerStatusStorer.Count);
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(0, 9223372036854775806);
+
+            Assert.AreEqual(9223372036854775807, testLongIntegerStatusStorer.Count);
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown if the SetRangeTrue() method is called when statuses have already been set to true.
+        /// </summary>
+        [Test]
+        public void SetRangeTrue_ExistingStatusesTrue()
+        {
+            testLongIntegerStatusStorer.SetStatusTrue(1);
+
+            InvalidOperationException e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                testLongIntegerStatusStorer.SetRangeTrue(2, 4);
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("A range of statuses can only be set true when all existing statuses are false."));
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown if the SetRangeTrue() method is called with a 'rangeEnd' parameter less than the 'rangeStart' parameter.
+        /// </summary>
+        [Test]
+        public void SetRangeTrue_RangeEndParameterLessThanRangeStart()
+        {
+            ArgumentException e = Assert.Throws<ArgumentException>(delegate
+            {
+                testLongIntegerStatusStorer.SetRangeTrue(2, 1);
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("Parameter 'rangeEnd' must be greater than or equal to parameter 'rangeStart'."));
+            Assert.AreEqual("rangeEnd", e.ParamName);
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown if the SetRangeTrue() method is called with a 'rangeStart' and 'rangeEnd' parameters whose inclusive range is greater than Int64.MaxValue.
+        /// </summary>
+        [Test]
+        public void SetRangeTrue_RangeGreaterThanInt64MaxValue()
+        {
+            ArgumentException e = Assert.Throws<ArgumentException>(delegate
+            {
+                testLongIntegerStatusStorer.SetRangeTrue(0, 9223372036854775807);
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The total inclusive range cannot exceed Int64.MaxValue."));
+            Assert.AreEqual("rangeEnd", e.ParamName);
+
+
+            e = Assert.Throws<ArgumentException>(delegate
+            {
+                testLongIntegerStatusStorer.SetRangeTrue(-1, 9223372036854775806);
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The total inclusive range cannot exceed Int64.MaxValue."));
+            Assert.AreEqual("rangeEnd", e.ParamName);
+
+
+            e = Assert.Throws<ArgumentException>(delegate
+            {
+                testLongIntegerStatusStorer.SetRangeTrue(-2, 9223372036854775805);
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The total inclusive range cannot exceed Int64.MaxValue."));
+            Assert.AreEqual("rangeEnd", e.ParamName);
+
+
+            e = Assert.Throws<ArgumentException>(delegate
+            {
+                testLongIntegerStatusStorer.SetRangeTrue(-4611686018427387903, 4611686018427387904);
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The total inclusive range cannot exceed Int64.MaxValue."));
+            Assert.AreEqual("rangeEnd", e.ParamName);
+
+
+            e = Assert.Throws<ArgumentException>(delegate
+            {
+                testLongIntegerStatusStorer.SetRangeTrue(-9223372036854775808, -1);
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The total inclusive range cannot exceed Int64.MaxValue."));
+            Assert.AreEqual("rangeEnd", e.ParamName);
+
+
+            e = Assert.Throws<ArgumentException>(delegate
+            {
+                testLongIntegerStatusStorer.SetRangeTrue(-9223372036854775807, 0);
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The total inclusive range cannot exceed Int64.MaxValue."));
+            Assert.AreEqual("rangeEnd", e.ParamName);
+
+
+            e = Assert.Throws<ArgumentException>(delegate
+            {
+                testLongIntegerStatusStorer.SetRangeTrue(-9223372036854775806, 1);
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The total inclusive range cannot exceed Int64.MaxValue."));
+            Assert.AreEqual("rangeEnd", e.ParamName);
+        }
+
+        /// <summary>
+        /// Success tests for the SetRangeTrue() method where the specified range is equal to Int64.MaxValue.
+        /// </summary>
+        [Test]
+        public void SetRangeTrue_Int64MaxValueRange()
+        {
+            testLongIntegerStatusStorer.SetRangeTrue(1, 9223372036854775807);
+
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(1));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775807));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(0));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775806 / 2));
+
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(0, 9223372036854775806);
+
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(0));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775806));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(-1));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(9223372036854775807));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775806 / 2));
+
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(-1, 9223372036854775805);
+
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-1));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775805));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(-2));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(9223372036854775806));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775806 / 2));
+            
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(-4611686018427387903, 4611686018427387903);
+
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-4611686018427387903));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(4611686018427387903));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(-4611686018427387904));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(4611686018427387904));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(0));
+
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(-9223372036854775806, 0);
+
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-9223372036854775806));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(0));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(-9223372036854775807));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(1));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-9223372036854775807 / 2));
+
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(-9223372036854775807, -1);
+
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-9223372036854775807));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-1));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(-9223372036854775808));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(0));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-9223372036854775807 / 2));
+
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(-9223372036854775808, -2);
+
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-9223372036854775808));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-2));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(-1));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-9223372036854775807 / 2));
+        }
+
+        /// <summary>
+        /// Success tests for the SetRangeTrue() method where the specified range is 1.
+        /// </summary>
+        [Test]
+        public void SetRangeTrue_Range1()
+        {
+            testLongIntegerStatusStorer.SetRangeTrue(1, 1);
+
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(0));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(1));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(2));
+        }
+
+        /// <summary>
+        /// Success tests for the SetRangeTrue() method.
+        /// </summary>
+        [Test]
+        public void SetRangeTrue()
+        {
+            testLongIntegerStatusStorer.SetRangeTrue(-1, 1);
+
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(-2));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-1));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(0));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(1));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(2));
+
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(-3, -1);
+
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(-4));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-3));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-2));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-1));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(0));
+
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(1, 3);
+
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(0));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(1));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(2));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(3));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(4));
+
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(-9223372036854775808, -4);
+
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-9223372036854775808));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-4));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(-3));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(-9223372036854775807 / 2));
+
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(3, 9223372036854775807);
+
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(3));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775807));
+            Assert.IsFalse(testLongIntegerStatusStorer.GetStatus(2));
+            Assert.IsTrue(testLongIntegerStatusStorer.GetStatus(9223372036854775807 / 2));
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown if the MinimumRange property is accessed when the underlying tree is empty.
+        /// </summary>
+        [Test]
+        public void MinimumRange_TreeIsEmpty()
+        {
+            InvalidOperationException e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                LongIntegerRange result = testLongIntegerStatusStorer.MinimumRange;
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The underlying tree is empty."));
+
+
+            testLongIntegerStatusStorer = new LongIntegerStatusStorer();
+            testLongIntegerStatusStorer.SetStatusTrue(5);
+            testLongIntegerStatusStorer.SetStatusFalse(5);
+
+            e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                LongIntegerRange result = testLongIntegerStatusStorer.MinimumRange;
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The underlying tree is empty."));
+        }
+
+        /// <summary>
+        /// Success tests for the MinimumRange property.
+        /// </summary>
+        [Test]
+        public void MinimumRange()
+        {
+            testLongIntegerStatusStorer.SetRangeTrue(2, 6);
+            testLongIntegerStatusStorer.SetStatusTrue(0);
+            testLongIntegerStatusStorer.SetStatusTrue(8);
+            testLongIntegerStatusStorer.SetStatusFalse(5);
+            testLongIntegerStatusStorer.SetStatusFalse(0);
+
+            LongIntegerRange result = testLongIntegerStatusStorer.MinimumRange;
+
+            Assert.AreEqual(2, result.StartValue);
+            Assert.AreEqual(3, result.Length);
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown if the MaximumRange property is accessed when the underlying tree is empty.
+        /// </summary>
+        [Test]
+        public void MaximumRange_TreeIsEmpty()
+        {
+            InvalidOperationException e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                LongIntegerRange result = testLongIntegerStatusStorer.MaximumRange;
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The underlying tree is empty."));
+
+
+            testLongIntegerStatusStorer = new LongIntegerStatusStorer();
+            testLongIntegerStatusStorer.SetStatusTrue(5);
+            testLongIntegerStatusStorer.SetStatusFalse(5);
+
+            e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                LongIntegerRange result = testLongIntegerStatusStorer.MaximumRange;
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("The underlying tree is empty."));
+        }
+
+        /// <summary>
+        /// Success tests for the MaximumRange property.
+        /// </summary>
+        [Test]
+        public void MaximumRange()
+        {
+            testLongIntegerStatusStorer.SetRangeTrue(2, 6);
+            testLongIntegerStatusStorer.SetStatusTrue(8);
+            testLongIntegerStatusStorer.SetStatusTrue(0);
+            testLongIntegerStatusStorer.SetStatusFalse(3);
+            testLongIntegerStatusStorer.SetStatusFalse(8);
+
+            LongIntegerRange result = testLongIntegerStatusStorer.MaximumRange;
+
+            Assert.AreEqual(4, result.StartValue);
+            Assert.AreEqual(3, result.Length);
+        }
+
+        /// <summary>
+        /// Tests that an empty enumerable is returned if the GetAllRangesAscending() method is called when the underlying tree is empty.
+        /// </summary>
+        [Test]
+        public void GetAllRangesAscending_TreeIsEmpty()
+        {
+            IEnumerable<LongIntegerRange> result = testLongIntegerStatusStorer.GetAllRangesAscending();
+
+            Assert.AreEqual(0, result.Count());
+
+
+            testLongIntegerStatusStorer = new LongIntegerStatusStorer();
+            testLongIntegerStatusStorer.SetStatusTrue(5);
+            testLongIntegerStatusStorer.SetStatusFalse(5);
+
+            result = testLongIntegerStatusStorer.GetAllRangesAscending();
+
+            Assert.AreEqual(0, result.Count());
+        }
+
+        /// <summary>
+        /// Success tests for the GetAllRangesAscending() method.
+        /// </summary>
+        [Test]
+        public void GetAllRangesAscending()
+        {
+            testLongIntegerStatusStorer.SetRangeTrue(2, 6);
+
+            var result = new List<LongIntegerRange>(testLongIntegerStatusStorer.GetAllRangesAscending());
+
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(2, result[0].StartValue);
+            Assert.AreEqual(5, result[0].Length);
+
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(2, 6);
+            testLongIntegerStatusStorer.SetStatusTrue(8);
+            testLongIntegerStatusStorer.SetStatusTrue(0);
+            testLongIntegerStatusStorer.SetStatusFalse(3);
+            testLongIntegerStatusStorer.SetStatusFalse(8);
+
+            result = new List<LongIntegerRange>(testLongIntegerStatusStorer.GetAllRangesAscending());
+
+            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual(0, result[0].StartValue);
+            Assert.AreEqual(1, result[0].Length);
+            Assert.AreEqual(2, result[1].StartValue);
+            Assert.AreEqual(1, result[1].Length);
+            Assert.AreEqual(4, result[2].StartValue);
+            Assert.AreEqual(3, result[2].Length);
+        }
+
+        /// <summary>
+        /// Tests that an empty enumerable is returned if the GetAllRangesDescending() method is called when the underlying tree is empty.
+        /// </summary>
+        [Test]
+        public void GetAllRangesDescending_TreeIsEmpty()
+        {
+            IEnumerable<LongIntegerRange> result = testLongIntegerStatusStorer.GetAllRangesDescending();
+
+            Assert.AreEqual(0, result.Count());
+
+
+            testLongIntegerStatusStorer = new LongIntegerStatusStorer();
+            testLongIntegerStatusStorer.SetStatusTrue(5);
+            testLongIntegerStatusStorer.SetStatusFalse(5);
+
+            result = testLongIntegerStatusStorer.GetAllRangesDescending();
+
+            Assert.AreEqual(0, result.Count());
+        }
+
+        /// <summary>
+        /// Success tests for the GetAllRangesDescending() method.
+        /// </summary>
+        [Test]
+        public void GetAllRangesDescending()
+        {
+            testLongIntegerStatusStorer.SetRangeTrue(2, 6);
+
+            var result = new List<LongIntegerRange>(testLongIntegerStatusStorer.GetAllRangesDescending());
+
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(2, result[0].StartValue);
+            Assert.AreEqual(5, result[0].Length);
+
+
+            testLongIntegerStatusStorer.Clear();
+            testLongIntegerStatusStorer.SetRangeTrue(2, 6);
+            testLongIntegerStatusStorer.SetStatusTrue(0);
+            testLongIntegerStatusStorer.SetStatusTrue(8);
+            testLongIntegerStatusStorer.SetStatusFalse(5);
+            testLongIntegerStatusStorer.SetStatusFalse(0);
+
+            result = new List<LongIntegerRange>(testLongIntegerStatusStorer.GetAllRangesDescending());
+
+            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual(8, result[0].StartValue);
+            Assert.AreEqual(1, result[0].Length);
+            Assert.AreEqual(6, result[1].StartValue);
+            Assert.AreEqual(1, result[1].Length);
+            Assert.AreEqual(2, result[2].StartValue);
+            Assert.AreEqual(3, result[2].Length);
         }
 
         #region Private Methods

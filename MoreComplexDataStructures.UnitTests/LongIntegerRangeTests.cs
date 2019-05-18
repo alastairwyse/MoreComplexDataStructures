@@ -144,6 +144,37 @@ namespace MoreComplexDataStructures.UnitTests
         }
 
         /// <summary>
+        /// Success tests for setting the 'EndValue' property.
+        /// </summary>
+        [Test]
+        public void EndValue()
+        {
+            LongIntegerRange testLongIntegerRange = new LongIntegerRange(1, 1);
+            Assert.AreEqual(1, testLongIntegerRange.EndValue);
+
+            testLongIntegerRange = new LongIntegerRange(2, 5);
+            Assert.AreEqual(6, testLongIntegerRange.EndValue);
+
+            testLongIntegerRange = new LongIntegerRange(-10, 3);
+            Assert.AreEqual(-8, testLongIntegerRange.EndValue);
+
+            testLongIntegerRange = new LongIntegerRange(-3, 9);
+            Assert.AreEqual(5, testLongIntegerRange.EndValue);
+
+            testLongIntegerRange = new LongIntegerRange(Int64.MaxValue, 1);
+            Assert.AreEqual(Int64.MaxValue, testLongIntegerRange.EndValue);
+
+            testLongIntegerRange = new LongIntegerRange(Int64.MinValue, 1);
+            Assert.AreEqual(Int64.MinValue, testLongIntegerRange.EndValue);
+
+            testLongIntegerRange = new LongIntegerRange(1, Int64.MaxValue);
+            Assert.AreEqual(Int64.MaxValue, testLongIntegerRange.EndValue);
+
+            testLongIntegerRange = new LongIntegerRange(Int64.MinValue, Int64.MaxValue);
+            Assert.AreEqual(-2, testLongIntegerRange.EndValue);
+        }
+
+        /// <summary>
         /// Tests that an exception is thrown if the object is constructed with a 'length' parameter less than 1.
         /// </summary>
         [Test]

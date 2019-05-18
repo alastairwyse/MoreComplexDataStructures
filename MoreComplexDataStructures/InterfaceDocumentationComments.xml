@@ -37,6 +37,14 @@
       <param name="item">The item to remove.</param>
       <exception cref="T:System.ArgumentException">The specified item does not exist in the tree.</exception>
     </member>
+    <member name="M:MoreComplexDataStructures.IBinarySearchTree`1.Get(`0)">
+      <summary>
+        Retrieves the specified item from the tree.
+      </summary>
+      <param name="item">The item to retrieve.</param>
+      <returns>The item.</returns>
+      <exception cref="T:System.ArgumentException">The specified item does not exist in the tree.</exception>
+    </member>
     <member name="M:MoreComplexDataStructures.IBinarySearchTree`1.Contains(`0)">
       <summary>
         Determines whether the tree contains the specified item.
@@ -72,6 +80,28 @@
       <summary>
         The total number of items stored in the tree.
       </summary>
+    </member>
+    <member name="P:MoreComplexDataStructures.IBinarySearchTree`1.Min">
+      <summary>
+        Retrieves the minimum-valued item in the tree.
+      </summary>
+    </member>
+    <member name="P:MoreComplexDataStructures.IBinarySearchTree`1.Max">
+      <summary>
+        Retrieves the maximum-valued item in the tree.
+      </summary>
+    </member>
+    <member name="M:MoreComplexDataStructures.WeightBalancedTree`1.RotateNodeLeft(MoreComplexDataStructures.WeightBalancedTreeNode{`0})">
+      <summary>
+        Performs a left-rotation on the specified node.
+      </summary>
+      <param name="inputNode">The node to perform the rotation on.</param>
+    </member>
+    <member name="M:MoreComplexDataStructures.WeightBalancedTree`1.RotateNodeRight(MoreComplexDataStructures.WeightBalancedTreeNode{`0})">
+      <summary>
+        Performs a right-rotation on the specified node.
+      </summary>
+      <param name="inputNode">The node to perform the rotation on.</param>
     </member>
   </members>
 </doc>

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2017 Alastair Wyse (https://github.com/alastairwyse/MoreComplexDataStructures/)
+ * Copyright 2019 Alastair Wyse (https://github.com/alastairwyse/MoreComplexDataStructures/)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ namespace MoreComplexDataStructures.UnitTests
         /// Tests that an exception is thrown if the SetWeightings() method is called with a set of weightings whose total exceeds Int64.MaxValue.
         /// </summary>
         [Test]
-        public void SetWeightings_WeightingsTotalExceedsInt64Minus1()
+        public void SetWeightings_WeightingsTotalExceedsInt64MaxValue()
         {
             List<Tuple<Char, Int64>> weightings = new List<Tuple<Char, Int64>>();
             weightings.Add(new Tuple<Char, Int64>('a', 9223372036854775806));
@@ -178,10 +178,8 @@ namespace MoreComplexDataStructures.UnitTests
             testWeightedRandomGenerator = new WeightedRandomGenerator<Char>(mockRandomIntegerGenerator);
 
             // Test with a single weighting of 1
-            //   First expect on mockRandomIntegerGenerator is for the call to SetWeightings(), second expect is for the call to Generate()
             using (mockery.Ordered)
             {
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
                 Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1L).Will(Return.Value(0L));
             }
             testWeightedRandomGenerator.SetWeightings(new List<Tuple<Char, Int64>>() { new Tuple<Char, Int64>('a', 1) });
@@ -200,8 +198,6 @@ namespace MoreComplexDataStructures.UnitTests
             };
             using (mockery.Ordered)
             {
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(2).Will(Return.Value(1));
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
                 Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(0L));
                 Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(1L));
                 Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(Int64.MaxValue - 1));
@@ -226,8 +222,6 @@ namespace MoreComplexDataStructures.UnitTests
             };
             using (mockery.Ordered)
             {
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(2).Will(Return.Value(1));
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
                 Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(0L));
                 Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(Int64.MaxValue - 2));
                 Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(Int64.MaxValue).Will(Return.Value(Int64.MaxValue - 1));
@@ -253,9 +247,6 @@ namespace MoreComplexDataStructures.UnitTests
             };
             using (mockery.Ordered)
             {
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(3).Will(Return.Value(1));
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(2).Will(Return.Value(2));
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
                 Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(0L));
                 Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(1L));
                 Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(7L).Will(Return.Value(2L));
@@ -318,15 +309,6 @@ namespace MoreComplexDataStructures.UnitTests
             //   0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18
             //        | |     |   |          |              |
             //   a     b c     d   e          f
-            using (mockery.Ordered)
-            {
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(6).Will(Return.Value(3));
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(5).Will(Return.Value(1));
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(4).Will(Return.Value(3));
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(3).Will(Return.Value(0));
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(2).Will(Return.Value(0));
-                Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
-            }
             testWeightedRandomGenerator.SetWeightings(new List<Tuple<Char, Int64>>()
             { 
                 new Tuple<Char, Int64>('a', 3), 
@@ -336,8 +318,6 @@ namespace MoreComplexDataStructures.UnitTests
                 new Tuple<Char, Int64>('e', 4),
                 new Tuple<Char, Int64>('f', 5)
             });
-            mockery.VerifyAllExpectationsHaveBeenMet();
-
 
             // Test shuffling up the values of all the ranges lower than the one removed
             // Weighting ranges after removing 'c' can be visualised as follows...
@@ -504,13 +484,10 @@ namespace MoreComplexDataStructures.UnitTests
             // Remove all remaining, and then set the weights again to ensure that field 'weightingStartOffset' is reset to 0
             testWeightedRandomGenerator.RemoveWeighting('b');
             testWeightedRandomGenerator.RemoveWeighting('e');
-            mockery.ClearExpectation(mockRandomIntegerGenerator);
-            Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1).Will(Return.Value(0));
             testWeightedRandomGenerator.SetWeightings(new List<Tuple<Char, Int64>>()
             { 
                 new Tuple<Char, Int64>('g', 5)
             });
-            mockery.VerifyAllExpectationsHaveBeenMet();
 
             treeContents = GetAllWeightingRanges(testWeightedRandomGenerator);
             Assert.AreEqual(1, treeContents.Count);

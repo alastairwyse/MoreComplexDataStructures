@@ -56,6 +56,17 @@ namespace MoreComplexDataStructures
         }
 
         /// <summary>
+        /// Initialises a new instance of the MoreComplexDataStructures.Trie class.
+        /// </summary>
+        /// <param name="rootNode">Is assigned the root node of the trie.</param>
+        /// <remarks>Generally it's recommended to use the classes' included methods which encapsulate and protect the internal structure of the trie (including traversal methods like BreadthFirstSearch()).  However there may be cases where custom traversal is required, and in those cases this constructor can be used to obtain a reference to the root node of the trie.</remarks>
+        public Trie(out TrieNode<T> rootNode)
+            : this()
+        {
+            rootNode = this.rootNode;
+        }
+
+        /// <summary>
         /// Removes all sequences from the tree.
         /// </summary>
         public void Clear()
@@ -260,10 +271,9 @@ namespace MoreComplexDataStructures
         /// Returns a list of all sequences in the trie which include the specified prefix sequence.
         /// </summary>
         /// <param name="prefixSequence">The prefix sequence.</param>
-        /// <returns>A list of all sequences which include the specified prefix sequence.</returns>
-        public List<List<T>> GetAllSequencesWithPrefix(IList<T> prefixSequence)
+        /// <returns>An enumerator containing all sequences which include the specified prefix sequence.</returns>
+        public IEnumerable<List<T>> GetAllSequencesWithPrefix(IList<T> prefixSequence)
         {
-            List<List<T>> returnList = new List<List<T>>();
             TrieNode<T> lastPrefixSequenceItemNode = null;
             TrieNode<T> currentNode = rootNode;
 
@@ -272,7 +282,7 @@ namespace MoreComplexDataStructures
             {
                 if (currentNode.ChildNodeExists(prefixSequence[i]) == false)
                 {
-                    return returnList;
+                    yield break;
                 }
                 currentNode = currentNode.GetChildNode(prefixSequence[i]);
             }
@@ -286,15 +296,13 @@ namespace MoreComplexDataStructures
                 currentNode = traversalQueue.Dequeue();
                 if (currentNode is SequenceTerminatorTrieNode<T>)
                 {
-                    returnList.Add(GenerateSequenceToNode(prefixSequence, lastPrefixSequenceItemNode, currentNode));
+                    yield return GenerateSequenceToNode(prefixSequence, lastPrefixSequenceItemNode, currentNode);
                 }
                 foreach(TrieNode<T> currentChildNode in currentNode.ChildNodes)
                 {
                     traversalQueue.Enqueue(currentChildNode);
                 }
             }
-
-            return returnList;
         }
 
         /// <summary>
@@ -459,6 +467,8 @@ namespace MoreComplexDataStructures
 
         #region Nested Classes
 
+        #pragma warning disable 0693
+
         /// <summary>
         /// The root node of a trie.
         /// </summary>
@@ -473,6 +483,8 @@ namespace MoreComplexDataStructures
             {
             }
         }
+
+        #pragma warning restore 0693
 
         #endregion
     }
