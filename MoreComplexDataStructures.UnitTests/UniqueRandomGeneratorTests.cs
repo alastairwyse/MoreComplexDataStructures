@@ -1082,20 +1082,20 @@ namespace MoreComplexDataStructures.UnitTests
             if (currentNode.ParentNode != parentNode)
             {
                 if (currentNode.ParentNode != null)
-                    throw new Exception("Parent of node containing range starting with " + currentNode.Item.Range.StartValue + " was expected to be node " + parentNode.Item.Range.StartValue + " but was node " + +currentNode.ParentNode.Item.Range.StartValue + ".");
+                    throw new Exception($"Parent of node containing range starting with {currentNode.Item.Range.StartValue} was expected to be node {parentNode.Item.Range.StartValue} but was node {currentNode.ParentNode.Item.Range.StartValue}.");
                 else
-                    throw new Exception("Parent of node containing range starting with " + currentNode.Item.Range.StartValue + " was expected to be node " + parentNode.Item.Range.StartValue + " but was null.");
+                    throw new Exception($"Parent of node containing range starting with {currentNode.Item.Range.StartValue} was expected to be node {parentNode.Item.Range.StartValue} but was null.");
             }
             Int64 actualTotalRangeCount = currentNode.Item.LeftSubtreeRangeCount + currentNode.Item.Range.Length + currentNode.Item.RightSubtreeRangeCount;
             if (actualTotalRangeCount != totalRangeCount)
-                throw new Exception("Node containing range starting with " + currentNode.Item.Range.StartValue + " was expected to have total range count of " + totalRangeCount + " but actually had " + actualTotalRangeCount + " (" + currentNode.Item.LeftSubtreeRangeCount + ", " + currentNode.Item.Range.Length + ", " + currentNode.Item.RightSubtreeRangeCount + ").");
+                throw new Exception($"Node containing range starting with {currentNode.Item.Range.StartValue} was expected to have total range count of {totalRangeCount} but actually had {actualTotalRangeCount} ({currentNode.Item.LeftSubtreeRangeCount}, {currentNode.Item.Range.Length}, {currentNode.Item.RightSubtreeRangeCount}).");
             Int32 actualTotalNodeCount = currentNode.LeftSubtreeSize + 1 + currentNode.RightSubtreeSize;
             if (actualTotalNodeCount != totalNodeCount)
-                throw new Exception("Node containing range starting with " + currentNode.Item.Range.StartValue + " was expected to have total node count of " + totalNodeCount + " but actually had " + actualTotalNodeCount + " (" + currentNode.LeftSubtreeSize + ", " + currentNode.Item.Range.Length + ", " + currentNode.RightSubtreeSize + ").");
+                throw new Exception($"Node containing range starting with {currentNode.Item.Range.StartValue} was expected to have total node count of {totalNodeCount} but actually had {actualTotalNodeCount} ({currentNode.LeftSubtreeSize}, {currentNode.Item.Range.Length}, {currentNode.RightSubtreeSize}).");
             if (currentNode.Item.Range.StartValue < lowerRangeLimit)
-                throw new Exception("Node containing range starting with " + currentNode.Item.Range.StartValue + " should be greater than or equal to lower limit " + lowerRangeLimit + ".");
+                throw new Exception($"Node containing range starting with {currentNode.Item.Range.StartValue} should be greater than or equal to lower limit {lowerRangeLimit}.");
             if (currentNode.Item.Range.EndValue > upperRangeLimit)
-                throw new Exception("Node containing range starting with " + currentNode.Item.Range.StartValue + " and inclusive end value " + currentNode.Item.Range.EndValue + " should be less than or equal to upper limit " + upperRangeLimit + ".");
+                throw new Exception($"Node containing range starting with {currentNode.Item.Range.StartValue} and inclusive end value {currentNode.Item.Range.EndValue} should be less than or equal to upper limit {upperRangeLimit}.");
 
             // Recurse
             if (currentNode.LeftChildNode != null)
@@ -1332,7 +1332,7 @@ namespace MoreComplexDataStructures.UnitTests
                 else if (numberToGenerate < nodeStartValue)
                 {
                     if (currentNode.Item.LeftSubtreeRangeCount == 0)
-                        throw new ArgumentException("Value in parameter 'numberToGenerate' (" + numberToGenerate + ") doesn't exist in the range tree.", "numberToGenerate");
+                        throw new ArgumentException($"Value in parameter '{nameof(numberToGenerate)}' ({numberToGenerate}) doesn't exist in the range tree.", nameof(numberToGenerate));
                     else
                     {
                         Int64 returnValue = currentNode.Item.LeftSubtreeRangeCount - 1;
@@ -1344,7 +1344,7 @@ namespace MoreComplexDataStructures.UnitTests
                 else
                 {
                     if (currentNode.Item.RightSubtreeRangeCount == 0)
-                        throw new ArgumentException("Value in parameter 'numberToGenerate' (" + numberToGenerate + ") doesn't exist in the range tree.", "numberToGenerate");
+                        throw new ArgumentException($"Value in parameter '{nameof(numberToGenerate)}' ({numberToGenerate}) doesn't exist in the range tree.", nameof(numberToGenerate));
                     else
                     {
                         Int64 returnValue = currentNode.Item.LeftSubtreeRangeCount + currentNode.Item.Range.Length;

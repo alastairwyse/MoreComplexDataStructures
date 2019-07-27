@@ -80,16 +80,16 @@ namespace MoreComplexDataStructures
         public UniqueRandomGenerator(Int64 rangeStart, Int64 rangeEnd)
         {
             if (rangeEnd < rangeStart)
-                throw new ArgumentException("Parameter 'rangeEnd' must be greater than or equal to parameter 'rangeStart'.", "rangeEnd");
+                throw new ArgumentException($"Parameter '{nameof(rangeEnd)}' must be greater than or equal to parameter '{nameof(rangeStart)}'.", nameof(rangeEnd));
             if (rangeStart < 1)
             {
                 if (rangeStart + Int64.MaxValue <= rangeEnd)
-                    throw new ArgumentException("The total inclusive range cannot exceed Int64.MaxValue.", "rangeEnd");
+                    throw new ArgumentException("The total inclusive range cannot exceed Int64.MaxValue.", nameof(rangeEnd));
             }
             else if (rangeEnd > -2)
             {
                 if (rangeEnd - Int64.MaxValue >= rangeStart)
-                    throw new ArgumentException("The total inclusive range cannot exceed Int64.MaxValue.", "rangeEnd");
+                    throw new ArgumentException("The total inclusive range cannot exceed Int64.MaxValue.", nameof(rangeEnd));
             }
             rangeTree = new RangeTree();
             var baseRange = new LongIntegerRange(rangeStart, rangeEnd - rangeStart + 1);
@@ -369,7 +369,7 @@ namespace MoreComplexDataStructures
             protected void ValidateSubtreeRangeCount(Int64 value, String parameterName)
             {
                 if (value < 0)
-                    throw new ArgumentOutOfRangeException(parameterName, "Parameter '" + parameterName + "' must be greater than or equal to 0.");
+                    throw new ArgumentOutOfRangeException(parameterName, "Parameter '{parameterName}' must be greater than or equal to 0.");
             }
 
             #endregion

@@ -108,7 +108,7 @@ namespace MoreComplexDataStructures
         {
             if (childNodes.ContainsKey(item) == true)
             {
-                throw new ArgumentException("A child node for the specified item '" + item.ToString() + "' already exists.", "item");
+                throw new ArgumentException($"A child node for the specified item '{item.ToString()}' already exists.", nameof(item));
             }
 
             childNode.ParentNode = this;
@@ -238,7 +238,7 @@ namespace MoreComplexDataStructures
         {
             if (childNodes.ContainsKey(item) == false)
             {
-                throw new ArgumentException("A child node for the specified item '" + item.ToString() + "' does not exist.", "item");
+                throw new ArgumentException($"A child node for the specified item '{item.ToString()}' does not exist.", nameof(item));
             }
         }
 

@@ -94,7 +94,7 @@ namespace MoreComplexDataStructures
         {
             if (weightings.Count == 0)
             {
-                throw new ArgumentException("The specified set of weightings is empty.", "weightings");
+                throw new ArgumentException("The specified set of weightings is empty.", nameof(weightings));
             }
 
             Clear();
@@ -105,7 +105,7 @@ namespace MoreComplexDataStructures
             {
                 if ((Int64.MaxValue - 1) - nextRangeStartValue < (currentWeighting.Item2 - 1))
                 {
-                    throw new ArgumentException("The total of the specified weightings cannot exceed Int64.MaxValue.", "weightings");
+                    throw new ArgumentException("The total of the specified weightings cannot exceed Int64.MaxValue.", nameof(weightings));
                 }
 
                 var currentRange = new LongIntegerRange(nextRangeStartValue, currentWeighting.Item2);
@@ -118,7 +118,7 @@ namespace MoreComplexDataStructures
             {
                 if (itemToWeightingMap.ContainsKey(currentItemAndWeighting.Item) == true)
                 {
-                    throw new ArgumentException("The specified weightings contain duplicate item with value = '" + currentItemAndWeighting.Item.ToString() + "'.", "weightings");
+                    throw new ArgumentException($"The specified weightings contain duplicate item with value = '{currentItemAndWeighting.Item.ToString()}'.", nameof(weightings));
                 }
 
                 weightingRangesAndItems.Add(currentItemAndWeighting);
@@ -136,7 +136,7 @@ namespace MoreComplexDataStructures
         {
             if (itemToWeightingMap.ContainsKey(item) == false)
             {
-                throw new ArgumentException("A weighting for the specified item does not exist.", "item");
+                throw new ArgumentException("A weighting for the specified item does not exist.", nameof(item));
             }
 
             var itemAndWeightingToRemove = new ItemAndWeighting<T>(item, itemToWeightingMap[item]);

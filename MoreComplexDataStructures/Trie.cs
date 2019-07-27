@@ -112,7 +112,7 @@ namespace MoreComplexDataStructures
                             };
                             TraverseUpFromNode(existingNode.ParentNode, decrementCountsAction);
 
-                            throw new ArgumentException("The specified sequence { " + ConvertSequenceToString(sequence) + " } already exists in the trie.", "sequence");
+                            throw new ArgumentException($"The specified sequence {{ {ConvertSequenceToString(sequence)} }} already exists in the trie.", nameof(sequence));
                         }
                         else
                         {
@@ -161,14 +161,14 @@ namespace MoreComplexDataStructures
                 {
                     if (currentNode.ChildNodeExists(sequence[i]) == false)
                     {
-                        throw new ArgumentException("The specified sequence { " + ConvertSequenceToString(sequence) + " } does not exist in the trie.", "sequence");
+                        throw new ArgumentException($"The specified sequence {{ {ConvertSequenceToString(sequence)} }} does not exist in the trie.", nameof(sequence));
                     }
                     else
                     {
                         TrieNode<T> lastNode = currentNode.GetChildNode(sequence[i]);
                         if (!(lastNode is SequenceTerminatorTrieNode<T>))
                         {
-                            throw new ArgumentException("The specified sequence { " + ConvertSequenceToString(sequence) + " } does not exist in the trie.", "sequence");
+                            throw new ArgumentException($"The specified sequence {{ {ConvertSequenceToString(sequence)} }} does not exist in the trie.", nameof(sequence));
                         }
                         else
                         {
@@ -210,7 +210,7 @@ namespace MoreComplexDataStructures
                 {
                     if (currentNode.ChildNodeExists(sequence[i]) == false)
                     {
-                        throw new ArgumentException("The specified sequence { " + ConvertSequenceToString(sequence) + " } does not exist in the trie.", "sequence");
+                        throw new ArgumentException($"The specified sequence {{ {ConvertSequenceToString(sequence)} }} does not exist in the trie.", nameof(sequence));
                     }
 
                     currentNode = currentNode.GetChildNode(sequence[i]);
@@ -315,7 +315,7 @@ namespace MoreComplexDataStructures
         {
             if (prefixSequence.Count == 0)
             {
-                throw new ArgumentException("The specified prefix sequence is empty.", "prefixSequence");
+                throw new ArgumentException("The specified prefix sequence is empty.", nameof(prefixSequence));
             }
 
             TrieNode<T> currentNode = rootNode;
@@ -414,7 +414,7 @@ namespace MoreComplexDataStructures
         {
             if (sequence.Count == 0)
             {
-                throw new ArgumentException("The specified sequence is empty.", "sequence");
+                throw new ArgumentException("The specified sequence is empty.", nameof(sequence));
             }
         }
 

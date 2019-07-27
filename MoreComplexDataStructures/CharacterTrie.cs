@@ -78,7 +78,7 @@ namespace MoreComplexDataStructures
             }
             catch (ArgumentException e)
             {
-                throw new ArgumentException("The specified string '" + inputString + "' already exists in the trie.", "inputString", e);
+                throw new ArgumentException($"The specified string '{inputString}' already exists in the trie.", nameof(inputString), e);
             }
         }
 
@@ -98,7 +98,7 @@ namespace MoreComplexDataStructures
             }
             catch (ArgumentException e)
             {
-                throw new ArgumentException("The specified string '" + inputString + "' does not exist in the trie.", "inputString", e);
+                throw new ArgumentException($"The specified string '{inputString}' does not exist in the trie.", nameof(inputString), e);
             }
         }
 
@@ -140,7 +140,7 @@ namespace MoreComplexDataStructures
         {
             if (prefixString.Length == 0)
             {
-                throw new ArgumentException("The specified prefix string is empty.", "prefixString");
+                throw new ArgumentException("The specified prefix string is empty.", nameof(prefixString));
             }
 
             return underlyingTree.GetCountOfSequencesWithPrefix(new StringIListWrapper(prefixString));
@@ -165,7 +165,7 @@ namespace MoreComplexDataStructures
         {
             if (inputString.Length == 0)
             {
-                throw new ArgumentException("The specified string is empty.", "inputString");
+                throw new ArgumentException("The specified string is empty.", nameof(inputString));
             }
         }
 

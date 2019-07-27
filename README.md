@@ -51,6 +51,8 @@ Note that the current balancing algorithm can result in unbalanced trees for cer
 
 Note - Another (more simple) way to generate a range of unique random numbers is to initialize the numbers sequentially in an array, and then randomize the array using the Fisher/Yates/Knuth algorithm (as the ListRandomizer class does).  The issue with this method for very large ranges is that the memory usage is also large (since every number in the range must be preallocated in memory).  Also the range cannot be larger than Int32.MaxValue.  I built this class with the goal of generating larger ranges with far more efficient memory usage (the class starts with a single node item representing the full range, and then ’splits’ these node items and pushes them down the tree as the Generate() method is called… hence consecutive numbers are ‘condensed’ into a single range class).  After testing I found that during the process of generating all numbers in the range, at some point, the number of nodes in the tree will become ~n/4 (where n is the range size).  Unfortunately this makes the class less memory efficient than the Fisher/Yates/Knuth array method, as each node consumes more than 4 times as much memory as an Int64 (references to parent and child nodes, counts of child nodes, counts of ranges of child nodes, object overhead, etc…).  In any case building the class was an interesting exercise, and someone may find a use for it.
 
+**PriorityQueue** - An implementation of a [double-ended](https://en.wikipedia.org/wiki/Double-ended_priority_queue) [priority queue](https://en.wikipedia.org/wiki/Priority_queue).  As the underlying structure is a balanced tree, most methods return with order O(log(n)) time complexity.  The class allows dequeuing of specific items aside from the minimum and maximum, and exposes several methods to inspect the contents of the queue.
+
 ### Future Enhancements
 - Enhance WeightBalancedTree balancing algorithm to handle sequences of input values which currently result in an unbalanced tree (e.g. Int32 tree with insert sequence 1, 7, 2, 6, 3, 5, 4).
 - Enhance any methods which return an IEnumerable to throw an InvalidOperationException if the object structure is changed while enumerating.
@@ -60,9 +62,9 @@ Note - Another (more simple) way to generate a range of unique random numbers is
 - Refactor methods Insert() and ExtractMax()/ExtractMin() on the MaxHeap/MinHeap classes into the HeapBase class.
 - Abstract use of IComparable&lt;T&gt;.CompareTo() in heap classes to make code easier to read.
 - Consider adding a linked list implementation which supports Contains(T item) ( O(1) ), by additionally storing list data in a HashSet.
-- Consider adding a [priority queue](https://en.wikipedia.org/wiki/Priority_queue).
 - Consider adding a [skip list](https://en.wikipedia.org/wiki/Skip_list).
 - Consider building an IBinarySearchTree implementation using struct rather than class nodes (for potential reduced memory usage).
+- Consider adding array-based heaps
 
 ### Release History
 
@@ -70,6 +72,13 @@ Note - Another (more simple) way to generate a range of unique random numbers is
   <tr>
     <td><b>Version</b></td>
     <td><b>Changes</b></td>
+  </tr>
+  <tr>
+    <td valign="top">1.6.0.0</td>
+    <td>
+      Added PriorityQueue.<br />
+      Added an additional FrequencyTable constructor to allow pre-population with a collection of items and corresponding counts. 
+    </td>
   </tr>
   <tr>
     <td valign="top">1.5.0.0</td>

@@ -68,6 +68,19 @@ namespace MoreComplexDataStructures
         }
 
         /// <summary>
+        /// Initialises a new instance of the MoreComplexDataStructures.FrequencyTable class.
+        /// </summary>
+        /// <param name="itemsAndCounts">The collection of items and corresponding counts to be initialised in the new FrequencyTable.</param>
+        public FrequencyTable(IEnumerable<KeyValuePair<T, Int32>> itemsAndCounts)
+            : this()
+        {
+            foreach (KeyValuePair<T, Int32> currentItemsAndCount in itemsAndCounts)
+            {
+                IncrementBy(currentItemsAndCount.Key, currentItemsAndCount.Value);
+            }
+        }
+
+        /// <summary>
         /// Resets all frequency counts to 0.
         /// </summary>
         public void Clear()
@@ -100,7 +113,7 @@ namespace MoreComplexDataStructures
         {
             if (frequencyStore.ContainsKey(item) == false)
             {
-                throw new ArgumentException("The frequency for the specified item '" + item.ToString() + "' is 0.", "item");
+                throw new ArgumentException($"The frequency for the specified item '{item.ToString()}' is 0.", nameof(item));
             }
             else if (frequencyStore[item] == 1)
             {
@@ -146,11 +159,11 @@ namespace MoreComplexDataStructures
 
             if (frequencyStore.ContainsKey(item) == false)
             {
-                throw new ArgumentException("The frequency for the specified item '" + item.ToString() + "' is 0.", "item");
+                throw new ArgumentException($"The frequency for the specified item '{item.ToString()}' is 0.", nameof(item));
             }
             else if (frequencyStore[item] < count)
             {
-                throw new ArgumentException("The frequency for the specified item '" + item.ToString() + "' (" + frequencyStore[item] + ") is less than the value of the 'count' parameter.", "count");
+                throw new ArgumentException($"The frequency for the specified item '{item.ToString()}' ({frequencyStore[item]}) is less than the value of the '{nameof(count)}' parameter.", nameof(count));
             }
             else if (frequencyStore[item] == count)
             {
@@ -207,7 +220,7 @@ namespace MoreComplexDataStructures
         {
             if (count < 1)
             {
-                throw new ArgumentException("The value of the 'count' parameter must be greater than 0.", "count");
+                throw new ArgumentException($"The value of the '{nameof(count)}' parameter must be greater than 0.", nameof(count));
             }
         }
 

@@ -59,7 +59,7 @@ namespace MoreComplexDataStructures
             //   In this case we can never randomly select the last value in the list (as the IRandomIntegerGenerator.Next() 'maxValue' parameter is exclusive).
             if (inputCollection.Count == Int32.MaxValue)
             {
-                throw new ArgumentException("The maximum collection size supported by the ListRandomizer is " + (Int32.MaxValue - 1) + ".", "inputCollection");
+                throw new ArgumentException($"The maximum collection size supported by the ListRandomizer is {(Int32.MaxValue - 1)}.", nameof(inputCollection));
             }
 
             Int32 randomizedPortionDividerIndex = inputCollection.Count;

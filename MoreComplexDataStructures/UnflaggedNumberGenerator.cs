@@ -136,7 +136,7 @@ namespace MoreComplexDataStructures
         public IEnumerable<Int64> GetLowestUnflaggedNumbers(Int64 numberCount)
         {
             if (numberCount < 1)
-                throw new ArgumentOutOfRangeException("numberCount", "Parameter 'numberCount' must be greater than or equal to 1.");
+                throw new ArgumentOutOfRangeException(nameof(numberCount), $"Parameter '{nameof(numberCount)}' must be greater than or equal to 1.");
 
             Int64 returnedNumberCount = 0;
             foreach (LongIntegerRange currentRange in rangeStorer.GetAllRangesAscending())
@@ -163,7 +163,7 @@ namespace MoreComplexDataStructures
         public IEnumerable<Int64> GetHighestUnflaggedNumbers(Int64 numberCount)
         {
             if (numberCount < 1)
-                throw new ArgumentOutOfRangeException("numberCount", "Parameter 'numberCount' must be greater than or equal to 1.");
+                throw new ArgumentOutOfRangeException(nameof(numberCount), $"Parameter '{nameof(numberCount)}' must be greater than or equal to 1.");
 
             Int64 returnedNumberCount = 0;
             foreach (LongIntegerRange currentRange in rangeStorer.GetAllRangesDescending())
@@ -190,9 +190,9 @@ namespace MoreComplexDataStructures
         protected void ThrowExeptionIfNumberOutsideRange(Int64 number, String parameterName)
         {
             if (number < rangeStart)
-                throw new ArgumentOutOfRangeException(parameterName, "Parameter '" + parameterName + "' with value " + number + " is less than minimum of the range specified in the constructor (" + rangeStart + ").");
+                throw new ArgumentOutOfRangeException(parameterName, $"Parameter '{parameterName}' with value {number} is less than minimum of the range specified in the constructor ({rangeStart}).");
             if (number > rangeEnd)
-                throw new ArgumentOutOfRangeException(parameterName, "Parameter '" + parameterName + "' with value " + number + " is greater than maximum of the range specified in the constructor (" + rangeEnd + ").");
+                throw new ArgumentOutOfRangeException(parameterName, $"Parameter '{parameterName}' with value {number} is greater than maximum of the range specified in the constructor ({rangeEnd}).");
         }
 
         #endregion

@@ -38,6 +38,32 @@ namespace MoreComplexDataStructures.UnitTests
         }
 
         /// <summary>
+        /// Success tests for the constructor overload which pre-populates the frequency table with a collection of items and corresponding counts.
+        /// </summary>
+        [Test]
+        public void Constructor_InitialiseWithCounts()
+        {
+            var initialData = new List<KeyValuePair<Char, Int32>>
+            {
+                new KeyValuePair<Char, Int32>('c', 5),
+                new KeyValuePair<Char, Int32>('a', 1),
+                new KeyValuePair<Char, Int32>('d', 4),
+                new KeyValuePair<Char, Int32>('e', 3),
+                new KeyValuePair<Char, Int32>('b', 2)
+            };
+
+            testFrequencyTable = new FrequencyTable<Char>(initialData);
+
+            Assert.AreEqual(5, testFrequencyTable.ItemCount);
+            Assert.AreEqual(15, testFrequencyTable.FrequencyCount);
+            Assert.AreEqual(5, testFrequencyTable.GetFrequency('c'));
+            Assert.AreEqual(1, testFrequencyTable.GetFrequency('a'));
+            Assert.AreEqual(4, testFrequencyTable.GetFrequency('d'));
+            Assert.AreEqual(3, testFrequencyTable.GetFrequency('e'));
+            Assert.AreEqual(2, testFrequencyTable.GetFrequency('b'));
+        }
+
+        /// <summary>
         /// Tests that an exception is thrown if the Decrement() method is called for an item whose frequency is 0.
         /// </summary>
         [Test]

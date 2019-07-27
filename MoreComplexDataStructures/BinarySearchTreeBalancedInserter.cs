@@ -46,7 +46,7 @@ namespace MoreComplexDataStructures
         {
             if (elements.Length == 0)
             {
-                throw new ArgumentException("The specified array of elements is empty.", "elements");
+                throw new ArgumentException("The specified array of elements is empty.", nameof(elements));
             }
 
             tree.Clear();
@@ -76,7 +76,7 @@ namespace MoreComplexDataStructures
             }
             catch (Exception e)
             {
-                throw new Exception("Error encountered when adding item '" + elements[midPointIndex].ToString() + "' to the tree.", e);
+                throw new Exception($"Error encountered when adding item '{elements[midPointIndex].ToString()}' to the tree.", e);
             }
 
             if (startIndex < midPointIndex)

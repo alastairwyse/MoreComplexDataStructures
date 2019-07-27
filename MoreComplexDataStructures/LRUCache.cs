@@ -58,7 +58,7 @@ namespace MoreComplexDataStructures
         {
             if (itemLimit < 1)
             {
-                throw new ArgumentOutOfRangeException("itemLimit", "Parameter 'itemLimit' must be greater than or equal to 1.");
+                throw new ArgumentOutOfRangeException(nameof(itemLimit), $"Parameter '{nameof(itemLimit)}' must be greater than or equal to 1.");
             }
 
             cacheStore = new Dictionary<TKey, Tuple<TValue, LinkedListNode<TKey>>>();
@@ -166,7 +166,7 @@ namespace MoreComplexDataStructures
         {
             if (cacheStore.ContainsKey(key) == false)
             {
-                throw new ArgumentException("An item with the specified key '" + key.ToString() + "' does not exist in the cache.", "key");
+                throw new ArgumentException($"An item with the specified key '{key.ToString()}' does not exist in the cache.", nameof(key));
             }
             else
             {

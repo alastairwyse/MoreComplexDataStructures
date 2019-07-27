@@ -109,16 +109,16 @@ namespace MoreComplexDataStructures
             if (rangeStatuses.Count != 0)
                 throw new InvalidOperationException("A range of statuses can only be set true when all existing statuses are false.");
             if (rangeEnd < rangeStart)
-                throw new ArgumentException("Parameter 'rangeEnd' must be greater than or equal to parameter 'rangeStart'.", "rangeEnd");
+                throw new ArgumentException($"Parameter '{nameof(rangeEnd)}' must be greater than or equal to parameter '{nameof(rangeStart)}'.", nameof(rangeEnd));
             if (rangeStart < 1)
             {
                 if (rangeStart + Int64.MaxValue <= rangeEnd)
-                    throw new ArgumentException("The total inclusive range cannot exceed Int64.MaxValue.", "rangeEnd");
+                    throw new ArgumentException("The total inclusive range cannot exceed Int64.MaxValue.", nameof(rangeEnd));
             }
             else if (rangeEnd > -2)
             {
                 if (rangeEnd - Int64.MaxValue >= rangeStart)
-                    throw new ArgumentException("The total inclusive range cannot exceed Int64.MaxValue.", "rangeEnd");
+                    throw new ArgumentException("The total inclusive range cannot exceed Int64.MaxValue.", nameof(rangeEnd));
             }
 
             var newRange = new LongIntegerRange(rangeStart, rangeEnd - rangeStart + 1);

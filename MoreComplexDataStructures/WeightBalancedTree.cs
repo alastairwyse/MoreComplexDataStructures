@@ -249,7 +249,7 @@ namespace MoreComplexDataStructures
                         };
                         TraverseUpFromNode(currentNode, decrementCountsAction);
 
-                        throw new ArgumentException("A node holding the item specified in parameter 'item' (value = '" + item.ToString() + "') already exists in the tree.", "item");
+                        throw new ArgumentException($"A node holding the item specified in parameter '{nameof(item)}' (value = '{item.ToString()}') already exists in the tree.", nameof(item));
                     }
                     else if (comparisonResult < 0)
                     {
@@ -300,7 +300,7 @@ namespace MoreComplexDataStructures
         {
             if (rootNode == null)
             {
-                throw new ArgumentException("The specified item ('" + item.ToString() + "') does not exist in the tree.", "item");
+                throw new ArgumentException($"The specified item ('{item.ToString()}') does not exist in the tree.", nameof(item));
             }
             else
             {
@@ -408,7 +408,7 @@ namespace MoreComplexDataStructures
                             }
                             else
                             {
-                                throw new ArgumentException("The specified item ('" + item.ToString() + "') does not exist in the tree.", "item");
+                                throw new ArgumentException($"The specified item ('{item.ToString()}') does not exist in the tree.", nameof(item));
                             }
                         }
                         else if (comparisonResult > 0)
@@ -421,7 +421,7 @@ namespace MoreComplexDataStructures
                             }
                             else
                             {
-                                throw new ArgumentException("The specified item ('" + item.ToString() + "') does not exist in the tree.", "item");
+                                throw new ArgumentException($"The specified item ('{item.ToString()}') does not exist in the tree.", nameof(item));
                             }
                         }
                     }
@@ -457,7 +457,7 @@ namespace MoreComplexDataStructures
             Tuple<Boolean, WeightBalancedTreeNode<T>> searchResult = TraverseDownToNodeHoldingItemOrParent(item, (node) => { });
             if (searchResult.Item1 == false)
             {
-                throw new ArgumentException("The specified item ('" + item.ToString() + "') does not exist in the tree.", "item");
+                throw new ArgumentException($"The specified item ('{item.ToString()}') does not exist in the tree.", nameof(item));
             }
             else
             {
@@ -1072,7 +1072,7 @@ namespace MoreComplexDataStructures
             }
             else
             {
-                throw new Exception("Node containing item '" + childNode.Item.ToString() + "' is not a child of node containing item '" + parentNode.Item.ToString() + "'.");
+                throw new Exception($"Node containing item '{childNode.Item.ToString()}' is not a child of node containing item '{parentNode.Item.ToString()}'.");
             }
         }
 
@@ -1086,7 +1086,7 @@ namespace MoreComplexDataStructures
             // TODO: Could potentially remove this exception once functionality is solid
             if (node.LeftChildNode != null && node.RightChildNode != null)
             {
-                throw new Exception("Node with item '" + node.Item.ToString() + "' has left and right children, and cannot be handled by this method.");
+                throw new Exception("Node with item '{node.Item.ToString()}' has left and right children, and cannot be handled by this method.");
             }
 
             if (IsLeftChildOf(node, node.ParentNode) == true)
@@ -1314,7 +1314,7 @@ namespace MoreComplexDataStructures
         /// <typeparam name="T">Specifies the type of item held by the node of the recursion status.</typeparam>
         private class NodeRecursionStatus<T> where T : IComparable<T>
         {
-            private WeightBalancedTreeNode<T> node;
+            private readonly WeightBalancedTreeNode<T> node;
             private Boolean leftChildTreeProcessed;
             private Boolean rightChildTreeProcessed;
  

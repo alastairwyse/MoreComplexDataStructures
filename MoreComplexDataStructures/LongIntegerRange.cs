@@ -153,7 +153,7 @@ namespace MoreComplexDataStructures
         {
             if (inputLength < 1)
             {
-                throw new ArgumentException("Parameter 'length' must be greater than or equal to 1.", "length");
+                throw new ArgumentException($"Parameter '{nameof(length)}' must be greater than or equal to 1.", nameof(length));
             }
         }
 
@@ -166,7 +166,7 @@ namespace MoreComplexDataStructures
             {
                 if ((Int64.MaxValue - length) < (startValue - 1))
                 {
-                    throw new ArgumentException("The specified combination of parameters 'startValue'=" + startValue + " and 'length'=" + length + " exceeds the maximum value of an Int64.", "length");
+                    throw new ArgumentException($"The specified combination of parameters '{nameof(startValue)}'={startValue} and '{nameof(length)}'={length} exceeds the maximum value of an Int64.", nameof(length));
                 }
             }
         }

@@ -194,16 +194,16 @@ namespace MoreComplexDataStructures
         {
             if (depth < 1)
             {
-                throw new ArgumentException("Parameter 'depth' must be greater than or equal to 1.", "depth");
+                throw new ArgumentException($"Parameter '{nameof(depth)}' must be greater than or equal to 1.", nameof(depth));
             }
             if (horizontalPosition < 1)
             {
-                throw new ArgumentException("Parameter 'horizontalPosition' must be greater than or equal to 1.", "horizontalPosition");
+                throw new ArgumentException($"Parameter '{nameof(horizontalPosition)}' must be greater than or equal to 1.", nameof(horizontalPosition));
             }
             Int32 maximumPossiblePosition = Convert.ToInt32(Math.Pow(2, depth - 1));
             if (horizontalPosition > maximumPossiblePosition)
             {
-                throw new ArgumentException("Parameter 'horizontalPosition' is greater than maximum possible value " + maximumPossiblePosition + " for depth " + depth + ".", "horizontalPosition");
+                throw new ArgumentException($"Parameter '{nameof(horizontalPosition)}' is greater than maximum possible value {maximumPossiblePosition} for depth {depth}.", nameof(horizontalPosition));
             }
             if (rootNode == null)
             {
@@ -230,7 +230,7 @@ namespace MoreComplexDataStructures
                     // Move left (in this case we don't need to update targetHorizontalPosition)
                     if (currentNode.LeftChildNode == null)
                     {
-                        throw new Exception("Failed to traverse to position " + depth + ", " + horizontalPosition + ".  No node found at position " + (currentDepth + 1) + ", " + currentHorizontalPosition + ".");
+                        throw new Exception($"Failed to traverse to position {depth}, {horizontalPosition}.  No node found at position {(currentDepth + 1)}, {currentHorizontalPosition}.");
                     }
                     else
                     {
@@ -243,7 +243,7 @@ namespace MoreComplexDataStructures
                     currentHorizontalPosition = currentHorizontalPosition * 2;
                     if (currentNode.RightChildNode == null)
                     {
-                        throw new Exception("Failed to traverse to position " + depth + ", " + horizontalPosition + ".  No node found at position " + (currentDepth + 1) + ", " + currentHorizontalPosition + ".");
+                        throw new Exception($"Failed to traverse to position {depth}, {horizontalPosition}.  No node found at position {(currentDepth + 1)}, {currentHorizontalPosition}.");
                     }
                     else
                     {

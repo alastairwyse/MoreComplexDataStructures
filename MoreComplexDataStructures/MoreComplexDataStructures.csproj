@@ -11,43 +11,28 @@
 
 The project currently contains the following data structures and utility classes...
 
-WeightBalancedTree - An implementation of a weight-balanced tree.  The tree maintains counts of the nodes in each node's subtrees, and implements basic self balancing by performing rotations on any nodes where the subtree sizes differ, and rotation would improve the balance.  The class implements several methods to traverse based on item value comparison (e.g. GetNextLessThan(), GetNextGreaterThan(), GetAllLessThan(), GetAllGreaterThan()), and executes GetCountLessThan() and GetCountGreaterThan() in O(log(n)) time (since these values are stored and maintained at each node).  The class also provides methods to perform pre, post, and in-order depth-first search, breadth-first search, and to return a random node item.
-
-MinHeap / MaxHeap - Tree-based implementations of a min and max heap.  Insert() and ExtractMin() / ExtractMax() methods return with order O(log(n)) time complexity.  Also provides methods to traverse the nodes of the underlying trees via a breadth-first search.
-
-LongIntegerStatusStorer - Stores a true/false status for a complete set of long (Int64) integers.  Uses an underlying tree holding ranges of integers to store the statuses.  Also provides a method TraverseTree() to traverse the ranges stored in the tree via a breadth-first search.  Designed to be more memory efficient than an equivalent boolean array when large sets of the Int64 key values are contiguous (and hence can be 'condensed' into a range), and to support ranges larger than Int32.MaxValue.
-
-ListRandomizer - Randomizes a List or Array using the Fisher/Yates/Knuth algorithm (O(n) time complexity).
-
-WeightedRandomGenerator - Returns items randomly based on configured weightings.  The underlying implementation uses a tree, so the Generate() method returns with order O(log(n)) time complexity (where n is the number of weightings defined).
-
-Trie - An implementation of trie / prefix tree.  Nodes of the trie maintain a count of the number of sequences in each subtree, hence the GetCountOfSequencesWithPrefix() method returns a list of sequences with the specified prefix with order O(n) time complexity (where n is the number of elements in the prefix sequence).
-
-FrequencyTable - A simple (Dictionary-based) frequency table, which stores the frequency of occurrence of objects.
-
-BinarySearchTreeBalancedInserter - Inserts a set of items into a binary search tree, ensuring that the tree is balanced, and depth is minimized.
-
-CharacterTrie - Effectively a Trie&lt;Char&gt;, but with special implementations of the Insert(), Delete(), and Contains() methods which accept String parameters (and avoid the overhead of having to call String.ToCharArray() as is required with a Trie&lt;Char&gt;).
-
-LRUCache - A simple implementation of a least-recently-used cache using an underlying Dictionary and LinkedList.  By default the cache stores a fixed number of items (defined by constructor parameter 'itemLimit'), but it optionally allows overriding the routine to check whether the cache is full (e.g. to decide instead based on total memory usage, etc...).
-
-UnflaggedNumberGenerator - Allows 'flagging' (i.e. setting true or false) for each number in a consecutive range (where the range length is &lt;= Int64.MaxValue), and then provides methods to identify which numbers have not been flagged (GetLowestUnflaggedNumbers(), GetHighestUnflaggedNumbers(), etc...).
-
-UniqueRandomGenerator - Generates unique Int64 random numbers within a given range (where the range length is &lt;= Int64.MaxValue). The underlying implementation uses a balanced tree of integer ranges, so the Generate() method returns with order O(log(n)) time complexity.</Description>
+WeightBalancedTree&lt;T&gt; - A weight-balanced binary search tree
+MinHeap&lt;T&gt; - A tree-based min heap
+MaxHeap&lt;T&gt; - A tree-based max heap
+PriorityQueue&lt;T&gt; - A tree-based double-ended priority queue
+Trie&lt;T&gt; - A trie (or prefix tree)
+CharacterTrie - A trie which stores characters (with some performance enhancements over Trie&lt;Char&gt;)
+WeightedRandomGenerator&lt;T&gt; - A weighted random number (or item) generator
+UniqueRandomGenerator - A random number generator guaranteed to always produce unique numbers within a given range
+FrequencyTable&lt;T&gt; - A frequency table
+LRUCache&lt;TKey, TValue&gt; - A simple least recently used cache
+UnflaggedNumberGenerator - Allows the 'flagging' (marking) of numbers in a specified range, and provides methods to identify numbers which were not flagged
+LongIntegerStatusStorer - Stores a boolean status for a complete set of long integers
+ListRandomizer - Randomizes the elements of a list using the Fisher/Yates/Knuth algorithm</Description>
     <Authors>Alastair Wyse</Authors>
-    <Version>1.5.0</Version>
-    <PackageTags>data structure weight weighted balanced tree binary search minheap maxheap trie frequency table long integer int64 random randomize list array unique random generate lru cache</PackageTags>
-    <PackageReleaseNotes>Converted to .NET Standard.
-Added LRUCache, CharacterTrie, UniqueRandomGenerator, UnflaggedNumberGenerator classes.
-Implemented automatic balancing in WeightBalancedTree.
-Added Min and Max properties to WeightBalancedTree.
-Added method Get() to WeightBalancedTree to return a specified node item (useful when the node items are container classes which hold additional data to that used in the IComparable&lt;T&gt; implementation... i.e. allowing the tree to be used as a treemap).
-Trie.GetAllSequencesWithPrefix() now returns IEnumerable&lt;List&lt;T&gt;&gt;.
-Added an additional Trie constructor which returns the root node via an 'out' parameter (to allow custom traversals).
-Added method FrequencyTable.Clear().
-Refactored WeightedRandomGenerator to remove Dictionary member 'weightingToItemMap' and instead store data in ItemAndWeighting&lt;T&gt; as each tree node item.
-Removed TreeBasedListRandomizer class.</PackageReleaseNotes>
+    <Version>1.6.0</Version>
+    <PackageTags>data structure weight weighted balanced tree binary search minheap maxheap trie priority queue frequency table long integer int64 random randomize list array unique random generate lru cache</PackageTags>
+    <PackageReleaseNotes>Added PriorityQueue.
+Added an additional FrequencyTable constructor to allow pre-population with a collection of items and corresponding counts.</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
