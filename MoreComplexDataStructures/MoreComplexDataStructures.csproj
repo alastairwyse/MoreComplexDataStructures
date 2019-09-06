@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.5.0.0</AssemblyVersion>
-    <FileVersion>1.5.0.0</FileVersion>
+    <AssemblyVersion>1.7.0.0</AssemblyVersion>
+    <FileVersion>1.7.0.0</FileVersion>
     <Copyright>Copyright © Alastair Wyse 2019</Copyright>
     <PackageProjectUrl>https://github.com/alastairwyse/MoreComplexDataStructures</PackageProjectUrl>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
@@ -25,10 +25,9 @@ UnflaggedNumberGenerator - Allows the 'flagging' (marking) of numbers in a speci
 LongIntegerStatusStorer - Stores a boolean status for a complete set of long integers
 ListRandomizer - Randomizes the elements of a list using the Fisher/Yates/Knuth algorithm</Description>
     <Authors>Alastair Wyse</Authors>
-    <Version>1.6.0</Version>
+    <Version>1.7.0</Version>
     <PackageTags>data structure weight weighted balanced tree binary search minheap maxheap trie priority queue frequency table long integer int64 random randomize list array unique random generate lru cache</PackageTags>
-    <PackageReleaseNotes>Added PriorityQueue.
-Added an additional FrequencyTable constructor to allow pre-population with a collection of items and corresponding counts.</PackageReleaseNotes>
+    <PackageReleaseNotes>Optimized the WeightBalancedTree balancing algorithm to include both standard rotations and splay tree zig-zag operations.</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <ApplicationIcon />
     <OutputType>Library</OutputType>

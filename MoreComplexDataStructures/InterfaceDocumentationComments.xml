@@ -103,5 +103,21 @@
       </summary>
       <param name="inputNode">The node to perform the rotation on.</param>
     </member>
+    <member name="M:MoreComplexDataStructures.WeightBalancedTree`1.ZigZagNodeLeft(MoreComplexDataStructures.WeightBalancedTreeNode{`0})">
+      <summary>
+        Performs a left zig-zag operation on the specified node.
+      </summary>
+      <param name="inputNode">The node to perform the zig-zag operation on.</param>
+      <exception cref="T:System.InvalidOperationException">The specified node cannot have a left zig-zag operation applied as it is a right child of its parent.</exception>
+      <exception cref="T:System.InvalidOperationException">The specified node cannot have a left zig-zag operation applied as its parent is a left child of its grandparent.</exception>
+    </member>
+    <member name="M:MoreComplexDataStructures.WeightBalancedTree`1.ZigZagNodeRight(MoreComplexDataStructures.WeightBalancedTreeNode{`0})">
+      <summary>
+        Performs a right zig-zag operation on the specified node.
+      </summary>
+      <param name="inputNode">The node to perform the zig-zag operation on.</param>
+      <exception cref="T:System.InvalidOperationException">The specified node cannot have a right zig-zag operation applied as it is a left child of its parent.</exception>
+      <exception cref="T:System.InvalidOperationException">The specified node cannot have a right zig-zag operation applied as its parent is a right child of its grandparent.</exception>
+    </member>
   </members>
 </doc>

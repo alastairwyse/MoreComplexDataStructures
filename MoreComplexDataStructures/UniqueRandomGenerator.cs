@@ -439,6 +439,64 @@ namespace MoreComplexDataStructures
                 return base.TraverseUpToNode(startNode, traversePredicateFunc);
             }
 
+            /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.WeightBalancedTree`1.ZigZagNodeLeft(MoreComplexDataStructures.WeightBalancedTreeNode{`0})"]/*'/>
+            protected override void ZigZagNodeLeft(WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNode)
+            {
+                base.ZigZagNodeLeft(inputNode);
+
+                // Below variable names assume tree structure as it was before the zig-zag operation
+                WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNodeParent = inputNode.RightChildNode;
+                WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNodeGrandParent = inputNode.LeftChildNode;
+
+                if (inputNodeGrandParent.RightChildNode == null)
+                {
+                    inputNodeGrandParent.Item.RightSubtreeRangeCount = 0;
+                }
+                else
+                {
+                    inputNodeGrandParent.Item.RightSubtreeRangeCount = inputNode.Item.LeftSubtreeRangeCount;
+                }
+                if (inputNodeParent.LeftChildNode == null)
+                {
+                    inputNodeParent.Item.LeftSubtreeRangeCount = 0;
+                }
+                else
+                {
+                    inputNodeParent.Item.LeftSubtreeRangeCount = inputNode.Item.RightSubtreeRangeCount;
+                }
+                inputNode.Item.LeftSubtreeRangeCount = inputNodeGrandParent.Item.LeftSubtreeRangeCount + inputNodeGrandParent.Item.RightSubtreeRangeCount + inputNodeGrandParent.Item.Range.Length;
+                inputNode.Item.RightSubtreeRangeCount = inputNodeParent.Item.LeftSubtreeRangeCount + inputNodeParent.Item.RightSubtreeRangeCount + inputNodeParent.Item.Range.Length;
+            }
+
+            /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.WeightBalancedTree`1.ZigZagNodeRight(MoreComplexDataStructures.WeightBalancedTreeNode{`0})"]/*'/>
+            protected override void ZigZagNodeRight(WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNode)
+            {
+                base.ZigZagNodeRight(inputNode);
+
+                // Below variable names assume tree structure as it was before the zig-zag operation
+                WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNodeParent = inputNode.LeftChildNode;
+                WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNodeGrandParent = inputNode.RightChildNode;
+
+                if (inputNodeGrandParent.LeftChildNode == null)
+                {
+                    inputNodeGrandParent.Item.LeftSubtreeRangeCount = 0;
+                }
+                else
+                {
+                    inputNodeGrandParent.Item.LeftSubtreeRangeCount = inputNode.Item.RightSubtreeRangeCount;
+                }
+                if (inputNodeParent.RightChildNode == null)
+                {
+                    inputNodeParent.Item.RightSubtreeRangeCount = 0;
+                }
+                else
+                {
+                    inputNodeParent.Item.RightSubtreeRangeCount = inputNode.Item.LeftSubtreeRangeCount;
+                }
+                inputNode.Item.LeftSubtreeRangeCount = inputNodeParent.Item.LeftSubtreeRangeCount + inputNodeParent.Item.RightSubtreeRangeCount + inputNodeParent.Item.Range.Length;
+                inputNode.Item.RightSubtreeRangeCount = inputNodeGrandParent.Item.LeftSubtreeRangeCount + inputNodeGrandParent.Item.RightSubtreeRangeCount + inputNodeGrandParent.Item.Range.Length;
+            }
+
             /// <summary>
             /// Traverses upwards from the specified node, performing node rotations to balance the tree.
             /// </summary>
@@ -469,8 +527,8 @@ namespace MoreComplexDataStructures
             }
 
             #endregion
-        }
 
+        }
         #endregion
     }
 }

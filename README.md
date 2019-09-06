@@ -4,9 +4,7 @@ MoreComplexDataStructures
 MoreComplexDataStructures is a class library containing a collection of data structures (plus related utility classes) more complex than those found in the standard .NET framework.
 
 ### Contents
-**WeightBalancedTree** - An implementation of a [weight-balanced tree](https://en.wikipedia.org/wiki/Weight-balanced_tree).  The tree maintains counts of the nodes in each node's subtrees, and implements basic self balancing by performing rotations on any nodes where the subtree sizes differ, and rotation would improve the balance.  The class implements several methods to traverse based on item value comparison (e.g. GetNextLessThan(), GetNextGreaterThan(), GetAllLessThan(), GetAllGreaterThan()), and executes GetCountLessThan() and GetCountGreaterThan() in O(log(n)) time (since these values are stored and maintained at each node).  The class also provides methods to perform pre, post, and in-order depth-first search, breadth-first search, and to return a random node item.
-
-Note that the current balancing algorithm can result in unbalanced trees for certain specific sequences of input values (e.g. as a worst case, inserting values 1, 7, 2, 6, 3, 5, 4 in order would result in a tree which was effectively a linked list).
+**WeightBalancedTree** - An implementation of a [weight-balanced tree](https://en.wikipedia.org/wiki/Weight-balanced_tree).  The tree maintains counts of the nodes in each node's subtrees, and implements self-balancing by performing standard rotations and splay tree [zig-zag operations](https://en.wikipedia.org/wiki/Splay_tree#Splaying).  The balancing algorithm maintains an overall height typically within a factor of 1.2 of the optimal (1-based) height for the number of nodes stored.  The class implements several methods to traverse based on item value comparison (e.g. GetNextLessThan(), GetNextGreaterThan(), GetAllLessThan(), GetAllGreaterThan()), and executes GetCountLessThan() and GetCountGreaterThan() in O(log(n)) time (since these values are stored and maintained at each node).  The class also provides methods to perform pre, post, and in-order depth-first search, breadth-first search, and to return a random node item.
 
 **MinHeap** - A tree-based implementation of a [min heap](https://en.wikipedia.org/wiki/Heap_(data_structure)).  Insert() and ExtractMin() methods return with order O(log(n)) time complexity.  Also provides a method to traverse the nodes of the underlying tree via a breadth-first search.
 
@@ -54,7 +52,6 @@ Note - Another (more simple) way to generate a range of unique random numbers is
 **PriorityQueue** - An implementation of a [double-ended](https://en.wikipedia.org/wiki/Double-ended_priority_queue) [priority queue](https://en.wikipedia.org/wiki/Priority_queue).  As the underlying structure is a balanced tree, most methods return with order O(log(n)) time complexity.  The class allows dequeuing of specific items aside from the minimum and maximum, and exposes several methods to inspect the contents of the queue.
 
 ### Future Enhancements
-- Enhance WeightBalancedTree balancing algorithm to handle sequences of input values which currently result in an unbalanced tree (e.g. Int32 tree with insert sequence 1, 7, 2, 6, 3, 5, 4).
 - Enhance any methods which return an IEnumerable to throw an InvalidOperationException if the object structure is changed while enumerating.
 - Remove inefficiency of converting List&lt;Char&gt; to String in CharacterTrie.GetAllStringsWithPrefix().
 - Remove redundant / unused conditional branches in WeightBalancedTree.GetRandomItem() method (e.g. 'if (currentNode.LeftChildNode == null)')
@@ -72,6 +69,12 @@ Note - Another (more simple) way to generate a range of unique random numbers is
   <tr>
     <td><b>Version</b></td>
     <td><b>Changes</b></td>
+  </tr>
+  <tr>
+    <td valign="top">1.7.0.0</td>
+    <td>
+      Optimized the WeightBalancedTree balancing algorithm to include both standard rotations and splay tree zig-zag operations.
+    </td>
   </tr>
   <tr>
     <td valign="top">1.6.0.0</td>

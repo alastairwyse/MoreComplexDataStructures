@@ -1735,7 +1735,7 @@ namespace MoreComplexDataStructures.UnitTests
         [Test]
         public void Remove_BalancedRemoveNodeWithNoChildren()
         {
-            // Test by removing node 3 the following tree...
+            // Test by removing node 3 in the following tree...
             //      4
             //     / 
             //    2 
@@ -1774,7 +1774,7 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual(0, allNodes[4].RightSubtreeSize);
 
 
-            // Test by removing node 2 the following tree...
+            // Test by removing node 2 in the following tree...
             //  1  
             //   \  
             //    3 
@@ -1819,7 +1819,7 @@ namespace MoreComplexDataStructures.UnitTests
         [Test]
         public void Remove_BalancedRemoveNodeWithNoLeftChild()
         {
-            // Test by removing node 1 the following tree...
+            // Test by removing node 1 in the following tree...
             //      3
             //    /   \
             //  1       5
@@ -1883,7 +1883,7 @@ namespace MoreComplexDataStructures.UnitTests
         [Test]
         public void Remove_BalancedRemoveNodeWithNoRightChild()
         {
-            // Test by removing node 7 the following tree...
+            // Test by removing node 7 in the following tree...
             //       5
             //     /   \
             //   3       7
@@ -1947,7 +1947,7 @@ namespace MoreComplexDataStructures.UnitTests
         [Test]
         public void Remove_BalancedRemoveNodeWithLeftAndRightChildren()
         {
-            // Test by removing node 8 the following tree...
+            // Test by removing node 8 in the following tree...
             //        6
             //      /   \
             //    4       8
@@ -1961,11 +1961,11 @@ namespace MoreComplexDataStructures.UnitTests
             // ...and expect the result to look like...
             //        4
             //      /   \
-            //    1       6
-            //     \     / \
-            //      3   5   9 
-            //     /       /
-            //    2       7
+            //    2       6
+            //   / \     / \
+            //  1   3   5   9 
+            //             /
+            //            7
             testWeightBalancedTree = new WeightBalancedTree<Int32>(true);
             Int32[] treeItems = new Int32[] { 6, 4, 8, 1, 5, 7, 9, 3, 2 };
             foreach (Int32 currentItem in treeItems)
@@ -1978,16 +1978,19 @@ namespace MoreComplexDataStructures.UnitTests
             Dictionary<Int32, WeightBalancedTreeNode<Int32>> allNodes = PutAllNodesInDictionary(testWeightBalancedTree);
             Assert.AreEqual(8, allNodes.Count);
             Assert.IsNull(allNodes[4].ParentNode);
-            Assert.AreSame(allNodes[1], allNodes[4].LeftChildNode);
+            Assert.AreSame(allNodes[2], allNodes[4].LeftChildNode);
             Assert.AreSame(allNodes[6], allNodes[4].RightChildNode);
-            Assert.AreSame(allNodes[4], allNodes[1].ParentNode);
-            Assert.IsNull(allNodes[1].LeftChildNode);
-            Assert.AreSame(allNodes[3], allNodes[1].RightChildNode);
+            Assert.AreSame(allNodes[4], allNodes[2].ParentNode);
+            Assert.AreSame(allNodes[1], allNodes[2].LeftChildNode);
+            Assert.AreSame(allNodes[3], allNodes[2].RightChildNode);
             Assert.AreSame(allNodes[4], allNodes[6].ParentNode);
             Assert.AreSame(allNodes[5], allNodes[6].LeftChildNode);
             Assert.AreSame(allNodes[9], allNodes[6].RightChildNode);
-            Assert.AreSame(allNodes[1], allNodes[3].ParentNode);
-            Assert.AreSame(allNodes[2], allNodes[3].LeftChildNode);
+            Assert.AreSame(allNodes[2], allNodes[1].ParentNode);
+            Assert.IsNull(allNodes[1].LeftChildNode);
+            Assert.IsNull(allNodes[1].RightChildNode);
+            Assert.AreSame(allNodes[2], allNodes[3].ParentNode);
+            Assert.IsNull(allNodes[3].LeftChildNode);
             Assert.IsNull(allNodes[3].RightChildNode);
             Assert.AreSame(allNodes[6], allNodes[5].ParentNode);
             Assert.IsNull(allNodes[5].LeftChildNode);
@@ -1995,26 +1998,23 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreSame(allNodes[6], allNodes[9].ParentNode);
             Assert.AreSame(allNodes[7], allNodes[9].LeftChildNode);
             Assert.IsNull(allNodes[9].RightChildNode);
-            Assert.AreSame(allNodes[3], allNodes[2].ParentNode);
-            Assert.IsNull(allNodes[2].LeftChildNode);
-            Assert.IsNull(allNodes[2].RightChildNode);
             Assert.AreSame(allNodes[9], allNodes[7].ParentNode);
             Assert.IsNull(allNodes[7].LeftChildNode);
             Assert.IsNull(allNodes[7].RightChildNode);
             Assert.AreEqual(3, allNodes[4].LeftSubtreeSize);
             Assert.AreEqual(4, allNodes[4].RightSubtreeSize);
-            Assert.AreEqual(0, allNodes[1].LeftSubtreeSize);
-            Assert.AreEqual(2, allNodes[1].RightSubtreeSize);
+            Assert.AreEqual(1, allNodes[2].LeftSubtreeSize);
+            Assert.AreEqual(1, allNodes[2].RightSubtreeSize);
             Assert.AreEqual(1, allNodes[6].LeftSubtreeSize);
             Assert.AreEqual(2, allNodes[6].RightSubtreeSize);
-            Assert.AreEqual(1, allNodes[3].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[1].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[1].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[3].LeftSubtreeSize);
             Assert.AreEqual(0, allNodes[3].RightSubtreeSize);
             Assert.AreEqual(0, allNodes[5].LeftSubtreeSize);
             Assert.AreEqual(0, allNodes[5].RightSubtreeSize);
             Assert.AreEqual(1, allNodes[9].LeftSubtreeSize);
             Assert.AreEqual(0, allNodes[9].RightSubtreeSize);
-            Assert.AreEqual(0, allNodes[2].LeftSubtreeSize);
-            Assert.AreEqual(0, allNodes[2].RightSubtreeSize);
             Assert.AreEqual(0, allNodes[7].LeftSubtreeSize);
             Assert.AreEqual(0, allNodes[7].RightSubtreeSize);
         }
@@ -2239,6 +2239,120 @@ namespace MoreComplexDataStructures.UnitTests
             });
 
             Assert.That(e.Message, NUnit.Framework.Does.StartWith("The node containing item '3' cannot be left-rotated as its right child is null."));
+        }
+
+        /// <summary>
+        /// Success tests for the WillLeftRotationImproveBalance() method.
+        /// </summary>
+        [Test]
+        public void WillLeftRotationImproveBalance()
+        {
+            // Test with nodes 1 and 2 in the following tree
+            //  1
+            //   \
+            //    2
+            //     \
+            //      3
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 1, 2, 3 }, false);
+            WeightBalancedTreeNode<Int32> nodeToAssess = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 1)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            Boolean result = testWeightBalancedTree.WillLeftRotationImproveBalance(nodeToAssess);
+
+            Assert.IsTrue(result);
+
+
+            getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 2)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            result = testWeightBalancedTree.WillLeftRotationImproveBalance(nodeToAssess);
+
+            Assert.IsFalse(result);
+
+
+            // Test with node 3 in the following tree
+            //      3
+            //     / \
+            //    2   4
+            //   /
+            //  1
+            testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 3, 2, 4, 1 }, false);
+            getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 3)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            result = testWeightBalancedTree.WillLeftRotationImproveBalance(nodeToAssess);
+
+            Assert.IsFalse(result);
+        }
+
+        /// <summary>
+        /// Success tests for the WillRightRotationImproveBalance() method.
+        /// </summary>
+        [Test]
+        public void WillRightRotationImproveBalance()
+        {
+            // Test with nodes 3 and 2 in the following tree
+            //      3
+            //     / 
+            //    2   
+            //   /
+            //  1
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 3, 2, 1 }, false);
+            WeightBalancedTreeNode<Int32> nodeToAssess = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 3)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            Boolean result = testWeightBalancedTree.WillRightRotationImproveBalance(nodeToAssess);
+
+            Assert.IsTrue(result);
+
+
+            getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 2)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            result = testWeightBalancedTree.WillRightRotationImproveBalance(nodeToAssess);
+
+            Assert.IsFalse(result);
+
+
+            // Test with node 2 in the following tree
+            //    2
+            //   / \
+            //  1   3
+            //       \
+            //        4
+            testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 2, 1, 3, 4 }, false);
+            getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 2)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            result = testWeightBalancedTree.WillRightRotationImproveBalance(nodeToAssess);
+
+            Assert.IsFalse(result);
         }
 
         /// <summary>
@@ -2918,7 +3032,7 @@ namespace MoreComplexDataStructures.UnitTests
         [Test]
         public void BalanceTreeUpFromNode_3NodesRequiresRightRotation()
         {
-            // Test by balancing node 2 the following tree...
+            // Test by balancing node 2 in the following tree...
             //       3
             //      / 
             //     2
@@ -2972,7 +3086,7 @@ namespace MoreComplexDataStructures.UnitTests
         [Test]
         public void BalanceTreeUpFromNode_3NodesRequiresLeftRotation()
         {
-            // Test by balancing node 2 the following tree...
+            // Test by balancing node 2 in the following tree...
             //   1 
             //    \ 
             //     2
@@ -3026,7 +3140,7 @@ namespace MoreComplexDataStructures.UnitTests
         [Test]
         public void BalanceTreeUpFromNode_3NodesDoesntRequireRotation()
         {
-            // Test that the following tree is not changed if BalanceTreeUpFromNode() is called on with node containing 1...
+            // Test that the following tree is not changed if BalanceTreeUpFromNode() is called on node containing 1...
             //   1 
             //    \ 
             //     2
@@ -3062,7 +3176,7 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual(0, subtreeValueStore[2].Item2);
 
 
-            // Test that the following tree is not changed if BalanceTreeUpFromNode() is called on with node containing 2...
+            // Test that the following tree is not changed if BalanceTreeUpFromNode() is called on node containing 2...
             //     2 
             //    / 
             //   1
@@ -3092,7 +3206,7 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual(0, subtreeValueStore[1].Item2);
 
 
-            // Test that the following tree is not changed if BalanceTreeUpFromNode() is called on with node containing 2...
+            // Test that the following tree is not changed if BalanceTreeUpFromNode() is called on node containing 2...
             //     2 
             //    / \
             //   1   3
@@ -3125,96 +3239,137 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual(0, subtreeValueStore[1].Item2);
             Assert.AreEqual(0, subtreeValueStore[3].Item1);
             Assert.AreEqual(0, subtreeValueStore[3].Item2);
-
-
-            // Test that the following tree is not changed if BalanceTreeUpFromNode() is called on with node containing 3...
-            //     3
-            //    /
-            //   1 
-            //    \
-            //     2
-            allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
-            subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
-            testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 3, 1, 2 }, false);
-            getNodeAction = (currentNode) =>
-            {
-                if (currentNode.Item == 3)
-                    nodeToBalance = currentNode;
-            };
-            testWeightBalancedTree.InOrderDepthFirstSearch(getNodeAction);
-
-            testWeightBalancedTree.BalanceTreeUpFromNode(nodeToBalance);
-
-            testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
-            Assert.AreEqual(3, allNodes.Count);
-            Assert.IsNull(allNodes[3].ParentNode);
-            Assert.AreSame(allNodes[1], allNodes[3].LeftChildNode);
-            Assert.IsNull(allNodes[3].RightChildNode);
-            Assert.AreSame(allNodes[3], allNodes[1].ParentNode);
-            Assert.IsNull(allNodes[1].LeftChildNode);
-            Assert.AreSame(allNodes[2], allNodes[1].RightChildNode);
-            Assert.AreSame(allNodes[1], allNodes[2].ParentNode);
-            Assert.IsNull(allNodes[2].LeftChildNode);
-            Assert.IsNull(allNodes[2].RightChildNode);
-            Assert.AreEqual(2, subtreeValueStore[3].Item1);
-            Assert.AreEqual(0, subtreeValueStore[3].Item2);
-            Assert.AreEqual(0, subtreeValueStore[1].Item1);
-            Assert.AreEqual(1, subtreeValueStore[1].Item2);
-            Assert.AreEqual(0, subtreeValueStore[2].Item1);
-            Assert.AreEqual(0, subtreeValueStore[2].Item2);
-
-
-            // Test that the following tree is not changed if BalanceTreeUpFromNode() is called on with node containing 1...
-            //   1 
-            //    \
-            //     3
-            //    /
-            //   2
-            allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
-            subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
-            testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 1, 3, 2 }, false);
-            getNodeAction = (currentNode) =>
-            {
-                if (currentNode.Item == 1)
-                    nodeToBalance = currentNode;
-            };
-            testWeightBalancedTree.InOrderDepthFirstSearch(getNodeAction);
-
-            testWeightBalancedTree.BalanceTreeUpFromNode(nodeToBalance);
-
-            testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
-            Assert.AreEqual(3, allNodes.Count);
-            Assert.IsNull(allNodes[1].ParentNode);
-            Assert.IsNull(allNodes[1].LeftChildNode);
-            Assert.AreSame(allNodes[3], allNodes[1].RightChildNode);
-            Assert.AreSame(allNodes[1], allNodes[3].ParentNode);
-            Assert.AreSame(allNodes[2], allNodes[3].LeftChildNode);
-            Assert.IsNull(allNodes[3].RightChildNode);
-            Assert.AreSame(allNodes[3], allNodes[2].ParentNode);
-            Assert.IsNull(allNodes[2].LeftChildNode);
-            Assert.IsNull(allNodes[2].RightChildNode);
-            Assert.AreEqual(0, subtreeValueStore[1].Item1);
-            Assert.AreEqual(2, subtreeValueStore[1].Item2);
-            Assert.AreEqual(1, subtreeValueStore[3].Item1);
-            Assert.AreEqual(0, subtreeValueStore[3].Item2);
-            Assert.AreEqual(0, subtreeValueStore[2].Item1);
-            Assert.AreEqual(0, subtreeValueStore[2].Item2);
         }
-        
+
         /// <summary>
-        /// Success tests for the BalanceTreeUpFromNode() method for trees with 6 nodes which don't require balancing (i.e. tests that the method doesn't do anything).
+        /// Success tests for the BalanceTreeUpFromNode() method for a small tree with 3 nodes which requires a left zig-zag operation.
         /// </summary>
         [Test]
-        public void BalanceTreeUpFromNode_6NodesDoesntRequireRotation()
+        public void BalanceTreeUpFromNode_3NodesRequiresLeftZigZag()
         {
-            // Test that the following tree is not changed if BalanceTreeUpFromNode() is called on with node containing 3...
-            //       5 
-            //     /   \ 
-            //    2     6
+            // Test by balancing node 2 in the following tree...
+            //    1
+            //     \
+            //      3
+            //     /
+            //    2
+            //
+            // ...and expect the result to look like...
+            //      2
+            //     / \
+            //    1   3
+            var allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
+            var subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
+            Action<WeightBalancedTreeNode<Int32>> populateStoreAction = (node) =>
+            {
+                allNodes.Add(node.Item, node);
+                subtreeValueStore.Add(node.Item, new Tuple<Int32, Int32>(node.LeftSubtreeSize, node.RightSubtreeSize));
+            };
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 1, 3, 2 }, false);
+            WeightBalancedTreeNode<Int32> nodeToBalance = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 2)
+                    nodeToBalance = currentNode;
+            };
+            testWeightBalancedTree.InOrderDepthFirstSearch(getNodeAction);
+
+            testWeightBalancedTree.BalanceTreeUpFromNode(nodeToBalance);
+
+            testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
+            Assert.AreEqual(3, allNodes.Count);
+            Assert.IsNull(allNodes[2].ParentNode);
+            Assert.AreSame(allNodes[1], allNodes[2].LeftChildNode);
+            Assert.AreSame(allNodes[3], allNodes[2].RightChildNode);
+            Assert.AreSame(allNodes[2], allNodes[1].ParentNode);
+            Assert.IsNull(allNodes[1].LeftChildNode);
+            Assert.IsNull(allNodes[1].RightChildNode);
+            Assert.AreSame(allNodes[2], allNodes[3].ParentNode);
+            Assert.IsNull(allNodes[3].LeftChildNode);
+            Assert.IsNull(allNodes[3].RightChildNode);
+            Assert.AreEqual(1, subtreeValueStore[2].Item1);
+            Assert.AreEqual(1, subtreeValueStore[2].Item2);
+            Assert.AreEqual(0, subtreeValueStore[1].Item1);
+            Assert.AreEqual(0, subtreeValueStore[1].Item2);
+            Assert.AreEqual(0, subtreeValueStore[3].Item1);
+            Assert.AreEqual(0, subtreeValueStore[3].Item2);
+        }
+
+        /// <summary>
+        /// Success tests for the BalanceTreeUpFromNode() method for a small tree with 3 nodes which requires a right zig-zag operation.
+        /// </summary>
+        [Test]
+        public void BalanceTreeUpFromNode_3NodesRequiresRightZigZag()
+        {
+            // Test by balancing node 2 in the following tree...
+            //      3
+            //     /
+            //    1 
+            //     \
+            //      2
+            //
+            // ...and expect the result to look like...
+            //      2
+            //     / \
+            //    1   3
+            var allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
+            var subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
+            Action<WeightBalancedTreeNode<Int32>> populateStoreAction = (node) =>
+            {
+                allNodes.Add(node.Item, node);
+                subtreeValueStore.Add(node.Item, new Tuple<Int32, Int32>(node.LeftSubtreeSize, node.RightSubtreeSize));
+            };
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 3, 1, 2 }, false);
+            WeightBalancedTreeNode<Int32> nodeToBalance = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 2)
+                    nodeToBalance = currentNode;
+            };
+            testWeightBalancedTree.InOrderDepthFirstSearch(getNodeAction);
+
+            testWeightBalancedTree.BalanceTreeUpFromNode(nodeToBalance);
+
+            testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
+            Assert.AreEqual(3, allNodes.Count);
+            Assert.IsNull(allNodes[2].ParentNode);
+            Assert.AreSame(allNodes[1], allNodes[2].LeftChildNode);
+            Assert.AreSame(allNodes[3], allNodes[2].RightChildNode);
+            Assert.AreSame(allNodes[2], allNodes[1].ParentNode);
+            Assert.IsNull(allNodes[1].LeftChildNode);
+            Assert.IsNull(allNodes[1].RightChildNode);
+            Assert.AreSame(allNodes[2], allNodes[3].ParentNode);
+            Assert.IsNull(allNodes[3].LeftChildNode);
+            Assert.IsNull(allNodes[3].RightChildNode);
+            Assert.AreEqual(1, subtreeValueStore[2].Item1);
+            Assert.AreEqual(1, subtreeValueStore[2].Item2);
+            Assert.AreEqual(0, subtreeValueStore[1].Item1);
+            Assert.AreEqual(0, subtreeValueStore[1].Item2);
+            Assert.AreEqual(0, subtreeValueStore[3].Item1);
+            Assert.AreEqual(0, subtreeValueStore[3].Item2);
+        }
+
+        /// <summary>
+        /// Success tests for the BalanceTreeUpFromNode() method for trees with 6 nodes which requires a right zig-zag operation.
+        /// </summary>
+        [Test]
+        public void BalanceTreeUpFromNode_6NodesRequiresRightZigZag()
+        {
+            // Test by balancing node 3 in the following tree...
+            //      5 
+            //     / \ 
+            //    2   6
             //   / \
             //  1   3
             //       \
             //        4
+            //
+            // ...and expect the result to look like...
+            //      3 
+            //     / \ 
+            //    2   5
+            //   /   / \
+            //  1   4   6
             var allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
             var subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
             Action<WeightBalancedTreeNode<Int32>> populateStoreAction = (node) =>
@@ -3235,46 +3390,53 @@ namespace MoreComplexDataStructures.UnitTests
 
             testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
             Assert.AreEqual(6, allNodes.Count);
-            Assert.IsNull(allNodes[5].ParentNode);
-            Assert.AreSame(allNodes[2], allNodes[5].LeftChildNode);
-            Assert.AreSame(allNodes[6], allNodes[5].RightChildNode);
-            Assert.AreSame(allNodes[5], allNodes[2].ParentNode);
+            Assert.IsNull(allNodes[3].ParentNode);
+            Assert.AreSame(allNodes[2], allNodes[3].LeftChildNode);
+            Assert.AreSame(allNodes[5], allNodes[3].RightChildNode);
+            Assert.AreSame(allNodes[3], allNodes[2].ParentNode);
             Assert.AreSame(allNodes[1], allNodes[2].LeftChildNode);
-            Assert.AreSame(allNodes[3], allNodes[2].RightChildNode);
-            Assert.AreSame(allNodes[5], allNodes[6].ParentNode);
-            Assert.IsNull(allNodes[6].LeftChildNode);
-            Assert.IsNull(allNodes[6].RightChildNode);
+            Assert.IsNull(allNodes[2].RightChildNode);
+            Assert.AreSame(allNodes[3], allNodes[5].ParentNode);
+            Assert.AreSame(allNodes[4], allNodes[5].LeftChildNode);
+            Assert.AreSame(allNodes[6], allNodes[5].RightChildNode);
             Assert.AreSame(allNodes[2], allNodes[1].ParentNode);
             Assert.IsNull(allNodes[1].LeftChildNode);
             Assert.IsNull(allNodes[1].RightChildNode);
-            Assert.AreSame(allNodes[2], allNodes[3].ParentNode);
-            Assert.IsNull(allNodes[3].LeftChildNode);
-            Assert.AreSame(allNodes[4], allNodes[3].RightChildNode);
-            Assert.AreSame(allNodes[3], allNodes[4].ParentNode);
+            Assert.AreSame(allNodes[5], allNodes[4].ParentNode);
             Assert.IsNull(allNodes[4].LeftChildNode);
             Assert.IsNull(allNodes[4].RightChildNode);
-            Assert.AreEqual(4, subtreeValueStore[5].Item1);
-            Assert.AreEqual(1, subtreeValueStore[5].Item2);
+            Assert.AreSame(allNodes[5], allNodes[6].ParentNode);
+            Assert.IsNull(allNodes[6].LeftChildNode);
+            Assert.IsNull(allNodes[6].RightChildNode);
+            Assert.AreEqual(2, subtreeValueStore[3].Item1);
+            Assert.AreEqual(3, subtreeValueStore[3].Item2);
             Assert.AreEqual(1, subtreeValueStore[2].Item1);
-            Assert.AreEqual(2, subtreeValueStore[2].Item2);
-            Assert.AreEqual(0, subtreeValueStore[6].Item1);
-            Assert.AreEqual(0, subtreeValueStore[6].Item2);
+            Assert.AreEqual(0, subtreeValueStore[2].Item2);
+            Assert.AreEqual(1, subtreeValueStore[5].Item1);
+            Assert.AreEqual(1, subtreeValueStore[5].Item2);
             Assert.AreEqual(0, subtreeValueStore[1].Item1);
             Assert.AreEqual(0, subtreeValueStore[1].Item2);
-            Assert.AreEqual(0, subtreeValueStore[3].Item1);
-            Assert.AreEqual(1, subtreeValueStore[3].Item2);
             Assert.AreEqual(0, subtreeValueStore[4].Item1);
             Assert.AreEqual(0, subtreeValueStore[4].Item2);
+            Assert.AreEqual(0, subtreeValueStore[6].Item1);
+            Assert.AreEqual(0, subtreeValueStore[6].Item2);
 
 
-            // Test that the following tree is not changed if BalanceTreeUpFromNode() is called on with node containing 4...
-            //       2 
-            //     /   \ 
-            //    1     5
-            //         / \
-            //        4   6
-            //       /
-            //      3
+            // Test by balancing node 4 in the following tree...
+            //      2 
+            //     / \ 
+            //    1   5
+            //       / \
+            //      4   6
+            //     /
+            //    3
+            //
+            // ...and expect the result to look like...
+            //      4 
+            //     / \ 
+            //    2   5
+            //   / \   \
+            //  1   3   6
             allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
             subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
             testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 2, 1, 5, 4, 6, 3 }, false);
@@ -3289,45 +3451,46 @@ namespace MoreComplexDataStructures.UnitTests
 
             testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
             Assert.AreEqual(6, allNodes.Count);
-            Assert.IsNull(allNodes[2].ParentNode);
+            Assert.IsNull(allNodes[4].ParentNode);
+            Assert.AreSame(allNodes[2], allNodes[4].LeftChildNode);
+            Assert.AreSame(allNodes[5], allNodes[4].RightChildNode);
+            Assert.AreSame(allNodes[4], allNodes[2].ParentNode);
             Assert.AreSame(allNodes[1], allNodes[2].LeftChildNode);
-            Assert.AreSame(allNodes[5], allNodes[2].RightChildNode);
+            Assert.AreSame(allNodes[3], allNodes[2].RightChildNode);
+            Assert.AreSame(allNodes[4], allNodes[5].ParentNode);
+            Assert.IsNull(allNodes[5].LeftChildNode);
+            Assert.AreSame(allNodes[6], allNodes[5].RightChildNode);
             Assert.AreSame(allNodes[2], allNodes[1].ParentNode);
             Assert.IsNull(allNodes[1].LeftChildNode);
             Assert.IsNull(allNodes[1].RightChildNode);
-            Assert.AreSame(allNodes[2], allNodes[5].ParentNode);
-            Assert.AreSame(allNodes[4], allNodes[5].LeftChildNode);
-            Assert.AreSame(allNodes[6], allNodes[5].RightChildNode);
-            Assert.AreSame(allNodes[5], allNodes[4].ParentNode);
-            Assert.AreSame(allNodes[3], allNodes[4].LeftChildNode);
-            Assert.IsNull(allNodes[4].RightChildNode);
+            Assert.AreSame(allNodes[2], allNodes[3].ParentNode);
+            Assert.IsNull(allNodes[3].LeftChildNode);
+            Assert.IsNull(allNodes[3].RightChildNode);
             Assert.AreSame(allNodes[5], allNodes[6].ParentNode);
             Assert.IsNull(allNodes[6].LeftChildNode);
             Assert.IsNull(allNodes[6].RightChildNode);
-            Assert.AreSame(allNodes[4], allNodes[3].ParentNode);
-            Assert.IsNull(allNodes[3].LeftChildNode);
-            Assert.IsNull(allNodes[3].RightChildNode);
+
+            Assert.AreEqual(3, subtreeValueStore[4].Item1);
+            Assert.AreEqual(2, subtreeValueStore[4].Item2);
             Assert.AreEqual(1, subtreeValueStore[2].Item1);
-            Assert.AreEqual(4, subtreeValueStore[2].Item2);
+            Assert.AreEqual(1, subtreeValueStore[2].Item2);
+            Assert.AreEqual(0, subtreeValueStore[5].Item1);
+            Assert.AreEqual(1, subtreeValueStore[5].Item2);
             Assert.AreEqual(0, subtreeValueStore[1].Item1);
             Assert.AreEqual(0, subtreeValueStore[1].Item2);
-            Assert.AreEqual(2, subtreeValueStore[5].Item1);
-            Assert.AreEqual(1, subtreeValueStore[5].Item2);
-            Assert.AreEqual(1, subtreeValueStore[4].Item1);
-            Assert.AreEqual(0, subtreeValueStore[4].Item2);
-            Assert.AreEqual(0, subtreeValueStore[6].Item1);
-            Assert.AreEqual(0, subtreeValueStore[6].Item2);
             Assert.AreEqual(0, subtreeValueStore[3].Item1);
             Assert.AreEqual(0, subtreeValueStore[3].Item2);
+            Assert.AreEqual(0, subtreeValueStore[6].Item1);
+            Assert.AreEqual(0, subtreeValueStore[6].Item2);
         }
 
         /// <summary>
-        ///Success test for the BalanceTreeUpFromNode() method for a tree with 6 nodes requiring right rotation.
+        /// Success test for the BalanceTreeUpFromNode() method for a tree with 6 nodes requiring right rotation.
         /// </summary>
         [Test]
         public void BalanceTreeUpFromNode_6NodesRequiresRightRotation()
         {
-            // Test by balancing node 2 the following tree...
+            // Test by balancing node 2 in the following tree...
             //         5
             //        / \
             //       3   6
@@ -3395,12 +3558,12 @@ namespace MoreComplexDataStructures.UnitTests
         }
 
         /// <summary>
-        ///Success test for the BalanceTreeUpFromNode() method for a tree with 6 nodes requiring left rotation.
+        /// Success test for the BalanceTreeUpFromNode() method for a tree with 6 nodes requiring left rotation.
         /// </summary>
         [Test]
         public void BalanceTreeUpFromNode_6NodesRequiresLeftRotation()
         {
-            // Test by balancing node 5 the following tree...
+            // Test by balancing node 5 in the following tree...
             //     2
             //    / \
             //   1   4
@@ -3467,6 +3630,931 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual(0, subtreeValueStore[6].Item2);
         }
 
+        /// <summary>
+        /// Success test for the BalanceTreeUpFromNode() method for a tree with requires a left zig-zag operation.
+        /// </summary>
+        [Test]
+        public void BalanceTreeUpFromNode_IncludesLeftZigZag()
+        {
+            // Test by balancing node 3 in the following tree...
+            //     1
+            //      \
+            //       5
+            //      / 
+            //     2  
+            //      \
+            //       4
+            //      /
+            //     3
+            //
+            // ...and expect the result to look like...
+            //        3
+            //      /   \
+            //     1     5
+            //      \   /
+            //       2 4
+            var allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
+            var subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
+            Action<WeightBalancedTreeNode<Int32>> populateStoreAction = (node) =>
+            {
+                allNodes.Add(node.Item, node);
+                subtreeValueStore.Add(node.Item, new Tuple<Int32, Int32>(node.LeftSubtreeSize, node.RightSubtreeSize));
+            };
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 1, 5, 2, 4, 3 }, false);
+            WeightBalancedTreeNode<Int32> nodeToBalance = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 3)
+                    nodeToBalance = currentNode;
+            };
+            testWeightBalancedTree.InOrderDepthFirstSearch(getNodeAction);
+
+            testWeightBalancedTree.BalanceTreeUpFromNode(nodeToBalance);
+
+            testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
+            Assert.AreEqual(5, allNodes.Count);
+            Assert.IsNull(allNodes[3].ParentNode);
+            Assert.AreSame(allNodes[1], allNodes[3].LeftChildNode);
+            Assert.AreSame(allNodes[5], allNodes[3].RightChildNode);
+            Assert.AreSame(allNodes[3], allNodes[1].ParentNode);
+            Assert.IsNull(allNodes[1].LeftChildNode);
+            Assert.AreSame(allNodes[2], allNodes[1].RightChildNode);
+            Assert.AreSame(allNodes[3], allNodes[5].ParentNode);
+            Assert.AreSame(allNodes[4], allNodes[5].LeftChildNode);
+            Assert.IsNull(allNodes[5].RightChildNode);
+            Assert.AreSame(allNodes[1], allNodes[2].ParentNode);
+            Assert.IsNull(allNodes[2].LeftChildNode);
+            Assert.IsNull(allNodes[2].RightChildNode);
+            Assert.AreSame(allNodes[5], allNodes[4].ParentNode);
+            Assert.IsNull(allNodes[4].LeftChildNode);
+            Assert.IsNull(allNodes[4].RightChildNode);
+            Assert.AreEqual(2, subtreeValueStore[3].Item1);
+            Assert.AreEqual(2, subtreeValueStore[3].Item2);
+            Assert.AreEqual(0, subtreeValueStore[1].Item1);
+            Assert.AreEqual(1, subtreeValueStore[1].Item2);
+            Assert.AreEqual(1, subtreeValueStore[5].Item1);
+            Assert.AreEqual(0, subtreeValueStore[5].Item2);
+            Assert.AreEqual(0, subtreeValueStore[2].Item1);
+            Assert.AreEqual(0, subtreeValueStore[2].Item2);
+            Assert.AreEqual(0, subtreeValueStore[4].Item1);
+            Assert.AreEqual(0, subtreeValueStore[4].Item2);
+        }
+
+        /// <summary>
+        /// Success test for the BalanceTreeUpFromNode() method for a tree with requires a right zig-zag operation.
+        /// </summary>
+        [Test]
+        public void BalanceTreeUpFromNode_IncludesRightZigZag()
+        {
+            // Test by balancing node 3 in the following tree...
+            //     5
+            //    /
+            //   1
+            //    \ 
+            //     4  
+            //    /
+            //   2
+            //    \
+            //     3
+            //
+            // ...and expect the result to look like...
+            //      3
+            //    /   \
+            //   1     5
+            //    \   /
+            //     2 4
+            var allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
+            var subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
+            Action<WeightBalancedTreeNode<Int32>> populateStoreAction = (node) =>
+            {
+                allNodes.Add(node.Item, node);
+                subtreeValueStore.Add(node.Item, new Tuple<Int32, Int32>(node.LeftSubtreeSize, node.RightSubtreeSize));
+            };
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 5, 1, 4, 2, 3 }, false);
+            WeightBalancedTreeNode<Int32> nodeToBalance = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 3)
+                    nodeToBalance = currentNode;
+            };
+            testWeightBalancedTree.InOrderDepthFirstSearch(getNodeAction);
+
+            testWeightBalancedTree.BalanceTreeUpFromNode(nodeToBalance);
+
+            testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
+            Assert.AreEqual(5, allNodes.Count);
+            Assert.IsNull(allNodes[3].ParentNode);
+            Assert.AreSame(allNodes[1], allNodes[3].LeftChildNode);
+            Assert.AreSame(allNodes[5], allNodes[3].RightChildNode);
+            Assert.AreSame(allNodes[3], allNodes[1].ParentNode);
+            Assert.IsNull(allNodes[1].LeftChildNode);
+            Assert.AreSame(allNodes[2], allNodes[1].RightChildNode);
+            Assert.AreSame(allNodes[3], allNodes[5].ParentNode);
+            Assert.AreSame(allNodes[4], allNodes[5].LeftChildNode);
+            Assert.IsNull(allNodes[5].RightChildNode);
+            Assert.AreSame(allNodes[1], allNodes[2].ParentNode);
+            Assert.IsNull(allNodes[2].LeftChildNode);
+            Assert.IsNull(allNodes[2].RightChildNode);
+            Assert.AreSame(allNodes[5], allNodes[4].ParentNode);
+            Assert.IsNull(allNodes[4].LeftChildNode);
+            Assert.IsNull(allNodes[4].RightChildNode);
+            Assert.AreEqual(2, subtreeValueStore[3].Item1);
+            Assert.AreEqual(2, subtreeValueStore[3].Item2);
+            Assert.AreEqual(0, subtreeValueStore[1].Item1);
+            Assert.AreEqual(1, subtreeValueStore[1].Item2);
+            Assert.AreEqual(1, subtreeValueStore[5].Item1);
+            Assert.AreEqual(0, subtreeValueStore[5].Item2);
+            Assert.AreEqual(0, subtreeValueStore[2].Item1);
+            Assert.AreEqual(0, subtreeValueStore[2].Item2);
+            Assert.AreEqual(0, subtreeValueStore[4].Item1);
+            Assert.AreEqual(0, subtreeValueStore[4].Item2);
+        }
+
+        /// <summary>
+        /// Success tests for the WillLeftZigZagOperationImproveBalance() method.
+        /// </summary>
+        [Test]
+        public void WillLeftZigZagOperationImproveBalance()
+        {
+            // Test with node 3 in the following tree
+            //    3 
+            //     \ 
+            //      5   
+            //     /
+            //    4
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 3, 5, 4 }, false);
+            WeightBalancedTreeNode<Int32> nodeToAssess = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 3)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            Boolean result = testWeightBalancedTree.WillLeftZigZagOperationImproveBalance(nodeToAssess);
+
+            Assert.IsTrue(result);
+
+
+            // Test with nodes 3 and 5 in the following tree
+            //    3 
+            //     \ 
+            //      5   
+            testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 3, 5 }, false);
+            nodeToAssess = null;
+            getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 3)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            result = testWeightBalancedTree.WillLeftZigZagOperationImproveBalance(nodeToAssess);
+
+            Assert.IsFalse(result);
+
+            getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 5)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            result = testWeightBalancedTree.WillLeftZigZagOperationImproveBalance(nodeToAssess);
+
+            Assert.IsFalse(result);
+
+
+            // Test with node 3 in the following tree
+            //     3
+            //    / \
+            //   2   5
+            //      / \
+            //     4   6
+            testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 3, 2, 5, 4, 6 }, false);
+            nodeToAssess = null;
+            getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 3)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            result = testWeightBalancedTree.WillLeftZigZagOperationImproveBalance(nodeToAssess);
+
+            Assert.IsFalse(result);
+        }
+
+        /// <summary>
+        /// Success tests for the WillRightZigZagOperationImproveBalance() method.
+        /// </summary>
+        [Test]
+        public void WillRightZigZagOperationImproveBalance()
+        {
+            // Test with node 5 in the following tree
+            //      5
+            //     / 
+            //    3   
+            //     \
+            //      4
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 5, 3, 4 }, false);
+            WeightBalancedTreeNode<Int32> nodeToAssess = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 5)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            Boolean result = testWeightBalancedTree.WillRightZigZagOperationImproveBalance(nodeToAssess);
+
+            Assert.IsTrue(result);
+
+
+            // Test with nodes 5 and 3 in the following tree
+            //      5
+            //     / 
+            //    3   
+            testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 5, 3 }, false);
+            nodeToAssess = null;
+            getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 5)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            result = testWeightBalancedTree.WillRightZigZagOperationImproveBalance(nodeToAssess);
+
+            Assert.IsFalse(result);
+
+            getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 3)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            result = testWeightBalancedTree.WillRightZigZagOperationImproveBalance(nodeToAssess);
+
+            Assert.IsFalse(result);
+
+
+            // Test with node 5 in the following tree
+            //      5
+            //     / \
+            //    3   6
+            //   / \
+            //  2   4
+            testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 5, 3, 6, 2, 4 }, false);
+            nodeToAssess = null;
+            getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 5)
+                    nodeToAssess = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            result = testWeightBalancedTree.WillRightZigZagOperationImproveBalance(nodeToAssess);
+
+            Assert.IsFalse(result);
+        }
+
+        /// <summary>
+        /// Success test for the ZigZagNodeRight() method for a synthetic tree (with fake subtree sizes).
+        /// </summary>
+        [Test]
+        public void ZigZagNodeRight_SyntheticTree()
+        {
+            // Test by performing a right zig-zag operation on node 6 in the following tree...
+            //                    (10)
+            //                 131    31
+            //                 /
+            //               (8)
+            //             77   53
+            //            /       \
+            //         (4)        (9)
+            //       13   63    23   29
+            //      /       \
+            //    (3)       (6)
+            //   5   7    25   37
+            //            /     \
+            //         (5)       (7)
+            //       11   13   17   19
+            //
+            // ...and expect the result to look like...
+            //                     (10)
+            //                  131    31
+            //                  / 
+            //                (6)   
+            //            39       91
+            //           /           \   
+            //        (4)             (8)
+            //      13   25         37   53
+            //     /       \       /       \
+            //    (3)     (5)     (7)     (9)
+            //   5   7  11   13 17   19 23   29
+            var allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
+            var subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
+            Action<WeightBalancedTreeNode<Int32>> populateStoreAction = (node) =>
+            {
+                allNodes.Add(node.Item, node);
+                subtreeValueStore.Add(node.Item, new Tuple<Int32, Int32>(node.LeftSubtreeSize, node.RightSubtreeSize));
+            };
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 10, 8, 4, 9, 3, 6, 5, 7 }, false);
+            WeightBalancedTreeNode<Int32> nodeToZigZag = null;
+            Action<WeightBalancedTreeNode<Int32>> subtreeSizeUpdateAction = ((currentNode) => 
+            {
+                switch(currentNode.Item)
+                {
+                    case 10:
+                        currentNode.LeftSubtreeSize = 131;
+                        currentNode.RightSubtreeSize = 31;
+                        break;
+                    case 8:
+                        currentNode.LeftSubtreeSize = 77;
+                        currentNode.RightSubtreeSize = 53;
+                        break;
+                    case 4:
+                        currentNode.LeftSubtreeSize = 13;
+                        currentNode.RightSubtreeSize = 63;
+                        break;
+                    case 9:
+                        currentNode.LeftSubtreeSize = 23;
+                        currentNode.RightSubtreeSize = 29;
+                        break;
+                    case 3:
+                        currentNode.LeftSubtreeSize = 5;
+                        currentNode.RightSubtreeSize = 7;
+                        break;
+                    case 6:
+                        currentNode.LeftSubtreeSize = 25;
+                        currentNode.RightSubtreeSize = 37;
+                        nodeToZigZag = currentNode;
+                        break;
+                    case 5:
+                        currentNode.LeftSubtreeSize = 11;
+                        currentNode.RightSubtreeSize = 13;
+                        break;
+                    case 7:
+                        currentNode.LeftSubtreeSize = 17;
+                        currentNode.RightSubtreeSize = 19;
+                        break;
+                }
+            });
+            testWeightBalancedTree.BreadthFirstSearch(subtreeSizeUpdateAction);
+
+            testWeightBalancedTree.ZigZagNodeRight(nodeToZigZag);
+
+            testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
+            Assert.AreEqual(8, allNodes.Count);
+            Assert.IsNull(allNodes[10].ParentNode);
+            Assert.AreSame(allNodes[6], allNodes[10].LeftChildNode);
+            Assert.IsNull(allNodes[10].RightChildNode);
+            Assert.AreSame(allNodes[10], allNodes[6].ParentNode);
+            Assert.AreSame(allNodes[4], allNodes[6].LeftChildNode);
+            Assert.AreSame(allNodes[8], allNodes[6].RightChildNode);
+            Assert.AreSame(allNodes[6], allNodes[4].ParentNode);
+            Assert.AreSame(allNodes[3], allNodes[4].LeftChildNode);
+            Assert.AreSame(allNodes[5], allNodes[4].RightChildNode);
+            Assert.AreSame(allNodes[6], allNodes[8].ParentNode);
+            Assert.AreSame(allNodes[7], allNodes[8].LeftChildNode);
+            Assert.AreSame(allNodes[9], allNodes[8].RightChildNode);
+            Assert.AreSame(allNodes[4], allNodes[3].ParentNode);
+            Assert.IsNull(allNodes[3].LeftChildNode);
+            Assert.IsNull(allNodes[3].RightChildNode);
+            Assert.AreSame(allNodes[4], allNodes[5].ParentNode);
+            Assert.IsNull(allNodes[5].LeftChildNode);
+            Assert.IsNull(allNodes[5].RightChildNode);
+            Assert.AreSame(allNodes[8], allNodes[7].ParentNode);
+            Assert.IsNull(allNodes[7].LeftChildNode);
+            Assert.IsNull(allNodes[7].RightChildNode);
+            Assert.AreSame(allNodes[8], allNodes[9].ParentNode);
+            Assert.IsNull(allNodes[9].LeftChildNode);
+            Assert.IsNull(allNodes[9].RightChildNode);
+            Assert.AreEqual(131, subtreeValueStore[10].Item1);
+            Assert.AreEqual(31, subtreeValueStore[10].Item2);
+            Assert.AreEqual(39, subtreeValueStore[6].Item1);
+            Assert.AreEqual(91, subtreeValueStore[6].Item2);
+            Assert.AreEqual(13, subtreeValueStore[4].Item1);
+            Assert.AreEqual(25, subtreeValueStore[4].Item2);
+            Assert.AreEqual(37, subtreeValueStore[8].Item1);
+            Assert.AreEqual(53, subtreeValueStore[8].Item2);
+            Assert.AreEqual(5, subtreeValueStore[3].Item1);
+            Assert.AreEqual(7, subtreeValueStore[3].Item2);
+            Assert.AreEqual(11, subtreeValueStore[5].Item1);
+            Assert.AreEqual(13, subtreeValueStore[5].Item2);
+            Assert.AreEqual(17, subtreeValueStore[7].Item1);
+            Assert.AreEqual(19, subtreeValueStore[7].Item2);
+            Assert.AreEqual(23, subtreeValueStore[9].Item1);
+            Assert.AreEqual(29, subtreeValueStore[9].Item2);
+        }
+
+        /// <summary>
+        /// Success test for the ZigZagNodeRight() method where the nodes within the zig-zag shape all have children (and parents).
+        /// </summary>
+        [Test]
+        public void ZigZagNodeRight_ZigZagNodesHaveChildren()
+        {
+            // Test by performing a right zig-zag operation on node 6 in the following tree...
+            //         10
+            //        /
+            //       8
+            //      / \
+            //     4   9
+            //    / \
+            //   3   6
+            //      / \
+            //     5   7
+            //
+            // ...and expect the result to look like...
+            //          10
+            //         / 
+            //        6
+            //      /   \   
+            //     4     8
+            //    / \   / \
+            //   3   5 7   9
+            var allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
+            var subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
+            Action<WeightBalancedTreeNode<Int32>> populateStoreAction = (node) =>
+            {
+                allNodes.Add(node.Item, node);
+                subtreeValueStore.Add(node.Item, new Tuple<Int32, Int32>(node.LeftSubtreeSize, node.RightSubtreeSize));
+            };
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 10, 8, 4, 9, 3, 6, 5, 7 }, false);
+            WeightBalancedTreeNode<Int32> nodeToZigZag = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 6)
+                    nodeToZigZag = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            testWeightBalancedTree.ZigZagNodeRight(nodeToZigZag);
+
+            testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
+            Assert.AreEqual(8, allNodes.Count);
+            Assert.IsNull(allNodes[10].ParentNode);
+            Assert.AreSame(allNodes[6], allNodes[10].LeftChildNode);
+            Assert.IsNull(allNodes[10].RightChildNode);
+            Assert.AreSame(allNodes[10], allNodes[6].ParentNode);
+            Assert.AreSame(allNodes[4], allNodes[6].LeftChildNode);
+            Assert.AreSame(allNodes[8], allNodes[6].RightChildNode);
+            Assert.AreSame(allNodes[6], allNodes[4].ParentNode);
+            Assert.AreSame(allNodes[3], allNodes[4].LeftChildNode);
+            Assert.AreSame(allNodes[5], allNodes[4].RightChildNode);
+            Assert.AreSame(allNodes[6], allNodes[8].ParentNode);
+            Assert.AreSame(allNodes[7], allNodes[8].LeftChildNode);
+            Assert.AreSame(allNodes[9], allNodes[8].RightChildNode);
+            Assert.AreSame(allNodes[4], allNodes[3].ParentNode);
+            Assert.IsNull(allNodes[3].LeftChildNode);
+            Assert.IsNull(allNodes[3].RightChildNode);
+            Assert.AreSame(allNodes[4], allNodes[5].ParentNode);
+            Assert.IsNull(allNodes[5].LeftChildNode);
+            Assert.IsNull(allNodes[5].RightChildNode);
+            Assert.AreSame(allNodes[8], allNodes[7].ParentNode);
+            Assert.IsNull(allNodes[7].LeftChildNode);
+            Assert.IsNull(allNodes[7].RightChildNode);
+            Assert.AreSame(allNodes[8], allNodes[9].ParentNode);
+            Assert.IsNull(allNodes[9].LeftChildNode);
+            Assert.IsNull(allNodes[9].RightChildNode);
+            Assert.AreEqual(7, subtreeValueStore[10].Item1);
+            Assert.AreEqual(0, subtreeValueStore[10].Item2);
+            Assert.AreEqual(3, subtreeValueStore[6].Item1);
+            Assert.AreEqual(3, subtreeValueStore[6].Item2);
+            Assert.AreEqual(1, subtreeValueStore[4].Item1);
+            Assert.AreEqual(1, subtreeValueStore[4].Item2);
+            Assert.AreEqual(1, subtreeValueStore[8].Item1);
+            Assert.AreEqual(1, subtreeValueStore[8].Item2);
+            Assert.AreEqual(0, subtreeValueStore[3].Item1);
+            Assert.AreEqual(0, subtreeValueStore[3].Item2);
+            Assert.AreEqual(0, subtreeValueStore[5].Item1);
+            Assert.AreEqual(0, subtreeValueStore[5].Item2);
+            Assert.AreEqual(0, subtreeValueStore[7].Item1);
+            Assert.AreEqual(0, subtreeValueStore[7].Item2);
+            Assert.AreEqual(0, subtreeValueStore[9].Item1);
+            Assert.AreEqual(0, subtreeValueStore[9].Item2);
+        }
+
+        /// <summary>
+        /// Success test for the ZigZagNodeRight() method where the nodes within the zig-zag shape don't have children (nor parents).
+        /// </summary>
+        [Test]
+        public void ZigZagNodeRight_ZigZagNodesHaveNoChildren()
+        {
+            // Test by performing a right zig-zag operation on node 6 in the following tree...
+            //     8
+            //    / 
+            //   4   
+            //    \
+            //     6
+            //
+            // ...and expect the result to look like...
+            //     6
+            //    / \   
+            //   4   8
+            var allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
+            var subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
+            Action<WeightBalancedTreeNode<Int32>> populateStoreAction = (node) =>
+            {
+                allNodes.Add(node.Item, node);
+                subtreeValueStore.Add(node.Item, new Tuple<Int32, Int32>(node.LeftSubtreeSize, node.RightSubtreeSize));
+            };
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 8, 4, 6 }, false);
+            WeightBalancedTreeNode<Int32> nodeToZigZag = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 6)
+                    nodeToZigZag = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            testWeightBalancedTree.ZigZagNodeRight(nodeToZigZag);
+
+            testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
+            Assert.AreEqual(3, allNodes.Count);
+            Assert.IsNull(allNodes[6].ParentNode);
+            Assert.AreSame(allNodes[4], allNodes[6].LeftChildNode);
+            Assert.AreSame(allNodes[8], allNodes[6].RightChildNode);
+            Assert.AreSame(allNodes[6], allNodes[4].ParentNode);
+            Assert.IsNull(allNodes[4].LeftChildNode);
+            Assert.IsNull(allNodes[4].RightChildNode);
+            Assert.AreSame(allNodes[6], allNodes[8].ParentNode);
+            Assert.IsNull(allNodes[8].LeftChildNode);
+            Assert.IsNull(allNodes[8].RightChildNode);
+            Assert.AreEqual(1, subtreeValueStore[6].Item1);
+            Assert.AreEqual(1, subtreeValueStore[6].Item2);
+            Assert.AreEqual(0, subtreeValueStore[4].Item1);
+            Assert.AreEqual(0, subtreeValueStore[4].Item2);
+            Assert.AreEqual(0, subtreeValueStore[8].Item1);
+            Assert.AreEqual(0, subtreeValueStore[8].Item2);
+        }
+
+        /// <summary>
+        /// Test that an exception is thrown if the ZigZagNodeRight() method is called on a node which is a left child.
+        /// </summary>
+        [Test]
+        public void ZigZagNodeRight_ZigZagNodeIsALeftChild()
+        {
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 3, 2, 1 }, false);
+            WeightBalancedTreeNode<Int32> nodeToZigZag = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 1)
+                    nodeToZigZag = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            var e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                testWeightBalancedTree.ZigZagNodeRight(nodeToZigZag);
+            });
+
+            Assert.That(e.Message, Does.StartWith("The node containing item '1' cannot have a right zig-zag operation applied as it is a left child of its parent."));
+        }
+
+        /// <summary>
+        /// Test that an exception is thrown if the ZigZagNodeRight() method is called on a node whose parent is a right child.
+        /// </summary>
+        [Test]
+        public void ZigZagNodeRight_ZigZagNodesParentIsARightChild()
+        {
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 1, 2, 3 }, false);
+            WeightBalancedTreeNode<Int32> nodeToZigZag = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 3)
+                    nodeToZigZag = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            var e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                testWeightBalancedTree.ZigZagNodeRight(nodeToZigZag);
+            });
+
+            Assert.That(e.Message, Does.StartWith("The node containing item '3' cannot have a right zig-zag operation applied as its parent is a right child of its grandparent."));
+        }
+
+        /// <summary>
+        /// Success test for the ZigZagNodeLeft() method for a synthetic tree (with fake subtree sizes).
+        /// </summary>
+        [Test]
+        public void ZigZagNodeLeft_SyntheticTree()
+        {
+            // Test by performing a left zig-zag operation on node 7 in the following tree...
+            //     (3)
+            //   31   131
+            //           \
+            //           (5)
+            //         53   77
+            //        /       \
+            //      (4)       (9)
+            //    29   23   63   13
+            //             /       \
+            //           (7)      (10)
+            //         37   25   7    5
+            //         /     \
+            //      (6)       (8)
+            //    19   17   13   11
+            //
+            // ...and expect the result to look like...
+            //          (3)
+            //          31   131
+            //                 \
+            //                 (7)
+            //             91       39
+            //            /           \
+            //         (5)             (9)
+            //       53   37         25   13
+            //      /       \       /       \
+            //    (4)      (6)     (8)      (10)
+            //  29   23  19   17 13   11   7    5
+            var allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
+            var subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
+            Action<WeightBalancedTreeNode<Int32>> populateStoreAction = (node) =>
+            {
+                allNodes.Add(node.Item, node);
+                subtreeValueStore.Add(node.Item, new Tuple<Int32, Int32>(node.LeftSubtreeSize, node.RightSubtreeSize));
+            };
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 3, 5, 4, 9, 7, 10, 6, 8 }, false);
+            WeightBalancedTreeNode<Int32> nodeToZigZag = null;
+            Action<WeightBalancedTreeNode<Int32>> subtreeSizeUpdateAction = ((currentNode) =>
+            {
+                switch (currentNode.Item)
+                {
+                    case 3:
+                        currentNode.LeftSubtreeSize = 31;
+                        currentNode.RightSubtreeSize = 131;
+                        break;
+                    case 5:
+                        currentNode.LeftSubtreeSize = 53;
+                        currentNode.RightSubtreeSize = 77;
+                        break;
+                    case 4:
+                        currentNode.LeftSubtreeSize = 29;
+                        currentNode.RightSubtreeSize = 23;
+                        break;
+                    case 9:
+                        currentNode.LeftSubtreeSize = 63;
+                        currentNode.RightSubtreeSize = 13;
+                        break;
+                    case 7:
+                        currentNode.LeftSubtreeSize = 37;
+                        currentNode.RightSubtreeSize = 25;
+                        nodeToZigZag = currentNode;
+                        break;
+                    case 10:
+                        currentNode.LeftSubtreeSize = 7;
+                        currentNode.RightSubtreeSize = 5;
+                        break;
+                    case 6:
+                        currentNode.LeftSubtreeSize = 19;
+                        currentNode.RightSubtreeSize = 17;
+                        break;
+                    case 8:
+                        currentNode.LeftSubtreeSize = 13;
+                        currentNode.RightSubtreeSize = 11;
+                        break;
+                }
+            });
+            testWeightBalancedTree.BreadthFirstSearch(subtreeSizeUpdateAction);
+
+            testWeightBalancedTree.ZigZagNodeLeft(nodeToZigZag);
+
+            testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
+            Assert.AreEqual(8, allNodes.Count);
+            Assert.IsNull(allNodes[3].ParentNode);
+            Assert.IsNull(allNodes[3].LeftChildNode);
+            Assert.AreSame(allNodes[7], allNodes[3].RightChildNode);
+            Assert.AreSame(allNodes[3], allNodes[7].ParentNode);
+            Assert.AreSame(allNodes[5], allNodes[7].LeftChildNode);
+            Assert.AreSame(allNodes[9], allNodes[7].RightChildNode);
+            Assert.AreSame(allNodes[7], allNodes[5].ParentNode);
+            Assert.AreSame(allNodes[4], allNodes[5].LeftChildNode);
+            Assert.AreSame(allNodes[6], allNodes[5].RightChildNode);
+            Assert.AreSame(allNodes[7], allNodes[9].ParentNode);
+            Assert.AreSame(allNodes[8], allNodes[9].LeftChildNode);
+            Assert.AreSame(allNodes[10], allNodes[9].RightChildNode);
+            Assert.AreSame(allNodes[5], allNodes[4].ParentNode);
+            Assert.IsNull(allNodes[4].LeftChildNode);
+            Assert.IsNull(allNodes[4].RightChildNode);
+            Assert.AreSame(allNodes[5], allNodes[6].ParentNode);
+            Assert.IsNull(allNodes[6].LeftChildNode);
+            Assert.IsNull(allNodes[6].RightChildNode);
+            Assert.AreSame(allNodes[9], allNodes[8].ParentNode);
+            Assert.IsNull(allNodes[8].LeftChildNode);
+            Assert.IsNull(allNodes[8].RightChildNode);
+            Assert.AreSame(allNodes[9], allNodes[10].ParentNode);
+            Assert.IsNull(allNodes[10].LeftChildNode);
+            Assert.IsNull(allNodes[10].RightChildNode);
+            Assert.AreEqual(31, subtreeValueStore[3].Item1);
+            Assert.AreEqual(131, subtreeValueStore[3].Item2);
+            Assert.AreEqual(91, subtreeValueStore[7].Item1);
+            Assert.AreEqual(39, subtreeValueStore[7].Item2);
+            Assert.AreEqual(53, subtreeValueStore[5].Item1);
+            Assert.AreEqual(37, subtreeValueStore[5].Item2);
+            Assert.AreEqual(25, subtreeValueStore[9].Item1);
+            Assert.AreEqual(13, subtreeValueStore[9].Item2);
+            Assert.AreEqual(29, subtreeValueStore[4].Item1);
+            Assert.AreEqual(23, subtreeValueStore[4].Item2);
+            Assert.AreEqual(19, subtreeValueStore[6].Item1);
+            Assert.AreEqual(17, subtreeValueStore[6].Item2);
+            Assert.AreEqual(13, subtreeValueStore[8].Item1);
+            Assert.AreEqual(11, subtreeValueStore[8].Item2);
+            Assert.AreEqual(7, subtreeValueStore[10].Item1);
+            Assert.AreEqual(5, subtreeValueStore[10].Item2);
+        }
+
+        /// <summary>
+        /// Success test for the  ZigZagNodeLeft() method where the nodes within the zig-zag shape all have children (and parents).
+        /// </summary>
+        [Test]
+        public void ZigZagNodeLeft_ZigZagNodesHaveChildren()
+        {
+            // Test by performing a right zig-zag operation on node 7 in the following tree...
+            //    3
+            //     \
+            //      5
+            //     / \
+            //    4   9
+            //       / \
+            //      7   10
+            //     / \
+            //    6   8
+            //
+            // ...and expect the result to look like...
+            //       3
+            //        \
+            //         7
+            //       /   \
+            //      5     9
+            //     / \   / \
+            //    4   6 8   10
+            var allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
+            var subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
+            Action<WeightBalancedTreeNode<Int32>> populateStoreAction = (node) =>
+            {
+                allNodes.Add(node.Item, node);
+                subtreeValueStore.Add(node.Item, new Tuple<Int32, Int32>(node.LeftSubtreeSize, node.RightSubtreeSize));
+            };
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 3, 5, 4, 9, 7, 10, 6, 8 }, false);
+            WeightBalancedTreeNode<Int32> nodeToZigZag = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 7)
+                    nodeToZigZag = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            testWeightBalancedTree.ZigZagNodeLeft(nodeToZigZag);
+
+            testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
+            Assert.AreEqual(8, allNodes.Count);
+            Assert.AreEqual(8, allNodes.Count);
+            Assert.IsNull(allNodes[3].ParentNode);
+            Assert.IsNull(allNodes[3].LeftChildNode);
+            Assert.AreSame(allNodes[7], allNodes[3].RightChildNode);
+            Assert.AreSame(allNodes[3], allNodes[7].ParentNode);
+            Assert.AreSame(allNodes[5], allNodes[7].LeftChildNode);
+            Assert.AreSame(allNodes[9], allNodes[7].RightChildNode);
+            Assert.AreSame(allNodes[7], allNodes[5].ParentNode);
+            Assert.AreSame(allNodes[4], allNodes[5].LeftChildNode);
+            Assert.AreSame(allNodes[6], allNodes[5].RightChildNode);
+            Assert.AreSame(allNodes[7], allNodes[9].ParentNode);
+            Assert.AreSame(allNodes[8], allNodes[9].LeftChildNode);
+            Assert.AreSame(allNodes[10], allNodes[9].RightChildNode);
+            Assert.AreSame(allNodes[5], allNodes[4].ParentNode);
+            Assert.IsNull(allNodes[4].LeftChildNode);
+            Assert.IsNull(allNodes[4].RightChildNode);
+            Assert.AreSame(allNodes[5], allNodes[6].ParentNode);
+            Assert.IsNull(allNodes[6].LeftChildNode);
+            Assert.IsNull(allNodes[6].RightChildNode);
+            Assert.AreSame(allNodes[9], allNodes[8].ParentNode);
+            Assert.IsNull(allNodes[8].LeftChildNode);
+            Assert.IsNull(allNodes[8].RightChildNode);
+            Assert.AreSame(allNodes[9], allNodes[10].ParentNode);
+            Assert.IsNull(allNodes[10].LeftChildNode);
+            Assert.IsNull(allNodes[10].RightChildNode);
+            Assert.AreEqual(0, subtreeValueStore[3].Item1);
+            Assert.AreEqual(7, subtreeValueStore[3].Item2);
+            Assert.AreEqual(3, subtreeValueStore[7].Item1);
+            Assert.AreEqual(3, subtreeValueStore[7].Item2);
+            Assert.AreEqual(1, subtreeValueStore[5].Item1);
+            Assert.AreEqual(1, subtreeValueStore[5].Item2);
+            Assert.AreEqual(1, subtreeValueStore[9].Item1);
+            Assert.AreEqual(1, subtreeValueStore[9].Item2);
+            Assert.AreEqual(0, subtreeValueStore[4].Item1);
+            Assert.AreEqual(0, subtreeValueStore[4].Item2);
+            Assert.AreEqual(0, subtreeValueStore[6].Item1);
+            Assert.AreEqual(0, subtreeValueStore[6].Item2);
+            Assert.AreEqual(0, subtreeValueStore[8].Item1);
+            Assert.AreEqual(0, subtreeValueStore[8].Item2);
+            Assert.AreEqual(0, subtreeValueStore[10].Item1);
+            Assert.AreEqual(0, subtreeValueStore[10].Item2);
+        }
+
+        /// <summary>
+        /// Success test for the ZigZagNodeLeft() method where the nodes within the zig-zag shape don't have children (nor parents).
+        /// </summary>
+        [Test]
+        public void ZigZagNodeLeft_ZigZagNodesHaveNoChildren()
+        {
+            // Test by performing a right zig-zag operation on node 6 in the following tree...
+            //     4
+            //      \
+            //       8 
+            //      /
+            //     6
+            //
+            // ...and expect the result to look like...
+            //     6
+            //    / \   
+            //   4   8
+            var allNodes = new Dictionary<Int32, WeightBalancedTreeNode<Int32>>();
+            var subtreeValueStore = new Dictionary<Int32, Tuple<Int32, Int32>>();
+            Action<WeightBalancedTreeNode<Int32>> populateStoreAction = (node) =>
+            {
+                allNodes.Add(node.Item, node);
+                subtreeValueStore.Add(node.Item, new Tuple<Int32, Int32>(node.LeftSubtreeSize, node.RightSubtreeSize));
+            };
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 4, 8, 6 }, false);
+            WeightBalancedTreeNode<Int32> nodeToZigZag = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 6)
+                    nodeToZigZag = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            testWeightBalancedTree.ZigZagNodeLeft(nodeToZigZag);
+
+            testWeightBalancedTree.BreadthFirstSearch(populateStoreAction);
+            Assert.AreEqual(3, allNodes.Count);
+            Assert.IsNull(allNodes[6].ParentNode);
+            Assert.AreSame(allNodes[4], allNodes[6].LeftChildNode);
+            Assert.AreSame(allNodes[8], allNodes[6].RightChildNode);
+            Assert.AreSame(allNodes[6], allNodes[4].ParentNode);
+            Assert.IsNull(allNodes[4].LeftChildNode);
+            Assert.IsNull(allNodes[4].RightChildNode);
+            Assert.AreSame(allNodes[6], allNodes[8].ParentNode);
+            Assert.IsNull(allNodes[8].LeftChildNode);
+            Assert.IsNull(allNodes[8].RightChildNode);
+            Assert.AreEqual(1, subtreeValueStore[6].Item1);
+            Assert.AreEqual(1, subtreeValueStore[6].Item2);
+            Assert.AreEqual(0, subtreeValueStore[4].Item1);
+            Assert.AreEqual(0, subtreeValueStore[4].Item2);
+            Assert.AreEqual(0, subtreeValueStore[8].Item1);
+            Assert.AreEqual(0, subtreeValueStore[8].Item2);
+        }
+
+        /// <summary>
+        /// Test that an exception is thrown if the ZigZagNodeLeft() method is called on a node which is a right child.
+        /// </summary>
+        [Test]
+        public void ZigZagNodeLeft_ZigZagNodeIsARightChild()
+        {
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 1, 2, 3 }, false);
+            WeightBalancedTreeNode<Int32> nodeToZigZag = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 3)
+                    nodeToZigZag = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            var e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                testWeightBalancedTree.ZigZagNodeLeft(nodeToZigZag);
+            });
+
+            Assert.That(e.Message, Does.StartWith("The node containing item '3' cannot have a left zig-zag operation applied as it is a right child of its parent."));
+        }
+
+        /// <summary>
+        /// Test that an exception is thrown if the ZigZagNodeLeft() method is called on a node whose parent is a left child.
+        /// </summary>
+        [Test]
+        public void ZigZagNodeLeft_ZigZagNodesParentIsALeftChild()
+        {
+            WeightBalancedTreeWithProtectedMethods<Int32> testWeightBalancedTree = new WeightBalancedTreeWithProtectedMethods<Int32>(new Int32[] { 3, 2, 1 }, false);
+            WeightBalancedTreeNode<Int32> nodeToZigZag = null;
+            Action<WeightBalancedTreeNode<Int32>> getNodeAction = (currentNode) =>
+            {
+                if (currentNode.Item == 1)
+                    nodeToZigZag = currentNode;
+            };
+            testWeightBalancedTree.BreadthFirstSearch(getNodeAction);
+
+            var e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                testWeightBalancedTree.ZigZagNodeLeft(nodeToZigZag);
+            });
+
+            Assert.That(e.Message, Does.StartWith("The node containing item '1' cannot have a left zig-zag operation applied as its parent is a left child of its grandparent."));
+        }
+
         #region Private Methods
 
         /// <summary>
@@ -3524,6 +4612,26 @@ namespace MoreComplexDataStructures.UnitTests
             }
 
             /// <summary>
+            /// Assesses whether performing a left rotation on the specified node will improve the tree's balance.
+            /// </summary>
+            /// <param name="inputNode">The node to assess.</param>
+            /// <returns>True if the rotation will improve the balance.  False otherwise.</returns>
+            public new Boolean WillLeftRotationImproveBalance(WeightBalancedTreeNode<T> inputNode)
+            {
+                return base.WillLeftRotationImproveBalance(inputNode);
+            }
+
+            /// <summary>
+            /// Assesses whether performing a right rotation on the specified node will improve the tree's balance.
+            /// </summary>
+            /// <param name="inputNode">The node to assess.</param>
+            /// <returns>True if the rotation will improve the balance.  False otherwise.</returns>
+            public new Boolean WillRightRotationImproveBalance(WeightBalancedTreeNode<T> inputNode)
+            {
+                return base.WillRightRotationImproveBalance(inputNode);
+            }
+
+            /// <summary>
             /// Performs a left rotation on the specified node.
             /// </summary>
             /// <param name="inputNode">The node to perform the rotation on.</param>
@@ -3539,6 +4647,44 @@ namespace MoreComplexDataStructures.UnitTests
             public new void RotateNodeRight(WeightBalancedTreeNode<T> inputNode)
             {
                 base.RotateNodeRight(inputNode);
+            }
+
+            /// <summary>
+            /// Assesses whether performing a left zig-zag operation on the specified node will improve the tree's balance.
+            /// </summary>
+            /// <param name="inputNode">The node to assess.</param>
+            /// <returns>True if the zig-zag operation will improve the balance.  False otherwise.</returns>
+            public new Boolean WillLeftZigZagOperationImproveBalance(WeightBalancedTreeNode<T> inputNode)
+            {
+                return base.WillLeftZigZagOperationImproveBalance(inputNode);
+            }
+
+            /// <summary>
+            /// Assesses whether performing a right zig-zag operation on the specified node will improve the tree's balance.
+            /// </summary>
+            /// <param name="inputNode">The node to assess.</param>
+            /// <returns>True if the zig-zag operation will improve the balance.  False otherwise.</returns>
+            public new Boolean WillRightZigZagOperationImproveBalance(WeightBalancedTreeNode<T> inputNode)
+            {
+                return base.WillRightZigZagOperationImproveBalance(inputNode);
+            }
+
+            /// <summary>
+            /// Performs a left zig-zag operation on the specified node.
+            /// </summary>
+            /// <param name="inputNode">The node to perform the zig-zag operation on.</param>
+            public new void ZigZagNodeLeft(WeightBalancedTreeNode<T> inputNode)
+            {
+                base.ZigZagNodeLeft(inputNode);
+            }
+
+            /// <summary>
+            /// Performs a right zig-zag operation on the specified node.
+            /// </summary>
+            /// <param name="inputNode">The node to perform the zig-zag operation on.</param>
+            public new void ZigZagNodeRight(WeightBalancedTreeNode<T> inputNode)
+            {
+                base.ZigZagNodeRight(inputNode);
             }
 
             /// <summary>

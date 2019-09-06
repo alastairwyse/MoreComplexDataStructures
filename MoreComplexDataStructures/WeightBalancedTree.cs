@@ -1171,6 +1171,38 @@ namespace MoreComplexDataStructures
             return depth;
         }
 
+        /// <summary>
+        /// Assesses whether performing a left rotation on the specified node will improve the tree's balance.
+        /// </summary>
+        /// <param name="inputNode">The node to assess.</param>
+        /// <returns>True if the rotation will improve the balance.  False otherwise.</returns>
+        protected Boolean WillLeftRotationImproveBalance(WeightBalancedTreeNode<T> inputNode)
+        {
+            Int32 rightChildsLeftSubtreeSize = inputNode.RightChildNode.LeftSubtreeSize;
+            Int32 newLeftSubtreeSize = inputNode.LeftSubtreeSize + 1 + rightChildsLeftSubtreeSize;
+            Int32 newRightSubtreeSize = inputNode.RightSubtreeSize - 1 - rightChildsLeftSubtreeSize;
+            if ((inputNode.RightSubtreeSize - inputNode.LeftSubtreeSize) > (newLeftSubtreeSize - newRightSubtreeSize))
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Assesses whether performing a right rotation on the specified node will improve the tree's balance.
+        /// </summary>
+        /// <param name="inputNode">The node to assess.</param>
+        /// <returns>True if the rotation will improve the balance.  False otherwise.</returns>
+        protected Boolean WillRightRotationImproveBalance(WeightBalancedTreeNode<T> inputNode)
+        {
+            Int32 leftChildsRightSubtreeSize = inputNode.LeftChildNode.RightSubtreeSize;
+            Int32 newLeftSubtreeSize = inputNode.LeftSubtreeSize - 1 - leftChildsRightSubtreeSize;
+            Int32 newRightSubtreeSize = inputNode.RightSubtreeSize + 1 + leftChildsRightSubtreeSize;
+            if ((inputNode.LeftSubtreeSize - inputNode.RightSubtreeSize) > (newRightSubtreeSize - newLeftSubtreeSize))
+                return true;
+            else
+                return false;
+        }
+
         /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.WeightBalancedTree`1.RotateNodeLeft(MoreComplexDataStructures.WeightBalancedTreeNode{`0})"]/*'/>
         protected virtual void RotateNodeLeft(WeightBalancedTreeNode<T> inputNode)
         {
@@ -1254,6 +1286,214 @@ namespace MoreComplexDataStructures
         }
 
         /// <summary>
+        /// Assesses whether performing a left zig-zag operation on the specified node will improve the tree's balance.
+        /// </summary>
+        /// <param name="inputNode">The node to assess.</param>
+        /// <returns>True if the zig-zag operation will improve the balance.  False otherwise.</returns>
+        protected Boolean WillLeftZigZagOperationImproveBalance(WeightBalancedTreeNode<T> inputNode)
+        {
+            if (inputNode.RightChildNode == null || inputNode.RightChildNode.LeftChildNode == null)
+                return false;
+
+            WeightBalancedTreeNode<T> node = inputNode.RightChildNode.LeftChildNode;
+            WeightBalancedTreeNode<T> parentNode = inputNode.RightChildNode;
+            WeightBalancedTreeNode<T> grandParentNode = inputNode;
+
+            Int32 currentNodeImbalance = Math.Abs(node.LeftSubtreeSize - node.RightSubtreeSize);
+            Int32 currentParentNodeImbalance = Math.Abs(parentNode.LeftSubtreeSize - parentNode.RightSubtreeSize);
+            Int32 currentGrandParentNodeImbalance = Math.Abs(grandParentNode.LeftSubtreeSize - grandParentNode.RightSubtreeSize);
+            Int32 currentImbalance = currentNodeImbalance + currentParentNodeImbalance + currentGrandParentNodeImbalance;
+            Int32 newGrandParentNodeImbalance = Math.Abs(grandParentNode.LeftSubtreeSize - node.LeftSubtreeSize);
+            Int32 newParentNodeImbalance = Math.Abs(parentNode.RightSubtreeSize - node.RightSubtreeSize);
+            Int32 newNodeImbalance = Math.Abs((parentNode.RightSubtreeSize + node.RightSubtreeSize) - (grandParentNode.LeftSubtreeSize + node.LeftSubtreeSize));
+            Int32 newImbalance = newNodeImbalance + newParentNodeImbalance + newGrandParentNodeImbalance;
+
+            if (newImbalance < currentImbalance)
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Assesses whether performing a right zig-zag operation on the specified node will improve the tree's balance.
+        /// </summary>
+        /// <param name="inputNode">The node to assess.</param>
+        /// <returns>True if the zig-zag operation will improve the balance.  False otherwise.</returns>
+        protected Boolean WillRightZigZagOperationImproveBalance(WeightBalancedTreeNode<T> inputNode)
+        {
+            if (inputNode.LeftChildNode == null || inputNode.LeftChildNode.RightChildNode == null)
+                return false;
+
+            WeightBalancedTreeNode<T> node = inputNode.LeftChildNode.RightChildNode;
+            WeightBalancedTreeNode<T> parentNode = inputNode.LeftChildNode; 
+            WeightBalancedTreeNode<T> grandParentNode = inputNode;
+
+            Int32 currentNodeImbalance = Math.Abs(node.LeftSubtreeSize - node.RightSubtreeSize);
+            Int32 currentParentNodeImbalance = Math.Abs(parentNode.LeftSubtreeSize - parentNode.RightSubtreeSize);
+            Int32 currentGrandParentNodeImbalance = Math.Abs(grandParentNode.LeftSubtreeSize - grandParentNode.RightSubtreeSize);
+            Int32 currentImbalance = currentNodeImbalance + currentParentNodeImbalance + currentGrandParentNodeImbalance;
+            Int32 newGrandParentNodeImbalance = Math.Abs(grandParentNode.RightSubtreeSize - node.RightSubtreeSize);
+            Int32 newParentNodeImbalance = Math.Abs(parentNode.LeftSubtreeSize - node.LeftSubtreeSize);
+            Int32 newNodeImbalance = Math.Abs((parentNode.LeftSubtreeSize + node.LeftSubtreeSize) - (grandParentNode.RightSubtreeSize + node.RightSubtreeSize));
+            Int32 newImbalance = newNodeImbalance + newParentNodeImbalance + newGrandParentNodeImbalance;
+
+            if (newImbalance < currentImbalance)
+                return true;
+            else
+                return false;
+        }
+
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.WeightBalancedTree`1.ZigZagNodeLeft(MoreComplexDataStructures.WeightBalancedTreeNode{`0})"]/*'/>
+        protected virtual void ZigZagNodeLeft(WeightBalancedTreeNode<T> inputNode)
+        {
+            // Check that input node is at the base of a zig-zag shape
+            if (IsLeftChildOf(inputNode, inputNode.ParentNode) == false)
+                throw new InvalidOperationException($"The node containing item '{inputNode.Item.ToString()}' cannot have a left zig-zag operation applied as it is a right child of its parent.");
+            if (IsLeftChildOf(inputNode.ParentNode, inputNode.ParentNode.ParentNode) == true)
+                throw new InvalidOperationException($"The node containing item '{inputNode.Item.ToString()}' cannot have a left zig-zag operation applied as its parent is a left child of its grandparent.");
+
+            // Store references to all nodes in the zig-zag
+            WeightBalancedTreeNode<T> inputNodeParent = inputNode.ParentNode;
+            WeightBalancedTreeNode<T> inputNodeGrandParent = inputNode.ParentNode.ParentNode;
+            WeightBalancedTreeNode<T> inputNodeGreatGrandParent = inputNode.ParentNode.ParentNode.ParentNode; 
+            Boolean grandParentIsLeftChild = true;
+            if (inputNodeGreatGrandParent != null)
+                grandParentIsLeftChild = IsLeftChildOf(inputNodeGrandParent, inputNodeGreatGrandParent);
+            WeightBalancedTreeNode<T> inputNodeLeftChild = inputNode.LeftChildNode; 
+            WeightBalancedTreeNode<T> inputNodeRightChild = inputNode.RightChildNode; 
+
+            // Perform the zig-zag operation
+            DetachNodeFromParent(inputNode);
+            if (inputNodeRightChild != null)
+            {
+                DetachNodeFromParent(inputNodeRightChild);
+                inputNodeParent.LeftChildNode = inputNodeRightChild;
+                inputNodeRightChild.ParentNode = inputNodeParent;
+            }
+            DetachNodeFromParent(inputNodeParent);
+            if (inputNodeGreatGrandParent != null)
+                DetachNodeFromParent(inputNodeGrandParent);
+            if (inputNodeLeftChild != null)
+                DetachNodeFromParent(inputNodeLeftChild);
+            if (inputNodeGreatGrandParent != null)
+            {
+                if (grandParentIsLeftChild)
+                    inputNodeGreatGrandParent.LeftChildNode = inputNode;
+                else
+                    inputNodeGreatGrandParent.RightChildNode = inputNode;
+                inputNode.ParentNode = inputNodeGreatGrandParent;
+            }
+            else
+            {
+                rootNode = inputNode;
+            }
+            inputNode.RightChildNode = inputNodeParent;
+            inputNodeParent.ParentNode = inputNode;
+            inputNode.LeftChildNode = inputNodeGrandParent;
+            inputNodeGrandParent.ParentNode = inputNode;
+            if (inputNodeLeftChild != null)
+            {
+                inputNodeGrandParent.RightChildNode = inputNodeLeftChild;
+                inputNodeLeftChild.ParentNode = inputNodeGrandParent;
+            }
+
+            // Update the subtree sizes
+            if (inputNodeRightChild != null)
+            {
+                inputNodeParent.LeftSubtreeSize = inputNodeRightChild.LeftSubtreeSize + inputNodeRightChild.RightSubtreeSize + 1;
+            }
+            else
+            {
+                inputNodeParent.LeftSubtreeSize = 0;
+            }
+            if (inputNodeLeftChild != null)
+            {
+                inputNodeGrandParent.RightSubtreeSize = inputNodeLeftChild.LeftSubtreeSize + inputNodeLeftChild.RightSubtreeSize + 1;
+            }
+            else
+            {
+                inputNodeGrandParent.RightSubtreeSize = 0;
+            }
+            inputNode.LeftSubtreeSize = inputNodeGrandParent.LeftSubtreeSize + inputNodeGrandParent.RightSubtreeSize + 1;
+            inputNode.RightSubtreeSize = inputNodeParent.LeftSubtreeSize + inputNodeParent.RightSubtreeSize + 1;
+        }
+
+        /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.WeightBalancedTree`1.ZigZagNodeRight(MoreComplexDataStructures.WeightBalancedTreeNode{`0})"]/*'/>
+        protected virtual void ZigZagNodeRight(WeightBalancedTreeNode<T> inputNode)
+        {
+            // Check that input node is at the base of a zig-zag shape
+            if (IsLeftChildOf(inputNode, inputNode.ParentNode) == true)
+                throw new InvalidOperationException($"The node containing item '{inputNode.Item.ToString()}' cannot have a right zig-zag operation applied as it is a left child of its parent.");
+            if (IsLeftChildOf(inputNode.ParentNode, inputNode.ParentNode.ParentNode) == false)
+                throw new InvalidOperationException($"The node containing item '{inputNode.Item.ToString()}' cannot have a right zig-zag operation applied as its parent is a right child of its grandparent.");
+
+            // Store references to all nodes in the zig-zag
+            WeightBalancedTreeNode<T> inputNodeParent = inputNode.ParentNode;
+            WeightBalancedTreeNode<T> inputNodeGrandParent = inputNode.ParentNode.ParentNode;
+            WeightBalancedTreeNode<T> inputNodeGreatGrandParent = inputNode.ParentNode.ParentNode.ParentNode;
+            Boolean grandParentIsLeftChild = true;
+            if (inputNodeGreatGrandParent != null)
+                grandParentIsLeftChild = IsLeftChildOf(inputNodeGrandParent, inputNodeGreatGrandParent);
+            WeightBalancedTreeNode<T> inputNodeLeftChild = inputNode.LeftChildNode;
+            WeightBalancedTreeNode<T> inputNodeRightChild = inputNode.RightChildNode;
+
+            // Perform the zig-zag operation
+            DetachNodeFromParent(inputNode);
+            if (inputNodeLeftChild != null)
+            {
+                DetachNodeFromParent(inputNodeLeftChild);
+                inputNodeParent.RightChildNode = inputNodeLeftChild;
+                inputNodeLeftChild.ParentNode = inputNodeParent;
+            }
+            DetachNodeFromParent(inputNodeParent);
+            if (inputNodeGreatGrandParent != null)
+                DetachNodeFromParent(inputNodeGrandParent);
+            if (inputNodeRightChild != null)
+                DetachNodeFromParent(inputNodeRightChild);
+            if (inputNodeGreatGrandParent != null)
+            {
+                if (grandParentIsLeftChild)
+                    inputNodeGreatGrandParent.LeftChildNode = inputNode;
+                else
+                    inputNodeGreatGrandParent.RightChildNode = inputNode;
+                inputNode.ParentNode = inputNodeGreatGrandParent;
+            }
+            else
+            {
+                rootNode = inputNode;
+            }
+            inputNode.LeftChildNode = inputNodeParent;
+            inputNodeParent.ParentNode = inputNode;
+            inputNode.RightChildNode = inputNodeGrandParent;
+            inputNodeGrandParent.ParentNode = inputNode;
+            if (inputNodeRightChild != null)
+            {
+                inputNodeGrandParent.LeftChildNode = inputNodeRightChild;
+                inputNodeRightChild.ParentNode = inputNodeGrandParent;
+            }
+            
+            // Update the subtree sizes
+            if (inputNodeLeftChild != null)
+            {
+                inputNodeParent.RightSubtreeSize = inputNodeLeftChild.LeftSubtreeSize + inputNodeLeftChild.RightSubtreeSize + 1;
+            }
+            else
+            {
+                inputNodeParent.RightSubtreeSize = 0;
+            }
+            if (inputNodeRightChild != null)
+            {
+                inputNodeGrandParent.LeftSubtreeSize = inputNodeRightChild.LeftSubtreeSize + inputNodeRightChild.RightSubtreeSize + 1;
+            }
+            else
+            {
+                inputNodeGrandParent.LeftSubtreeSize = 0;
+            }
+            inputNode.LeftSubtreeSize = inputNodeParent.LeftSubtreeSize + inputNodeParent.RightSubtreeSize + 1;
+            inputNode.RightSubtreeSize = inputNodeGrandParent.LeftSubtreeSize + inputNodeGrandParent.RightSubtreeSize + 1;
+        }
+
+        /// <summary>
         /// Traverses upwards from the specified node, performing node rotations to balance the tree.
         /// </summary>
         /// <param name="inputNode">The node at which to start balancing.</param>
@@ -1266,31 +1506,49 @@ namespace MoreComplexDataStructures
                 nextNode = nextNode.ParentNode;
                 if (currentNode.LeftSubtreeSize > currentNode.RightSubtreeSize)
                 {
-                    // Calculate whether performing a right-rotation will result in a better subtree balance
-                    Int32 leftChildsRightSubtreeSize = currentNode.LeftChildNode.RightSubtreeSize;
-                    Int32 newLeftSubtreeSize = currentNode.LeftSubtreeSize - 1 - leftChildsRightSubtreeSize;
-                    Int32 newRightSubtreeSize = currentNode.RightSubtreeSize + 1 + leftChildsRightSubtreeSize;
-                    if ((currentNode.LeftSubtreeSize - currentNode.RightSubtreeSize) > (newRightSubtreeSize - newLeftSubtreeSize))
+                    if (WillRightRotationImproveBalance(currentNode) == true)
                     {
                         RotateNodeRight(currentNode);
                         if (currentNode == rootNode)
                             rootNode = rootNode.ParentNode;
                     }
+                    else if (WillRightZigZagOperationImproveBalance(currentNode) == true)
+                    {
+                        ZigZagNodeRight(currentNode.LeftChildNode.RightChildNode);
+                    }
                 }
                 else if (currentNode.LeftSubtreeSize < currentNode.RightSubtreeSize)
                 {
-                    // Calculate whether performing a left-rotation will result in a better subtree balance
-                    Int32 rightChildsLeftSubtreeSize = currentNode.RightChildNode.LeftSubtreeSize;
-                    Int32 newLeftSubtreeSize = currentNode.LeftSubtreeSize + 1 + rightChildsLeftSubtreeSize;
-                    Int32 newRightSubtreeSize = currentNode.RightSubtreeSize - 1 - rightChildsLeftSubtreeSize;
-                    if ((currentNode.RightSubtreeSize - currentNode.LeftSubtreeSize) > (newLeftSubtreeSize - newRightSubtreeSize))
+                    if (WillLeftRotationImproveBalance(currentNode) == true)
                     {
                         RotateNodeLeft(currentNode);
                         if (currentNode == rootNode)
                             rootNode = rootNode.ParentNode;
                     }
+                    else if (WillLeftZigZagOperationImproveBalance(currentNode))
+                    {
+                        ZigZagNodeLeft(currentNode.RightChildNode.LeftChildNode);
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// Detaches the specified node from its parent node.
+        /// </summary>
+        /// <param name="inputNode">The node to detach</param>
+        /// <remarks>The method does not update the parent node subtree size.</remarks>
+        /// <exception cref="System.InvalidOperationException">The specified node cannot be detached from its parent, as it has no parent.</exception>
+        protected void DetachNodeFromParent(WeightBalancedTreeNode<T> inputNode)
+        {
+            if (inputNode.ParentNode == null)
+                throw new InvalidOperationException($"The node containing item '{inputNode.Item.ToString()}' cannot be detached from its parent, as it has no parent.");
+
+            if (IsLeftChildOf(inputNode, inputNode.ParentNode))
+                inputNode.ParentNode.LeftChildNode = null;
+            else
+                inputNode.ParentNode.RightChildNode = null;
+            inputNode.ParentNode = null;
         }
 
         /// <summary>

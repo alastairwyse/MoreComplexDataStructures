@@ -994,7 +994,7 @@ namespace MoreComplexDataStructures.UnitTests
                 Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(1L).Will(Return.Value(0L));
                 Expect.Once.On(mockRandomIntegerGenerator).Method("Next").With(19L).Will(Return.Value(7L));
             }
-            // Remove a node on the right side of the tree to prevent automatic balancing
+            // Remove a node on the right side of the tree (results in a left zig-zag operation on node with range 30-30)
             Int64 result = testUniqueRandomGenerator.Generate();
             Assert.AreEqual(36, result);
 
@@ -1005,32 +1005,36 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.IsFalse(allNodes.ContainsKey(18));
             Assert.IsNull(allNodes[20].ParentNode);
             Assert.AreSame(allNodes[10], allNodes[20].LeftChildNode);
-            Assert.AreSame(allNodes[26], allNodes[20].RightChildNode);
+            Assert.AreSame(allNodes[30], allNodes[20].RightChildNode);
             Assert.AreEqual(7, allNodes[20].Item.LeftSubtreeRangeCount);
             Assert.AreEqual(10, allNodes[20].Item.RightSubtreeRangeCount);
             Assert.AreEqual(7, allNodes[20].LeftSubtreeSize);
             Assert.AreEqual(9, allNodes[20].RightSubtreeSize);
-            Assert.AreSame(allNodes[20], allNodes[26].ParentNode);
+            Assert.AreSame(allNodes[20], allNodes[30].ParentNode);
+            Assert.AreSame(allNodes[26], allNodes[30].LeftChildNode);
+            Assert.AreSame(allNodes[34], allNodes[30].RightChildNode);
+            Assert.AreEqual(4, allNodes[30].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(5, allNodes[30].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(4, allNodes[30].LeftSubtreeSize);
+            Assert.AreEqual(4, allNodes[30].RightSubtreeSize);
+            Assert.AreSame(allNodes[30], allNodes[26].ParentNode);
             Assert.AreSame(allNodes[22], allNodes[26].LeftChildNode);
-            Assert.AreSame(allNodes[34], allNodes[26].RightChildNode);
+            Assert.AreSame(allNodes[28], allNodes[26].RightChildNode);
             Assert.AreEqual(2, allNodes[26].Item.LeftSubtreeRangeCount);
-            Assert.AreEqual(7, allNodes[26].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(1, allNodes[26].Item.RightSubtreeRangeCount);
             Assert.AreEqual(2, allNodes[26].LeftSubtreeSize);
-            Assert.AreEqual(6, allNodes[26].RightSubtreeSize);
+            Assert.AreEqual(1, allNodes[26].RightSubtreeSize);
+            Assert.AreSame(allNodes[30], allNodes[34].ParentNode);
+            Assert.AreSame(allNodes[32], allNodes[34].LeftChildNode);
+            Assert.AreSame(allNodes[38], allNodes[34].RightChildNode); ;
+            Assert.AreEqual(1, allNodes[34].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(3, allNodes[34].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(1, allNodes[34].LeftSubtreeSize);
+            Assert.AreEqual(2, allNodes[34].RightSubtreeSize);
             Assert.AreSame(allNodes[26], allNodes[22].ParentNode);
-            Assert.IsNull(allNodes[22].LeftChildNode);
-            Assert.AreSame(allNodes[24], allNodes[22].RightChildNode);
-            Assert.AreEqual(0, allNodes[22].Item.LeftSubtreeRangeCount);
-            Assert.AreEqual(1, allNodes[22].Item.RightSubtreeRangeCount);
-            Assert.AreEqual(0, allNodes[22].LeftSubtreeSize);
-            Assert.AreEqual(1, allNodes[22].RightSubtreeSize);
-            Assert.AreSame(allNodes[22], allNodes[24].ParentNode);
-            Assert.IsNull(allNodes[24].LeftChildNode);
-            Assert.IsNull(allNodes[24].RightChildNode);
-            Assert.AreEqual(0, allNodes[24].Item.LeftSubtreeRangeCount);
-            Assert.AreEqual(0, allNodes[24].Item.RightSubtreeRangeCount);
-            Assert.AreEqual(0, allNodes[24].LeftSubtreeSize);
-            Assert.AreEqual(0, allNodes[24].RightSubtreeSize);
+            Assert.AreSame(allNodes[26], allNodes[28].ParentNode);
+            Assert.AreSame(allNodes[34], allNodes[32].ParentNode);
+            Assert.AreSame(allNodes[34], allNodes[38].ParentNode);
             mockery.VerifyAllExpectationsHaveBeenMet();
             ValidateRangeTree(testUniqueRandomGenerator);
         }
@@ -1051,9 +1055,354 @@ namespace MoreComplexDataStructures.UnitTests
             Int64 result = testUniqueRandomGenerator.Generate();
 
             Assert.AreEqual(Int64.MaxValue, result);
+            mockery.VerifyAllExpectationsHaveBeenMet();
+        }
+
+        /// <summary>
+        /// Success test for the  ZigZagNodeLeft() method where the nodes within the zig-zag shape all have children (and parents).
+        /// </summary>
+        [Test]
+        public void ZigZagNodeLeft_ZigZagNodesHaveChildren()
+        {
+            // Construct the following tree and perform a left zig-zag operation on the node with range starting at 31 in the following tree...
+            //              67-85(19)
+            //             /
+            //         9-25(17)
+            //        /        \
+            //  1-7(7)      47-59(13)
+            //             /         \
+            //         31-41(11)    61-65(5)
+            //        /         \
+            //   27-28(2)     43-45(3)
+            //
+            // ...and expect the result to look like...
+            //                     67-85(19)
+            //                    /
+            //               31-41(11)
+            //              /         \
+            //      9-25(17)           47-59(13)
+            //     /        \         /         \
+            //  1-7(7)     27-28(2) 43-45(3)  61-65(5)
+            var sixtySevenNode = CreateRangeTreeNode(67, 19, 7, 0, 58, 0, null);
+            var nineNode = CreateRangeTreeNode(9, 17, 1, 5, 7, 34, sixtySevenNode);
+            sixtySevenNode.LeftChildNode = nineNode;
+            var oneNode = CreateRangeTreeNode(1, 7, 0, 0, 0, 0, nineNode);
+            nineNode.LeftChildNode = oneNode;
+            var fortySevenNode = CreateRangeTreeNode(47, 13, 3, 1, 16, 5, nineNode);
+            nineNode.RightChildNode = fortySevenNode;
+            var thirtyOneNode = CreateRangeTreeNode(31, 11, 1, 1, 2, 3, fortySevenNode);
+            fortySevenNode.LeftChildNode = thirtyOneNode;
+            var sixtyOneNOde = CreateRangeTreeNode(61, 5, 0, 0, 0, 0, fortySevenNode);
+            fortySevenNode.RightChildNode = sixtyOneNOde;
+            var twentySevenNode = CreateRangeTreeNode(27, 2, 0, 0, 0, 0, thirtyOneNode);
+            thirtyOneNode.LeftChildNode = twentySevenNode;
+            var fortyThreeNode = CreateRangeTreeNode(43, 3, 0, 0, 0, 0, thirtyOneNode);
+            thirtyOneNode.RightChildNode = fortyThreeNode;
+            var testUniqueRandomGenerator = new UniqueRandomGeneratorWithProtectedMethods(1, 1, mockRandomIntegerGenerator);
+            testUniqueRandomGenerator.RangeTree.RootNode = sixtySevenNode;
+
+            testUniqueRandomGenerator.RangeTree.ZigZagNodeLeft(thirtyOneNode);
+
+            Dictionary<Int64, WeightBalancedTreeNode<RangeAndSubtreeCounts>> allNodes = testUniqueRandomGenerator.AllNodes;
+            Assert.AreEqual(8, allNodes.Count);
+            Assert.IsNull(allNodes[67].ParentNode);
+            Assert.AreSame(allNodes[31], allNodes[67].LeftChildNode);
+            Assert.IsNull(allNodes[67].RightChildNode);
+            Assert.AreSame(allNodes[67], allNodes[31].ParentNode);
+            Assert.AreSame(allNodes[9], allNodes[31].LeftChildNode);
+            Assert.AreSame(allNodes[47], allNodes[31].RightChildNode);
+            Assert.AreSame(allNodes[31], allNodes[9].ParentNode);
+            Assert.AreSame(allNodes[1], allNodes[9].LeftChildNode);
+            Assert.AreSame(allNodes[27], allNodes[9].RightChildNode);
+            Assert.AreSame(allNodes[31], allNodes[47].ParentNode);
+            Assert.AreSame(allNodes[43], allNodes[47].LeftChildNode);
+            Assert.AreSame(allNodes[61], allNodes[47].RightChildNode);
+            Assert.AreSame(allNodes[9], allNodes[1].ParentNode);
+            Assert.IsNull(allNodes[1].LeftChildNode);
+            Assert.IsNull(allNodes[1].RightChildNode);
+            Assert.AreSame(allNodes[9], allNodes[27].ParentNode);
+            Assert.IsNull(allNodes[27].LeftChildNode);
+            Assert.IsNull(allNodes[27].RightChildNode);
+            Assert.AreSame(allNodes[47], allNodes[43].ParentNode);
+            Assert.IsNull(allNodes[43].LeftChildNode);
+            Assert.IsNull(allNodes[43].RightChildNode);
+            Assert.AreSame(allNodes[47], allNodes[61].ParentNode);
+            Assert.IsNull(allNodes[61].LeftChildNode);
+            Assert.IsNull(allNodes[61].RightChildNode);
+            Assert.AreEqual(7, allNodes[67].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[67].RightSubtreeSize);
+            Assert.AreEqual(3, allNodes[31].LeftSubtreeSize);
+            Assert.AreEqual(3, allNodes[31].RightSubtreeSize);
+            Assert.AreEqual(1, allNodes[9].LeftSubtreeSize);
+            Assert.AreEqual(1, allNodes[9].RightSubtreeSize);
+            Assert.AreEqual(1, allNodes[47].LeftSubtreeSize);
+            Assert.AreEqual(1, allNodes[47].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[1].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[1].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[27].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[27].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[43].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[43].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[61].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[61].RightSubtreeSize);
+            Assert.AreEqual(58, allNodes[67].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[67].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(26, allNodes[31].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(21, allNodes[31].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(7, allNodes[9].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(2, allNodes[9].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(3, allNodes[47].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(5, allNodes[47].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[1].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[1].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[27].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[27].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[43].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[43].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[61].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[61].Item.RightSubtreeRangeCount);
+            mockery.VerifyAllExpectationsHaveBeenMet();
+            ValidateRangeTree(testUniqueRandomGenerator);
+        }
+
+        /// <summary>
+        /// Success test for the ZigZagNodeLeft() method where the nodes within the zig-zag shape don't have children (nor parents).
+        /// </summary>
+        [Test]
+        public void ZigZagNodeLeft_ZigZagNodesHaveNoChildren()
+        {
+            // Construct the following tree and perform a left zig-zag operation on the node with range starting at 31 in the following tree...
+            //   9-25(17)
+            //           \
+            //        47-59(13)
+            //       /
+            //   31-41(11)
+            //
+            // ...and expect the result to look like...
+            //            31-41(11)
+            //           /         \
+            //   9-25(17)           47-59(13)
+            var nineNode = CreateRangeTreeNode(9, 17, 0, 2, 0, 24, null);
+            var fortySevenNode = CreateRangeTreeNode(47, 13, 1, 0, 11, 0, nineNode);
+            nineNode.RightChildNode = fortySevenNode;
+            var thirtyOneNode = CreateRangeTreeNode(31, 11, 0, 0, 0, 0, fortySevenNode);
+            fortySevenNode.LeftChildNode = thirtyOneNode;
+            var testUniqueRandomGenerator = new UniqueRandomGeneratorWithProtectedMethods(1, 1, mockRandomIntegerGenerator);
+            testUniqueRandomGenerator.RangeTree.RootNode = nineNode;
+
+            testUniqueRandomGenerator.RangeTree.ZigZagNodeLeft(thirtyOneNode);
+
+            Dictionary<Int64, WeightBalancedTreeNode<RangeAndSubtreeCounts>> allNodes = testUniqueRandomGenerator.AllNodes;
+            Assert.AreEqual(3, allNodes.Count);
+            Assert.IsNull(allNodes[31].ParentNode);
+            Assert.AreSame(allNodes[9], allNodes[31].LeftChildNode);
+            Assert.AreSame(allNodes[47], allNodes[31].RightChildNode);
+            Assert.AreSame(allNodes[31], allNodes[9].ParentNode);
+            Assert.IsNull(allNodes[9].LeftChildNode);
+            Assert.IsNull(allNodes[9].RightChildNode);
+            Assert.AreSame(allNodes[31], allNodes[47].ParentNode);
+            Assert.IsNull(allNodes[47].LeftChildNode);
+            Assert.IsNull(allNodes[47].RightChildNode);
+            Assert.AreEqual(1, allNodes[31].LeftSubtreeSize);
+            Assert.AreEqual(1, allNodes[31].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[9].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[9].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[47].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[47].RightSubtreeSize);
+            Assert.AreEqual(17, allNodes[31].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(13, allNodes[31].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[9].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[9].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[47].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[47].Item.RightSubtreeRangeCount);
+            mockery.VerifyAllExpectationsHaveBeenMet();
+            ValidateRangeTree(testUniqueRandomGenerator);
+        }
+
+        /// <summary>
+        /// Success test for the ZigZagNodeRight() method where the nodes within the zig-zag shape all have children (and parents).
+        /// </summary>
+        [Test]
+        public void ZigZagNodeRight_ZigZagNodesHaveChildren()
+        {
+            // Construct the following tree and perform a right zig-zag operation on the node with range starting at 44 in the following tree...
+            //       1-18(19)
+            //               \
+            //            59-75(17)
+            //           /         \
+            //      26-38(13)       77-83(7)
+            //     /         \
+            //  20-24(5)   44-54(11)
+            //            /         \
+            //         40-42(3)   56-57(2)
+            //
+            // ...and expect the result to look like...
+            //            1-18(19)
+            //                    \
+            //                 44-54(11)
+            //                /         \
+            //       26-38(13)           59-75(17)
+            //      /         \         /         \
+            //   20-24(5)  40-42(3)  56-57(2)   77-83(7)
+            var oneNode = CreateRangeTreeNode(1, 19, 0, 7, 0, 58, null);
+            var fiftyNineNode = CreateRangeTreeNode(59, 17, 5, 1, 34, 7, oneNode);
+            oneNode.RightChildNode = fiftyNineNode;
+            var seventySevenNode = CreateRangeTreeNode(77, 7, 0, 0, 0, 0, fiftyNineNode);
+            fiftyNineNode.RightChildNode = seventySevenNode;
+            var twentySixNode = CreateRangeTreeNode(26, 13, 1, 3, 5, 16, fiftyNineNode);
+            fiftyNineNode.LeftChildNode = twentySixNode;
+            var fortyFourNode = CreateRangeTreeNode(44, 11, 1, 1, 3, 2, twentySixNode);
+            twentySixNode.RightChildNode = fortyFourNode;
+            var twentyNode = CreateRangeTreeNode(20, 5, 0, 0, 0, 0, twentySixNode);
+            twentySixNode.LeftChildNode = twentyNode;
+            var fiftySixNode = CreateRangeTreeNode(56, 2, 0, 0, 0, 0, fortyFourNode);
+            fortyFourNode.RightChildNode = fiftySixNode;
+            var fortyNode = CreateRangeTreeNode(40, 3, 0, 0, 0, 0, fortyFourNode);
+            fortyFourNode.LeftChildNode = fortyNode;
+            var testUniqueRandomGenerator = new UniqueRandomGeneratorWithProtectedMethods(1, 1, mockRandomIntegerGenerator);
+            testUniqueRandomGenerator.RangeTree.RootNode = oneNode;
+
+            testUniqueRandomGenerator.RangeTree.ZigZagNodeRight(fortyFourNode);
+
+            Dictionary<Int64, WeightBalancedTreeNode<RangeAndSubtreeCounts>> allNodes = testUniqueRandomGenerator.AllNodes;
+            Assert.AreEqual(8, allNodes.Count);
+            Assert.IsNull(allNodes[1].ParentNode);
+            Assert.IsNull(allNodes[1].LeftChildNode);
+            Assert.AreSame(allNodes[44], allNodes[1].RightChildNode);
+            Assert.AreSame(allNodes[1], allNodes[44].ParentNode);
+            Assert.AreSame(allNodes[26], allNodes[44].LeftChildNode);
+            Assert.AreSame(allNodes[59], allNodes[44].RightChildNode);
+            Assert.AreSame(allNodes[44], allNodes[26].ParentNode);
+            Assert.AreSame(allNodes[20], allNodes[26].LeftChildNode);
+            Assert.AreSame(allNodes[40], allNodes[26].RightChildNode);
+            Assert.AreSame(allNodes[44], allNodes[59].ParentNode);
+            Assert.AreSame(allNodes[56], allNodes[59].LeftChildNode);
+            Assert.AreSame(allNodes[77], allNodes[59].RightChildNode);
+            Assert.AreSame(allNodes[26], allNodes[20].ParentNode);
+            Assert.IsNull(allNodes[20].LeftChildNode);
+            Assert.IsNull(allNodes[20].RightChildNode);
+            Assert.AreSame(allNodes[26], allNodes[40].ParentNode);
+            Assert.IsNull(allNodes[40].LeftChildNode);
+            Assert.IsNull(allNodes[40].RightChildNode);
+            Assert.AreSame(allNodes[59], allNodes[56].ParentNode);
+            Assert.IsNull(allNodes[56].LeftChildNode);
+            Assert.IsNull(allNodes[56].RightChildNode);
+            Assert.AreSame(allNodes[59], allNodes[77].ParentNode);
+            Assert.IsNull(allNodes[77].LeftChildNode);
+            Assert.IsNull(allNodes[77].RightChildNode);
+            Assert.AreEqual(0, allNodes[1].LeftSubtreeSize);
+            Assert.AreEqual(7, allNodes[1].RightSubtreeSize);
+            Assert.AreEqual(3, allNodes[44].LeftSubtreeSize);
+            Assert.AreEqual(3, allNodes[44].RightSubtreeSize);
+            Assert.AreEqual(1, allNodes[26].LeftSubtreeSize);
+            Assert.AreEqual(1, allNodes[26].RightSubtreeSize);
+            Assert.AreEqual(1, allNodes[59].LeftSubtreeSize);
+            Assert.AreEqual(1, allNodes[59].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[20].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[20].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[40].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[40].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[56].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[56].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[77].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[77].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[1].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(58, allNodes[1].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(21, allNodes[44].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(26, allNodes[44].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(5, allNodes[26].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(3, allNodes[26].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(2, allNodes[59].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(7, allNodes[59].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[20].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[20].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[40].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[40].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[56].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[56].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[77].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[77].Item.RightSubtreeRangeCount);
+            mockery.VerifyAllExpectationsHaveBeenMet();
+            ValidateRangeTree(testUniqueRandomGenerator);
+        }
+
+        /// <summary>
+        /// Success test for the ZigZagNodeRight() method where the nodes within the zig-zag shape don't have children (nor parents).
+        /// </summary>
+        [Test]
+        public void ZigZagNodeRight_ZigZagNodesHaveNoChildren()
+        {
+            // Construct the following tree and perform a right zig-zag operation on the node with range starting at 44 in the following tree...
+            //       59-75(17)
+            //      /  
+            //  26-38(13)      
+            //           \
+            //        44-54(11)
+            //
+            // ...and expect the result to look like...
+            //            44-54(11)
+            //           /         \
+            //   26-38(13)          59-75(17)
+            var fiftyNineNode = CreateRangeTreeNode(59, 17, 1, 0, 24, 0, null);
+            var twentySixNode = CreateRangeTreeNode(26, 13, 0, 1, 0, 11, fiftyNineNode);
+            fiftyNineNode.LeftChildNode = twentySixNode;
+            var fortyFourNode = CreateRangeTreeNode(44, 11, 0, 0, 0, 0, twentySixNode);
+            twentySixNode.RightChildNode = fortyFourNode;
+            var testUniqueRandomGenerator = new UniqueRandomGeneratorWithProtectedMethods(1, 1, mockRandomIntegerGenerator);
+            testUniqueRandomGenerator.RangeTree.RootNode = fiftyNineNode;
+
+            testUniqueRandomGenerator.RangeTree.ZigZagNodeRight(fortyFourNode);
+
+            Dictionary<Int64, WeightBalancedTreeNode<RangeAndSubtreeCounts>> allNodes = testUniqueRandomGenerator.AllNodes;
+            Assert.AreEqual(3, allNodes.Count);
+            Assert.IsNull(allNodes[44].ParentNode);
+            Assert.AreSame(allNodes[26], allNodes[44].LeftChildNode);
+            Assert.AreSame(allNodes[59], allNodes[44].RightChildNode);
+            Assert.AreSame(allNodes[44], allNodes[26].ParentNode);
+            Assert.IsNull(allNodes[26].LeftChildNode);
+            Assert.IsNull(allNodes[26].RightChildNode);
+            Assert.AreSame(allNodes[44], allNodes[59].ParentNode);
+            Assert.IsNull(allNodes[59].LeftChildNode);
+            Assert.IsNull(allNodes[59].RightChildNode);
+            Assert.AreEqual(1, allNodes[44].LeftSubtreeSize);
+            Assert.AreEqual(1, allNodes[44].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[26].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[26].RightSubtreeSize);
+            Assert.AreEqual(0, allNodes[59].LeftSubtreeSize);
+            Assert.AreEqual(0, allNodes[59].RightSubtreeSize);
+            Assert.AreEqual(13, allNodes[44].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(17, allNodes[44].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[26].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[26].Item.RightSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[59].Item.LeftSubtreeRangeCount);
+            Assert.AreEqual(0, allNodes[59].Item.RightSubtreeRangeCount);
+            mockery.VerifyAllExpectationsHaveBeenMet();
+            ValidateRangeTree(testUniqueRandomGenerator);
         }
 
         #region Private Methods
+
+        /// <summary>
+        /// Creates a node of a RangeTree.
+        /// </summary>
+        /// <param name="rangeStart">The first value in the range.</param>
+        /// <param name="rangeLength">The inclusive length of the range (e.g the range containing values { 2, 3, 4, 5 } would have length 4).</param>
+        /// <param name="leftSubtreeSize">The number of nodes in the left subtree of the node.</param>
+        /// <param name="rightSubtreeSize">The number of nodes in the right subtree of the node.</param>
+        /// <param name="leftSubtreeRangeCount">The total count of integers in the ranges of the left subtree of the node.</param>
+        /// <param name="rightSubtreeRangeCount">The total count of integers in the ranges of the right subtree of the node.</param>
+        /// <param name="parentNode">The parent of the node.</param>
+        /// <returns></returns>
+        WeightBalancedTreeNode<RangeAndSubtreeCounts> CreateRangeTreeNode(Int32 rangeStart, Int32 rangeLength, Int32 leftSubtreeSize, Int32 rightSubtreeSize, Int32 leftSubtreeRangeCount, Int32 rightSubtreeRangeCount, WeightBalancedTreeNode<RangeAndSubtreeCounts> parentNode)
+        {
+            var longIntegerRange = new LongIntegerRange(rangeStart, rangeLength);
+            var rangeAndSubtreeCounts = new RangeAndSubtreeCounts(longIntegerRange, leftSubtreeRangeCount, rightSubtreeRangeCount);
+            var node = new WeightBalancedTreeNode<RangeAndSubtreeCounts>(rangeAndSubtreeCounts, parentNode);
+            node.LeftSubtreeSize = leftSubtreeSize;
+            node.RightSubtreeSize = rightSubtreeSize;
+
+            return node;
+        }
 
         /// <summary>
         /// Validates the structure of the range tree underlying the specified unique random generator. 
@@ -1398,9 +1747,9 @@ namespace MoreComplexDataStructures.UnitTests
             /// <summary>
             /// The underlying tree of integer ranges used to generate randoms from.
             /// </summary>
-            public new RangeTree RangeTree
+            public new RangeTreeWithProtectedMethods RangeTree
             {
-                get { return rangeTree; }
+                get { return (RangeTreeWithProtectedMethods)rangeTree; }
             }
 
             /// <summary>
@@ -1430,7 +1779,38 @@ namespace MoreComplexDataStructures.UnitTests
             public UniqueRandomGeneratorWithProtectedMethods(Int64 rangeStart, Int64 rangeEnd, IRandomIntegerGenerator randomIntegerGenerator)
                 : base(rangeStart, rangeEnd, randomIntegerGenerator)
             {
+                var newRangeTree = new RangeTreeWithProtectedMethods();
+                newRangeTree.Add(rangeTree.RootNode.Item);
+                rangeTree = newRangeTree;
             }
+
+            #region Nested Classes
+
+            /// <summary>
+            /// Version of the UniqueRandomGenerator+RangeTree class where private and protected methods and members are exposed as public so that they can be unit tested.
+            /// </summary>
+            public class RangeTreeWithProtectedMethods : RangeTree
+            {
+                /// <summary>
+                /// Performs a left zig-zag operation on the specified node.
+                /// </summary>
+                /// <param name="inputNode">The node to perform the zig-zag operation on.</param>
+                public new void ZigZagNodeLeft(WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNode)
+                {
+                    base.ZigZagNodeLeft(inputNode);
+                }
+
+                /// <summary>
+                /// Performs a right zig-zag operation on the specified node.
+                /// </summary>
+                /// <param name="inputNode">The node to perform the zig-zag operation on.</param>
+                public new void ZigZagNodeRight(WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNode)
+                {
+                    base.ZigZagNodeRight(inputNode);
+                }
+            }
+
+            #endregion
         }
 
         #endregion
