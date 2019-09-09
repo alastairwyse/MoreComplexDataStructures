@@ -52,6 +52,7 @@ Note - Another (more simple) way to generate a range of unique random numbers is
 **PriorityQueue** - An implementation of a [double-ended](https://en.wikipedia.org/wiki/Double-ended_priority_queue) [priority queue](https://en.wikipedia.org/wiki/Priority_queue).  As the underlying structure is a balanced tree, most methods return with order O(log(n)) time complexity.  The class allows dequeuing of specific items aside from the minimum and maximum, and exposes several methods to inspect the contents of the queue.
 
 ### Future Enhancements
+- Correct bug in the PriorityQueue class where methods EnqueueAsMax() and EnqueueAsMin() may not enqueue accordingly if the existing maximum or minimum priorities are very large or very small double values.
 - Enhance any methods which return an IEnumerable to throw an InvalidOperationException if the object structure is changed while enumerating.
 - Remove inefficiency of converting List&lt;Char&gt; to String in CharacterTrie.GetAllStringsWithPrefix().
 - Remove redundant / unused conditional branches in WeightBalancedTree.GetRandomItem() method (e.g. 'if (currentNode.LeftChildNode == null)')
