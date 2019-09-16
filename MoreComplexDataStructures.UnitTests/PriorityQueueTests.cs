@@ -331,6 +331,22 @@ namespace MoreComplexDataStructures.UnitTests
         }
 
         /// <summary>
+        /// Tests that items can EnqueueAsMax() method continues to enqueue items with priority Double.PositiveInfinity when the maximum priority is already Double.PositiveInfinity.
+        /// </summary>
+        [Test]
+        public void EnqueueAsMax_MaximumPriorityAlreadyPositiveInfinity()
+        {
+            testPriorityQueue.Enqueue('A', Double.PositiveInfinity);
+
+            testPriorityQueue.EnqueueAsMax('B');
+
+            Assert.AreEqual(2, testPriorityQueue.Count);
+            var priorities = new List<Double>(testPriorityQueue.GetPrioritiesForItem('B'));
+            Assert.AreEqual(1, priorities.Count);
+            Assert.AreEqual(Double.PositiveInfinity, priorities[0]);
+        }
+
+        /// <summary>
         /// Success tests for the EnqueueAsMax() method.
         /// </summary>
         [Test]
@@ -348,7 +364,41 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual('F', testPriorityQueue.PeekMax());
             var priorities = new List<Double>(testPriorityQueue.GetPrioritiesForItem('F'));
             Assert.AreEqual(1, priorities.Count);
-            Assert.AreEqual(13.0, priorities[0]);
+            Assert.IsTrue(12.0 < priorities[0]);
+        }
+
+        /// <summary>
+        /// Success tests for the EnqueueAsMax() method, where the existing maximum priority is a very large double value.
+        /// </summary>
+        [Test]
+        public void EnqueueAsMax_LargePriorityValue()
+        {
+            Double largePriorityValue = BitConverter.Int64BitsToDouble(0x7FEFFFFFFFFFFFF0);
+            testPriorityQueue.Enqueue('A', largePriorityValue);
+
+            testPriorityQueue.EnqueueAsMax('B');
+
+            Assert.AreEqual(2, testPriorityQueue.Count);
+            Assert.AreEqual(1, testPriorityQueue.GetItemCountByPriority(largePriorityValue));
+            Assert.AreEqual('B', testPriorityQueue.GetItemsWithPriorityGreaterThan(largePriorityValue, 1).First().Value);
+            Assert.AreEqual(1, testPriorityQueue.GetItemsWithPriorityGreaterThan(largePriorityValue, 1).Count());
+            Assert.IsTrue(largePriorityValue < testPriorityQueue.MaxPriority);
+        }
+
+        /// <summary>
+        /// Tests that items can EnqueueAsMin() method continues to enqueue items with priority Double.NegativeInfinity when the minimum priority is already Double.NegativeInfinity.
+        /// </summary>
+        [Test]
+        public void EnqueueAsMin_MinimumPriorityAlreadyNegativeInfinity()
+        {
+            testPriorityQueue.Enqueue('A', Double.NegativeInfinity);
+
+            testPriorityQueue.EnqueueAsMin('B');
+
+            Assert.AreEqual(2, testPriorityQueue.Count);
+            var priorities = new List<Double>(testPriorityQueue.GetPrioritiesForItem('B'));
+            Assert.AreEqual(1, priorities.Count);
+            Assert.AreEqual(Double.NegativeInfinity, priorities[0]);
         }
 
         /// <summary>
@@ -369,7 +419,25 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual('F', testPriorityQueue.PeekMin());
             var priorities = new List<Double>(testPriorityQueue.GetPrioritiesForItem('F'));
             Assert.AreEqual(1, priorities.Count);
-            Assert.AreEqual(7.0, priorities[0]);
+            Assert.IsTrue(8.0 > priorities[0]);
+        }
+
+        /// <summary>
+        /// Success tests for the EnqueueAsMin() method, where the existing minimum priority is a very small double value.
+        /// </summary>
+        [Test]
+        public void EnqueueAsMin_SmallPriorityValue()
+        {
+            Double smallPriorityValue = BitConverter.Int64BitsToDouble(unchecked((long)0xFFEFFFFFFFFFFFF0));
+            testPriorityQueue.Enqueue('A', smallPriorityValue);
+
+            testPriorityQueue.EnqueueAsMin('B');
+
+            Assert.AreEqual(2, testPriorityQueue.Count);
+            Assert.AreEqual(1, testPriorityQueue.GetItemCountByPriority(smallPriorityValue));
+            Assert.AreEqual('B', testPriorityQueue.GetItemsWithPriorityLessThan(smallPriorityValue, 1).First().Value);
+            Assert.AreEqual(1, testPriorityQueue.GetItemsWithPriorityLessThan(smallPriorityValue, 1).Count());
+            Assert.IsTrue(smallPriorityValue > testPriorityQueue.MinPriority);
         }
 
         /// <summary>
@@ -743,7 +811,6 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual(5.0, result[3].Key);
             Assert.AreEqual('A', result[3].Value);
 
-
             result = new List<KeyValuePair<Double, Char>>(testPriorityQueue.GetItemsWithPriorityGreaterThan(2.0, 1));
 
             Assert.AreEqual(1, result.Count);
@@ -828,6 +895,60 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual('B', result[3].Value);
             Assert.AreEqual(10.0, result[4].Key);
             Assert.AreEqual('A', result[4].Value);
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown if the MaxPriority property is accessed when the queue is empty.
+        /// </summary>
+        [Test]
+        public void MaxPriority_QueueEmpty()
+        {
+            var e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                Double result = testPriorityQueue.MaxPriority;
+            });
+
+            Assert.That(e.Message, Does.StartWith("The priority queue is empty."));
+        }
+
+        /// <summary>
+        /// Success tests for the MaxPriority property.
+        /// </summary>
+        [Test]
+        public new void MaxPriority()
+        {
+            EnqueueTestData(testPriorityQueue);
+
+            Double result = testPriorityQueue.MaxPriority;
+
+            Assert.AreEqual(7.0, result);
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown if the MinPriority property is accessed when the queue is empty.
+        /// </summary>
+        [Test]
+        public void MinPriority_QueueEmpty()
+        {
+            var e = Assert.Throws<InvalidOperationException>(delegate
+            {
+                Double result = testPriorityQueue.MinPriority;
+            });
+
+            Assert.That(e.Message, Does.StartWith("The priority queue is empty."));
+        }
+
+        /// <summary>
+        /// Success tests for the MinPriority property.
+        /// </summary>
+        [Test]
+        public new void MinPriority()
+        {
+            EnqueueTestData(testPriorityQueue);
+
+            Double result = testPriorityQueue.MinPriority;
+
+            Assert.AreEqual(3.0, result);
         }
 
         #region Private Methods

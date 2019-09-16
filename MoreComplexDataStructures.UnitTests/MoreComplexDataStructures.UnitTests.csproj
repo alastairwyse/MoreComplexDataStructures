@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="BinarySearchTreeBalancedInserterTests.cs" />
     <Compile Include="CharacterTrieTests.cs" />
+    <Compile Include="DoubleBinaryIncrementerTests.cs" />
     <Compile Include="FrequencyTableTests.cs" />
     <Compile Include="HeapTestBase.cs" />
     <Compile Include="LongIntegerRangeTests.cs" />

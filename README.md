@@ -51,8 +51,9 @@ Note - Another (more simple) way to generate a range of unique random numbers is
 
 **PriorityQueue** - An implementation of a [double-ended](https://en.wikipedia.org/wiki/Double-ended_priority_queue) [priority queue](https://en.wikipedia.org/wiki/Priority_queue).  As the underlying structure is a balanced tree, most methods return with order O(log(n)) time complexity.  The class allows dequeuing of specific items aside from the minimum and maximum, and exposes several methods to inspect the contents of the queue.
 
+Note - The priority of enqueued items is set and stored as a double.  Whilst NaN is not permitted (attempting to enqueue an item with NaN priority will throw an exception), it is possible to enqueue items with Double.PositiveInfinity or Double.NegativeInfinity priority.  Doing so will affect the behaviour of the EnqueueAsMax() and EnqueueAsMin() methods (e.g. calling EnqueueAsMax() when the maximum priority is already Double.PositiveInfinity will result in the new item also being enqueued with Double.PositiveInfinity priority... the same as the current maximum, not greater). Properties 'MaxPriority' and 'MinPriority' are provided to retrieve the maximum and minimum priorities if this behaviour needs to be predicted, or avoided.
+
 ### Future Enhancements
-- Correct bug in the PriorityQueue class where methods EnqueueAsMax() and EnqueueAsMin() may not enqueue accordingly if the existing maximum or minimum priorities are very large or very small double values.
 - Enhance any methods which return an IEnumerable to throw an InvalidOperationException if the object structure is changed while enumerating.
 - Remove inefficiency of converting List&lt;Char&gt; to String in CharacterTrie.GetAllStringsWithPrefix().
 - Remove redundant / unused conditional branches in WeightBalancedTree.GetRandomItem() method (e.g. 'if (currentNode.LeftChildNode == null)')
@@ -70,6 +71,13 @@ Note - Another (more simple) way to generate a range of unique random numbers is
   <tr>
     <td><b>Version</b></td>
     <td><b>Changes</b></td>
+  </tr>
+  <tr>
+    <td valign="top">1.8.0.0</td>
+    <td>
+      Corrected bug in PriorityQueue class where methods EnqueueAsMax() and EnqueueAsMin() would not always result in items being enqueued as maximum or minimum priority.  Now uses class DoubleBinaryIncrementer to ensure that the new priority generated is the binary successor or predecessor to the existing maximum or minimum.<br />
+      Added MaxPriority and MinPriority properties to the PriorityQueue class.
+    </td>
   </tr>
   <tr>
     <td valign="top">1.7.0.0</td>

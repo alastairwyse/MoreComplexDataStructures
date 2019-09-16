@@ -33,6 +33,8 @@ namespace MoreComplexDataStructures
         protected Dictionary<T, HashSet<Double>> itemToPriorityMap;
         /// <summary>The total number of items in the priority queue.</summary>
         protected Int32 count;
+        /// <summary>Utility class used to increment priority values for the EnqueueAsMax() and EnqueueAsMin() methods.</summary>
+        protected DoubleBinaryIncrementer priorityIncrementer;
 
         /// <summary>
         /// The total number of items in the priority queue.
@@ -43,6 +45,34 @@ namespace MoreComplexDataStructures
         }
 
         /// <summary>
+        /// The maximum priority of items in the queue.
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">The queue is empty.</exception>
+        public Double MaxPriority
+        {
+            get
+            {
+                ThrowExceptionIfQueueIsEmpty();
+
+                return tree.Max.Priority;
+            }
+        }
+
+        /// <summary>
+        /// The minimum priority of items in the queue.
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">The queue is empty.</exception>
+        public Double MinPriority
+        {
+            get
+            {
+                ThrowExceptionIfQueueIsEmpty();
+
+                return tree.Min.Priority;
+            }
+        }
+
+        /// <summary>
         /// Initialises a new instance of the MoreComplexDataStructures.PriorityQueue class.
         /// </summary>
         public PriorityQueue()
@@ -50,6 +80,7 @@ namespace MoreComplexDataStructures
             tree = new WeightBalancedTreeWithProtectedMethods<PriorityAndItems<T>>(true);
             itemToPriorityMap = new Dictionary<T, HashSet<Double>>();
             count = 0;
+            priorityIncrementer = new DoubleBinaryIncrementer();
         }
 
         /// <summary>
@@ -166,7 +197,7 @@ namespace MoreComplexDataStructures
             else
             {
                 PriorityAndItems<T> maxNode = tree.Max;
-                Enqueue(item, maxNode.Priority + 1.0);
+                Enqueue(item, priorityIncrementer.Increment(maxNode.Priority));
             }
         }
 
@@ -183,7 +214,7 @@ namespace MoreComplexDataStructures
             else
             {
                 PriorityAndItems<T> minNode = tree.Min;
-                Enqueue(item, minNode.Priority - 1.0);
+                Enqueue(item, priorityIncrementer.Decrement(minNode.Priority));
             }
         }
 
