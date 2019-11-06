@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.8.0.0</AssemblyVersion>
-    <FileVersion>1.8.0.0</FileVersion>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+    <FileVersion>1.9.0.0</FileVersion>
     <Copyright>Copyright © Alastair Wyse 2019</Copyright>
     <PackageProjectUrl>https://github.com/alastairwyse/MoreComplexDataStructures</PackageProjectUrl>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
@@ -25,10 +25,9 @@ UnflaggedNumberGenerator - Allows the 'flagging' (marking) of numbers in a speci
 LongIntegerStatusStorer - Stores a boolean status for a complete set of long integers
 ListRandomizer - Randomizes the elements of a list using the Fisher/Yates/Knuth algorithm</Description>
     <Authors>Alastair Wyse</Authors>
-    <Version>1.8.0</Version>
+    <Version>1.9.0</Version>
     <PackageTags>data structure weight weighted balanced tree binary search minheap maxheap trie priority queue frequency table long integer int64 random randomize list array unique random generate lru cache</PackageTags>
-    <PackageReleaseNotes>Corrected bug in PriorityQueue class where methods EnqueueAsMax() and EnqueueAsMin() would not always result in items being enqueued as maximum or minimum priority.  Now uses class DoubleBinaryIncrementer to ensure that the new priority generated is the binary successor or predecessor to the existing maximum or minimum.
-Added MaxPriority and MinPriority properties to the PriorityQueue class.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added methods GetAllBetweenAscending() and GetAllBetweenDescending() to WeightBalancedTree.</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <ApplicationIcon />
     <OutputType>Library</OutputType>

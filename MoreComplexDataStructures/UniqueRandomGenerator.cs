@@ -439,6 +439,35 @@ namespace MoreComplexDataStructures
                 return base.TraverseUpToNode(startNode, traversePredicateFunc);
             }
 
+            /// <summary>
+            /// Traverses upwards from the specified node, performing node rotations to balance the tree.
+            /// </summary>
+            /// <param name="inputNode">The node at which to start balancing.</param>
+            public new void BalanceTreeUpFromNode(WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNode)
+            {
+                base.BalanceTreeUpFromNode(inputNode);
+            }
+
+            # region Private/Protected Methods
+
+            /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.WeightBalancedTree`1.RotateNodeLeft(MoreComplexDataStructures.WeightBalancedTreeNode{`0})"]/*'/>
+            protected override void RotateNodeLeft(WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNode)
+            {
+                // Update the node's subtree range count properties
+                inputNode.Item.RightSubtreeRangeCount = inputNode.RightChildNode.Item.LeftSubtreeRangeCount;
+                inputNode.RightChildNode.Item.LeftSubtreeRangeCount += inputNode.Item.LeftSubtreeRangeCount + inputNode.Item.Range.Length;
+                base.RotateNodeLeft(inputNode);
+            }
+
+            /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.WeightBalancedTree`1.RotateNodeRight(MoreComplexDataStructures.WeightBalancedTreeNode{`0})"]/*'/>
+            protected override void RotateNodeRight(WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNode)
+            {
+                // Update the node's subtree range count properties
+                inputNode.Item.LeftSubtreeRangeCount = inputNode.LeftChildNode.Item.RightSubtreeRangeCount;
+                inputNode.LeftChildNode.Item.RightSubtreeRangeCount += inputNode.Item.RightSubtreeRangeCount + inputNode.Item.Range.Length;
+                base.RotateNodeRight(inputNode);
+            }
+
             /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.WeightBalancedTree`1.ZigZagNodeLeft(MoreComplexDataStructures.WeightBalancedTreeNode{`0})"]/*'/>
             protected override void ZigZagNodeLeft(WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNode)
             {
@@ -495,35 +524,6 @@ namespace MoreComplexDataStructures
                 }
                 inputNode.Item.LeftSubtreeRangeCount = inputNodeParent.Item.LeftSubtreeRangeCount + inputNodeParent.Item.RightSubtreeRangeCount + inputNodeParent.Item.Range.Length;
                 inputNode.Item.RightSubtreeRangeCount = inputNodeGrandParent.Item.LeftSubtreeRangeCount + inputNodeGrandParent.Item.RightSubtreeRangeCount + inputNodeGrandParent.Item.Range.Length;
-            }
-
-            /// <summary>
-            /// Traverses upwards from the specified node, performing node rotations to balance the tree.
-            /// </summary>
-            /// <param name="inputNode">The node at which to start balancing.</param>
-            public new void BalanceTreeUpFromNode(WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNode)
-            {
-                base.BalanceTreeUpFromNode(inputNode);
-            }
-
-            # region Private/Protected Methods
-
-            /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.WeightBalancedTree`1.RotateNodeLeft(MoreComplexDataStructures.WeightBalancedTreeNode{`0})"]/*'/>
-            protected override void RotateNodeLeft(WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNode)
-            {
-                // Update the node's subtree range count properties
-                inputNode.Item.RightSubtreeRangeCount = inputNode.RightChildNode.Item.LeftSubtreeRangeCount;
-                inputNode.RightChildNode.Item.LeftSubtreeRangeCount += inputNode.Item.LeftSubtreeRangeCount + inputNode.Item.Range.Length;
-                base.RotateNodeLeft(inputNode);
-            }
-
-            /// <include file='InterfaceDocumentationComments.xml' path='doc/members/member[@name="M:MoreComplexDataStructures.WeightBalancedTree`1.RotateNodeRight(MoreComplexDataStructures.WeightBalancedTreeNode{`0})"]/*'/>
-            protected override void RotateNodeRight(WeightBalancedTreeNode<RangeAndSubtreeCounts> inputNode)
-            {
-                // Update the node's subtree range count properties
-                inputNode.Item.LeftSubtreeRangeCount = inputNode.LeftChildNode.Item.RightSubtreeRangeCount;
-                inputNode.LeftChildNode.Item.RightSubtreeRangeCount += inputNode.Item.RightSubtreeRangeCount + inputNode.Item.Range.Length;
-                base.RotateNodeRight(inputNode);
             }
 
             #endregion

@@ -1350,6 +1350,298 @@ namespace MoreComplexDataStructures.UnitTests
         }
 
         /// <summary>
+        /// Tests that an exception is thrown when the GetAllBetweenAscending() method is called with equal 'lowItem' and 'highItem' parameters.
+        /// </summary>
+        [Test]
+        public void GetAllBetweenAscending_ParametersAreEqual()
+        {
+            ArgumentException e = Assert.Throws<ArgumentException>(delegate
+            {
+                testWeightBalancedTree.GetAllBetweenAscending(10, 10).Count();
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("Parameter 'lowItem' must be less than parameter 'highItem'."));
+            Assert.AreEqual("lowItem", e.ParamName);
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown when the GetAllBetweenAscending() method is called with a 'lowItem' parameter greater than the 'highItem' parameter.
+        /// </summary>
+        [Test]
+        public void GetAllBetweenAscending_LowItemGreaterThanHighItem()
+        {
+            ArgumentException e = Assert.Throws<ArgumentException>(delegate
+            {
+                testWeightBalancedTree.GetAllBetweenAscending(11, 10).Count();
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("Parameter 'lowItem' must be less than parameter 'highItem'."));
+            Assert.AreEqual("lowItem", e.ParamName);
+        }
+
+        /// <summary>
+        /// Success tests for the GetAllBetweenAscending() method when the tree is empty.
+        /// </summary>
+        [Test]
+        public void GetAllBetweenAscending_EmptyTree()
+        {
+            IEnumerable<Int32> result = testWeightBalancedTree.GetAllBetweenAscending(1, 100);
+            Assert.Zero(result.Count<Int32>());
+        }
+
+        /// <summary>
+        /// Success tests for the GetAllBetweenAscending() method.
+        /// </summary>
+        [Test]
+        public void GetAllBetweenAscending()
+        {
+            testWeightBalancedTree = new WeightBalancedTree<Int32>(new Int32[] { 5, 7, 9, 11, 13, 15 }, true);
+
+            // 'lowItem' and 'highItem' parameters are both less than the lowest item in the tree
+            var result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(1, 4));
+            Assert.AreEqual(0, result.Count<Int32>());
+
+            // 'lowItem' is less than and 'highItem' is equal to the lowest item in the tree
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(1, 5));
+            Assert.AreEqual(0, result.Count<Int32>());
+
+            // 'lowItem' is less than and 'highItem' is greater than the lowest item in the tree
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(1, 11));
+            Assert.AreEqual(3, result.Count<Int32>());
+            Assert.AreEqual(5, result[0]);
+            Assert.AreEqual(7, result[1]);
+            Assert.AreEqual(9, result[2]);
+
+            // 'lowItem' is less than the lowest item in tree and 'highItem' is equal to the highest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(1, 15));
+            Assert.AreEqual(5, result.Count<Int32>());
+            Assert.AreEqual(5, result[0]);
+            Assert.AreEqual(7, result[1]);
+            Assert.AreEqual(9, result[2]);
+            Assert.AreEqual(11, result[3]);
+            Assert.AreEqual(13, result[4]);
+
+            // 'lowItem' is less than the lowest item in tree and 'highItem' is greater than the highest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(1, 16));
+            Assert.AreEqual(6, result.Count<Int32>());
+            Assert.AreEqual(5, result[0]);
+            Assert.AreEqual(7, result[1]);
+            Assert.AreEqual(9, result[2]);
+            Assert.AreEqual(11, result[3]);
+            Assert.AreEqual(13, result[4]);
+            Assert.AreEqual(15, result[5]);
+
+            // 'lowItem' is equal to the lowest item in tree and 'highItem' is less than the highest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(5, 14));
+            Assert.AreEqual(4, result.Count<Int32>());
+            Assert.AreEqual(7, result[0]);
+            Assert.AreEqual(9, result[1]);
+            Assert.AreEqual(11, result[2]);
+            Assert.AreEqual(13, result[3]);
+
+            // 'lowItem' is equal to the lowest item in tree and 'highItem' is equal to the highest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(5, 15));
+            Assert.AreEqual(4, result.Count<Int32>());
+            Assert.AreEqual(7, result[0]);
+            Assert.AreEqual(9, result[1]);
+            Assert.AreEqual(11, result[2]);
+            Assert.AreEqual(13, result[3]);
+
+            // 'lowItem' is equal to the lowest item in tree and 'highItem' is greater the highest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(5, 16));
+            Assert.AreEqual(5, result.Count<Int32>());
+            Assert.AreEqual(7, result[0]);
+            Assert.AreEqual(9, result[1]);
+            Assert.AreEqual(11, result[2]);
+            Assert.AreEqual(13, result[3]);
+            Assert.AreEqual(15, result[4]);
+
+            // 'lowItem' is greater than the lowest item in tree and 'highItem' is less than the highest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(6, 14));
+            Assert.AreEqual(4, result.Count<Int32>());
+            Assert.AreEqual(7, result[0]);
+            Assert.AreEqual(9, result[1]);
+            Assert.AreEqual(11, result[2]);
+            Assert.AreEqual(13, result[3]);
+
+            // 'lowItem' is greater than the lowest item in tree and 'highItem' is equal to the highest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(6, 15));
+            Assert.AreEqual(4, result.Count<Int32>());
+            Assert.AreEqual(7, result[0]);
+            Assert.AreEqual(9, result[1]);
+            Assert.AreEqual(11, result[2]);
+            Assert.AreEqual(13, result[3]);
+
+            // 'lowItem' is greater than the lowest item in tree and 'highItem' is greater than the highest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(6, 16));
+            Assert.AreEqual(5, result.Count<Int32>());
+            Assert.AreEqual(7, result[0]);
+            Assert.AreEqual(9, result[1]);
+            Assert.AreEqual(11, result[2]);
+            Assert.AreEqual(13, result[3]);
+            Assert.AreEqual(15, result[4]);
+
+            // 'lowItem' is equal to and 'highItem' is greater than the highest item in the tree
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(16, 18));
+            Assert.AreEqual(0, result.Count<Int32>());
+
+            // 'lowItem' and 'highItem' are both greater than the highest item in the tree
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(16, 18));
+            Assert.AreEqual(0, result.Count<Int32>());
+
+            // 'lowItem' and 'highItem' are between adjacent values
+            testWeightBalancedTree = new WeightBalancedTree<Int32>(new Int32[] { 5, 7, 13, 15 }, true);
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenAscending(8, 12));
+            Assert.AreEqual(0, result.Count<Int32>());
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown when the GetAllBetweenDescending() method is called with equal 'highItem' and 'lowItem' parameters.
+        /// </summary>
+        [Test]
+        public void GetAllBetweenDescending_ParametersAreEqual()
+        {
+            ArgumentException e = Assert.Throws<ArgumentException>(delegate
+            {
+                testWeightBalancedTree.GetAllBetweenDescending(10, 10).Count();
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("Parameter 'highItem' must be greater than parameter 'lowItem'."));
+            Assert.AreEqual("highItem", e.ParamName);
+        }
+
+        /// <summary>
+        /// Tests that an exception is thrown when the GetAllBetweenDescending() method is called with a 'highItem' parameter less than the 'lowItem' parameter.
+        /// </summary>
+        [Test]
+        public void GetAllBetweenDescending_HighItemLessThanLowItem()
+        {
+            ArgumentException e = Assert.Throws<ArgumentException>(delegate
+            {
+                testWeightBalancedTree.GetAllBetweenDescending(10, 11).Count();
+            });
+
+            Assert.That(e.Message, NUnit.Framework.Does.StartWith("Parameter 'highItem' must be greater than parameter 'lowItem'."));
+            Assert.AreEqual("highItem", e.ParamName);
+        }
+
+        /// <summary>
+        /// Success tests for the GetAllBetweenDescending() method when the tree is empty.
+        /// </summary>
+        [Test]
+        public void GetAllBetweenDescending_EmptyTree()
+        {
+            IEnumerable<Int32> result = testWeightBalancedTree.GetAllBetweenDescending(100, 1);
+            Assert.Zero(result.Count<Int32>());
+        }
+
+        /// <summary>
+        /// Success tests for the GetAllBetweenDescending() method.
+        /// </summary>
+        [Test]
+        public void GetAllBetweenDescending()
+        {
+            testWeightBalancedTree = new WeightBalancedTree<Int32>(new Int32[] { 5, 7, 9, 11, 13, 15 }, true);
+
+            // 'highItem' and 'lowItem' parameters are both less than the lowest item in the tree
+            var result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(4, 1));
+            Assert.AreEqual(0, result.Count<Int32>());
+
+            // 'highItem' is equal to and 'lowItem' is less than the lowest item in the tree
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(5, 1));
+            Assert.AreEqual(0, result.Count<Int32>());
+
+            // 'highItem' is greater than and 'lowItem' is less than the lowest item in the tree
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(11, 1));
+            Assert.AreEqual(3, result.Count<Int32>());
+            Assert.AreEqual(9, result[0]);
+            Assert.AreEqual(7, result[1]);
+            Assert.AreEqual(5, result[2]);
+
+            // 'highItem' is equal to the highest item in tree and 'lowItem' is less than the lowest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(15, 1));
+            Assert.AreEqual(5, result.Count<Int32>());
+            Assert.AreEqual(13, result[0]);
+            Assert.AreEqual(11, result[1]);
+            Assert.AreEqual(9, result[2]);
+            Assert.AreEqual(7, result[3]);
+            Assert.AreEqual(5, result[4]);
+
+            // 'highItem' is is greater than the highest item in tree and 'lowItem' less than the lowest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(16, 1));
+            Assert.AreEqual(6, result.Count<Int32>());
+            Assert.AreEqual(15, result[0]);
+            Assert.AreEqual(13, result[1]);
+            Assert.AreEqual(11, result[2]);
+            Assert.AreEqual(9, result[3]);
+            Assert.AreEqual(7, result[4]);
+            Assert.AreEqual(5, result[5]);
+
+            // 'highItem' is less than the highest item in tree and 'lowItem' is equal to the lowest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(14, 5));
+            Assert.AreEqual(4, result.Count<Int32>());
+            Assert.AreEqual(13, result[0]);
+            Assert.AreEqual(11, result[1]);
+            Assert.AreEqual(9, result[2]);
+            Assert.AreEqual(7, result[3]);
+
+            // 'highItem' is equal to the highest item in tree and 'lowItem' is equal to the lowest 
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(15, 5));
+            Assert.AreEqual(4, result.Count<Int32>());
+            Assert.AreEqual(13, result[0]);
+            Assert.AreEqual(11, result[1]);
+            Assert.AreEqual(9, result[2]);
+            Assert.AreEqual(7, result[3]);
+
+            // 'highItem' is greater the highest item in tree and 'lowItem' is equal to the lowest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(16, 5));
+            Assert.AreEqual(5, result.Count<Int32>());
+            Assert.AreEqual(15, result[0]);
+            Assert.AreEqual(13, result[1]);
+            Assert.AreEqual(11, result[2]);
+            Assert.AreEqual(9, result[3]);
+            Assert.AreEqual(7, result[4]);
+
+            // 'highItem' is less than the highest item in tree and 'lowItem' is greater than the lowest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(14, 6));
+            Assert.AreEqual(4, result.Count<Int32>());
+            Assert.AreEqual(13, result[0]);
+            Assert.AreEqual(11, result[1]);
+            Assert.AreEqual(9, result[2]);
+            Assert.AreEqual(7, result[3]);
+
+            // 'highItem' is equal to the highest item in tree and 'lowItem' is greater than the lowest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(15, 6));
+            Assert.AreEqual(4, result.Count<Int32>());
+            Assert.AreEqual(13, result[0]);
+            Assert.AreEqual(11, result[1]);
+            Assert.AreEqual(9, result[2]);
+            Assert.AreEqual(7, result[3]);
+
+            // 'highItem' is greater than the highest item in tree and 'lowItem' is greater than the lowest
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(16, 6));
+            Assert.AreEqual(5, result.Count<Int32>());
+            Assert.AreEqual(15, result[0]);
+            Assert.AreEqual(13, result[1]);
+            Assert.AreEqual(11, result[2]);
+            Assert.AreEqual(9, result[3]);
+            Assert.AreEqual(7, result[4]);
+
+            // 'highItem' is greater than and 'lowItem' is equal to the highest item in the tree
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(18, 15));
+            Assert.AreEqual(0, result.Count<Int32>());
+
+            // 'highItem' and 'lowItem' are both greater than the highest item in the tree
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(18, 16));
+            Assert.AreEqual(0, result.Count<Int32>());
+
+            // 'highItem' and 'lowItem' are between adjacent values
+            testWeightBalancedTree = new WeightBalancedTree<Int32>(new Int32[] { 5, 7, 13, 15 }, true);
+            result = new List<Int32>(testWeightBalancedTree.GetAllBetweenDescending(12, 8));
+            Assert.AreEqual(0, result.Count<Int32>());
+        }
+
+        /// <summary>
         /// Tests that an exception is thrown when the Remove() method is called on an empty tree.
         /// </summary>
         [Test]

@@ -693,6 +693,48 @@ namespace MoreComplexDataStructures
         }
 
         /// <summary>
+        /// Returns an enumerator containing all items in the tree between the specified two items, in ascending order.
+        /// </summary>
+        /// <param name="lowItem">The lower of the two items.</param>
+        /// <param name="highItem">The greater of the two items.</param>
+        /// <returns>An enumerator containing all items in the tree between the specified two items, in ascending order.</returns>
+        public IEnumerable<T> GetAllBetweenAscending(T lowItem, T highItem)
+        {
+            if (lowItem.CompareTo(highItem) >= 0)
+            {
+                throw new ArgumentException("Parameter 'lowItem' must be less than parameter 'highItem'.", nameof(lowItem));
+            }
+
+            Tuple<Boolean, T> currentItem = GetNextGreaterThan(lowItem);
+            while (currentItem.Item1 == true && currentItem.Item2.CompareTo(highItem) < 0)
+            {
+                yield return currentItem.Item2;
+                currentItem = GetNextGreaterThan(currentItem.Item2);
+            }
+        }
+
+        /// <summary>
+        /// Returns an enumerator containing all items in the tree between the specified two items, in descending order.
+        /// </summary>
+        /// <param name="highItem">The greater of the two items.</param>
+        /// <param name="lowItem">The lower of the two items.</param>
+        /// <returns>An enumerator containing all items in the tree between the specified two items, in descending order.</returns>
+        public IEnumerable<T> GetAllBetweenDescending(T highItem, T lowItem)
+        {
+            if (highItem.CompareTo(lowItem) <= 0)
+            {
+                throw new ArgumentException("Parameter 'highItem' must be greater than parameter 'lowItem'.", nameof(highItem));
+            }
+
+            Tuple<Boolean, T> currentItem = GetNextLessThan(highItem);
+            while (currentItem.Item1 == true && currentItem.Item2.CompareTo(lowItem) > 0)
+            {
+                yield return currentItem.Item2;
+                currentItem = GetNextLessThan(currentItem.Item2);
+            }
+        }
+
+        /// <summary>
         /// Returns a random item from the tree.
         /// </summary>
         /// <returns>A random item.</returns>
