@@ -49,7 +49,7 @@ weightedRandomGenerator.SetWeightings(weightings);
 
 **UniqueRandomGenerator** - Generates unique Int64 random numbers within a given range (where the range length is <= Int64.MaxValue). The underlying implementation uses a balanced tree of integer ranges, so the Generate() method returns with order O(log(n)) time complexity.
 
-Note - Another (more simple) way to generate a range of unique random numbers is to initialize the numbers sequentially in an array, and then randomize the array using the Fisher/Yates/Knuth algorithm (as the ListRandomizer class does).  The issue with this method for very large ranges is that the memory usage is also large (since every number in the range must be preallocated in memory).  Also the range cannot be larger than Int32.MaxValue.  I built this class with the goal of generating larger ranges with far more efficient memory usage (the class starts with a single node item representing the full range, and then 'splits' these node items and pushes them down the tree as the Generate() method is called...  hence consecutive numbers are 'condensed' into a single range class).  After testing I found that during the process of generating all numbers in the range, at some point the number of nodes in the tree will become ~n/4 (where n is the range size).  Unfortunately this makes the class less memory efficient than the Fisher/Yates/Knuth array method, as each node consumes more than 4 times as much memory as an Int64 (references to parent and child nodes, counts of child nodes, counts of ranges of child nodes, object overhead, etc...).  In any case building the class was an interesting exercise, and someone may find a use for it.
+Note - Another (more simple) way to generate a range of unique random numbers is to initialize the numbers sequentially in an array, and then randomize the array using the Fisher/Yates/Knuth algorithm (as the ListRandomizer class does).  The issue with this method for very large ranges is that the memory usage is also large (since every number in the range must be preallocated in memory).  Also the range cannot be larger than Int32.MaxValue.  I built this class with the goal of generating larger ranges with far more efficient memory usage (the class starts with a single node item representing the full range, and then 'splits' these node items and pushes them down the tree as the Generate() method is called...  hence consecutive numbers are 'condensed' into a single range class).  After testing I found that during the process of generating all numbers in the range, at some point the number of nodes in the tree will become ~n/4 (where n is the range size).  For generating n unique random numbers from a range k, this means the class is less memory efficient than the Fisher/Yates/Knuth array method when n is close to k (each node in the tree consumes more than 4 times as much memory as an Int64).  But, for cases where k is very large and n relatively small UniqueRandomGenerator will be more memory efficient.
 
 **PriorityQueue** - An implementation of a [double-ended](https://en.wikipedia.org/wiki/Double-ended_priority_queue) [priority queue](https://en.wikipedia.org/wiki/Priority_queue).  As the underlying structure is a balanced tree, most methods return with order O(log(n)) time complexity.  The class allows dequeuing of specific items aside from the minimum and maximum, and exposes several methods to inspect the contents of the queue.
 
@@ -73,6 +73,12 @@ Note - The priority of enqueued items is set and stored as a double.  Whilst NaN
   <tr>
     <td><b>Version</b></td>
     <td><b>Changes</b></td>
+  </tr>
+  <tr>
+    <td valign="top">1.9.1.0</td>
+    <td>
+      Bug fix in CharacterTrie.  Corrected NotImplementedException being thrown from method GetAllStringsWithPrefix().
+    </td>
   </tr>
   <tr>
     <td valign="top">1.9.0.0</td>
