@@ -237,7 +237,7 @@ namespace MoreComplexDataStructures
 
             public void CopyTo(Char[] array, int arrayIndex)
             {
-                throw new NotImplementedException();
+                wrappedString.CopyTo(arrayIndex, array, 0, wrappedString.Length - arrayIndex);
             }
 
             public Int32 Count

@@ -240,6 +240,116 @@ namespace MoreComplexDataStructures.UnitTests
         }
 
         /// <summary>
+        /// Success tests for the GetAllStringsWithPrefix() method.
+        /// </summary>
+        [Test]
+        public void GetAllStringsWithPrefix()
+        {
+            testCharacterTrie.Insert("cop");
+            testCharacterTrie.Insert("d");
+            testCharacterTrie.Insert("apple");
+            testCharacterTrie.Insert("apples");
+            testCharacterTrie.Insert("app");
+
+            HashSet<String> results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("c"));
+
+            Assert.IsTrue(results.Contains("cop"));
+            Assert.AreEqual(1, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("co"));
+
+            Assert.IsTrue(results.Contains("cop"));
+            Assert.AreEqual(1, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("cop"));
+
+            Assert.IsTrue(results.Contains("cop"));
+            Assert.AreEqual(1, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("copy"));
+
+            Assert.AreEqual(0, results.Count);
+
+            
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("d"));
+
+            Assert.IsTrue(results.Contains("d"));
+            Assert.AreEqual(1, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("do"));
+
+            Assert.AreEqual(0, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("a"));
+
+            Assert.IsTrue(results.Contains("apple"));
+            Assert.IsTrue(results.Contains("apples"));
+            Assert.IsTrue(results.Contains("app"));
+            Assert.AreEqual(3, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("ap"));
+
+            Assert.IsTrue(results.Contains("apple"));
+            Assert.IsTrue(results.Contains("apples"));
+            Assert.IsTrue(results.Contains("app"));
+            Assert.AreEqual(3, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("app"));
+
+            Assert.IsTrue(results.Contains("apple"));
+            Assert.IsTrue(results.Contains("apples"));
+            Assert.IsTrue(results.Contains("app"));
+            Assert.AreEqual(3, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("appl"));
+
+            Assert.IsTrue(results.Contains("apple"));
+            Assert.IsTrue(results.Contains("apples"));
+            Assert.AreEqual(2, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("apple"));
+
+            Assert.IsTrue(results.Contains("apple"));
+            Assert.IsTrue(results.Contains("apples"));
+            Assert.AreEqual(2, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("apples"));
+
+            Assert.IsTrue(results.Contains("apples"));
+            Assert.AreEqual(1, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("appless"));
+
+            Assert.AreEqual(0, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("appli"));
+
+            Assert.AreEqual(0, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("applez"));
+
+            Assert.AreEqual(0, results.Count);
+
+
+            results = PutStringsIntoHashSet(testCharacterTrie.GetAllStringsWithPrefix("e"));
+
+            Assert.AreEqual(0, results.Count);
+        }
+
+        /// <summary>
         /// Success tests for the GetCountOfStringsWithPrefix() method.
         /// </summary>
         [Test]
