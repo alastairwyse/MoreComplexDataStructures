@@ -15,6 +15,7 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,7 @@ namespace MoreComplexDataStructures
     /// A weight-balanced binary search tree where each node maintains the size of its left and right subtrees.
     /// </summary>
     /// <typeparam name="T">Specifies the type of items held by nodes of the tree.</typeparam>
-    public class WeightBalancedTree<T> : IBinarySearchTree<T> where T : IComparable<T>
+    public class WeightBalancedTree<T> : IEnumerable<T>, IBinarySearchTree<T> where T : IComparable<T>
     {
         /// <summary>The root node of the tree.</summary>
         protected WeightBalancedTreeNode<T> rootNode;
@@ -902,6 +903,31 @@ namespace MoreComplexDataStructures
                     traversalQueue.Enqueue(currentNode.RightChildNode);
                 }
             }
+        }
+
+        /// <inheritdoc/>
+        public IEnumerator<T> GetEnumerator()
+        {
+            if (Count == 0)
+            {
+                yield break;
+            }
+            else
+            {
+                T minItem = Min;
+                WeightBalancedTreeNode<T> currentNode = TraverseDownToNodeHoldingItem(minItem);
+                while (currentNode != null)
+                {
+                    yield return currentNode.Item;
+                    currentNode = GetNextGreaterThan(currentNode);
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         # region Private/Protected Methods

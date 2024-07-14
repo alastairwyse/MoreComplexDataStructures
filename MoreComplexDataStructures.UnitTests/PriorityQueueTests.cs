@@ -951,6 +951,42 @@ namespace MoreComplexDataStructures.UnitTests
             Assert.AreEqual(3.0, result);
         }
 
+        /// <summary>
+        /// Success tests for the GetEnumerator() method.
+        /// </summary>
+        [Test]
+        public new void GetEnumerator()
+        {
+            List<KeyValuePair<Double, Char>> enumerationResult;
+
+            enumerationResult = new List<KeyValuePair<Double, Char>>(testPriorityQueue);
+
+            Assert.AreEqual(0, enumerationResult.Count);
+
+
+            EnqueueTestData(testPriorityQueue);
+
+            enumerationResult = new List<KeyValuePair<Double, Char>>(testPriorityQueue);
+
+            Assert.AreEqual(8, enumerationResult.Count);
+            Assert.AreEqual(3.0, enumerationResult[0].Key);
+            Assert.AreEqual('C', enumerationResult[0].Value);
+            Assert.AreEqual(3.0, enumerationResult[1].Key);
+            Assert.AreEqual('C', enumerationResult[1].Value);
+            Assert.AreEqual(4.0, enumerationResult[2].Key);
+            Assert.AreEqual('B', enumerationResult[2].Value);
+            Assert.AreEqual(4.0, enumerationResult[3].Key);
+            Assert.AreEqual('D', enumerationResult[3].Value);
+            Assert.AreEqual(4.0, enumerationResult[4].Key);
+            Assert.AreEqual('D', enumerationResult[4].Value);
+            Assert.AreEqual(5.0, enumerationResult[5].Key);
+            Assert.AreEqual('A', enumerationResult[5].Value);
+            Assert.AreEqual(6.0, enumerationResult[6].Key);
+            Assert.AreEqual('C', enumerationResult[6].Value);
+            Assert.AreEqual(7.0, enumerationResult[7].Key);
+            Assert.AreEqual('C', enumerationResult[7].Value);
+        }
+
         #region Private Methods
 
         private void EnqueueTestData(PriorityQueue<Char> queue) 

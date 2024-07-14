@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.9.0.0</AssemblyVersion>
-    <FileVersion>1.9.0.0</FileVersion>
+    <AssemblyVersion>1.9.2.0</AssemblyVersion>
+    <FileVersion>1.9.2.0</FileVersion>
     <Copyright>Copyright © Alastair Wyse 2019</Copyright>
     <PackageProjectUrl>https://github.com/alastairwyse/MoreComplexDataStructures</PackageProjectUrl>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
@@ -25,9 +25,9 @@ UnflaggedNumberGenerator - Allows the 'flagging' (marking) of numbers in a speci
 LongIntegerStatusStorer - Stores a boolean status for a complete set of long integers
 ListRandomizer - Randomizes the elements of a list using the Fisher/Yates/Knuth algorithm</Description>
     <Authors>Alastair Wyse</Authors>
-    <Version>1.9.1</Version>
+    <Version>1.9.2</Version>
     <PackageTags>data structure weight weighted balanced tree binary search minheap maxheap trie priority queue frequency table long integer int64 random randomize list array unique random generate lru cache</PackageTags>
-    <PackageReleaseNotes>Added methods GetAllBetweenAscending() and GetAllBetweenDescending() to WeightBalancedTree.</PackageReleaseNotes>
+    <PackageReleaseNotes>WeightBalancedTree implements IEnumerable&lt;T&gt;.  PriorityQueue implements IEnumerable&lt;KeyValuePair&lt;Double, T&gt;&gt;.</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <ApplicationIcon />
     <OutputType>Library</OutputType>

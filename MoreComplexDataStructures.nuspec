@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>MoreComplexDataStructures</id>
+    <version>1.9.2</version>
+    <authors>Alastair Wyse</authors>
+    <owners>Alastair Wyse</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">Apache-2.0</license>
+    <projectUrl>https://github.com/alastairwyse/MoreComplexDataStructures</projectUrl>
+    <description>MoreComplexDataStructures is a class library containing a collection of data structures (plus related utility classes) more complex than those found in the standard .NET framework.
+
+The project currently contains the following data structures and utility classes...
+
+WeightBalancedTree&lt;T&gt; - A weight-balanced binary search tree
+MinHeap&lt;T&gt; - A tree-based min heap
+MaxHeap&lt;T&gt; - A tree-based max heap
+PriorityQueue&lt;T&gt; - A tree-based double-ended priority queue
+Trie&lt;T&gt; - A trie (or prefix tree)
+CharacterTrie - A trie which stores characters (with some performance enhancements over Trie&lt;Char&gt;)
+WeightedRandomGenerator&lt;T&gt; - A weighted random number (or item) generator
+UniqueRandomGenerator - A random number generator guaranteed to always produce unique numbers within a given range
+FrequencyTable&lt;T&gt; - A frequency table
+LRUCache&lt;TKey, TValue&gt; - A simple least recently used cache
+UnflaggedNumberGenerator - Allows the 'flagging' (marking) of numbers in a specified range, and provides methods to identify numbers which were not flagged
+LongIntegerStatusStorer - Stores a boolean status for a complete set of long integers
+ListRandomizer - Randomizes the elements of a list using the Fisher/Yates/Knuth algorithm</description>
+    <releaseNotes>WeightBalancedTree implements IEnumerable&lt;T&gt;.  PriorityQueue implements IEnumerable&lt;KeyValuePair&lt;Double, T&gt;&gt;.</releaseNotes>
+    <copyright>Copyright © Alastair Wyse 2019</copyright>
+    <tags>data structure weight weighted balanced tree binary search minheap maxheap trie priority queue frequency table long integer int64 random randomize list array unique random generate lru cache</tags>
+    <dependencies>
+      <group targetFramework=".NETStandard2.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src=".\MoreComplexDataStructures\bin\Release\netstandard2.0\MoreComplexDataStructures.dll" target="lib\netstandard2.0\MoreComplexDataStructures.dll" />
+    <file src=".\MoreComplexDataStructures\bin\Release\netstandard2.0\MoreComplexDataStructures.xml" target="lib\netstandard2.0\MoreComplexDataStructures.xml" />
+  </files>
+</package>

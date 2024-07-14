@@ -75,6 +75,12 @@ Note - The priority of enqueued items is set and stored as a double.  Whilst NaN
     <td><b>Changes</b></td>
   </tr>
   <tr>
+    <td valign="top">1.9.2.0</td>
+    <td>
+      WeightBalancedTree implements IEnumerable&lt;T&gt;.  PriorityQueue implements IEnumerable&lt;KeyValuePair&lt;Double, T&gt;&gt;.
+    </td>
+  </tr>
+  <tr>
     <td valign="top">1.9.1.0</td>
     <td>
       Bug fix in CharacterTrie.  Corrected NotImplementedException being thrown from method GetAllStringsWithPrefix().

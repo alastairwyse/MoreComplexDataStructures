@@ -15,8 +15,8 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MoreComplexDataStructures
 {
@@ -24,7 +24,7 @@ namespace MoreComplexDataStructures
     /// A tree-based double-ended priority queue.
     /// </summary>
     /// <typeparam name="T">Specifies the type of items held in the queue.</typeparam>
-    public class PriorityQueue<T> where T : IEquatable<T>
+    public class PriorityQueue<T> : IEnumerable<KeyValuePair<Double, T>> where T : IEquatable<T>
     {
         /// <summary>Tree holding all of the priorities and items in the priority queue.</summary>
         protected WeightBalancedTreeWithProtectedMethods<PriorityAndItems<T>> tree;
@@ -430,6 +430,37 @@ namespace MoreComplexDataStructures
         public IEnumerable<KeyValuePair<Double, T>> GetAllWithPriorityLessThan(Double priority)
         {
             return GetItemsWithPriorityLessThan(priority, Int32.MaxValue);
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through a <see cref="PriorityQueue{T}"/>.
+        /// </summary>
+        /// <returns>An enumerator containing all items in the queue and their associated priority.</returns>
+        public IEnumerator<KeyValuePair<Double, T>> GetEnumerator()
+        {
+            if (Count == 0)
+            {
+                yield break;
+            }
+            else
+            {
+                foreach (PriorityAndItems<T> currentPriorityAndItems in tree)
+                {
+                    foreach (KeyValuePair<T, Int32> currentPriorityAndItem in currentPriorityAndItems.Items)
+                    {
+                        for (Int32 i = 0; i < currentPriorityAndItem.Value; i++)
+                        {
+                            yield return new KeyValuePair<Double, T>(currentPriorityAndItems.Priority, currentPriorityAndItem.Key);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         #region Private/Protected Methods

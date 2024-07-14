@@ -997,6 +997,58 @@ namespace MoreComplexDataStructures.UnitTests
         }
 
         /// <summary>
+        /// Success tests for the GetEnumerator() method.
+        /// </summary>
+        [Test]
+        public void GetEnumerator()
+        {
+            testWeightBalancedTree = new WeightBalancedTree<Int32>(true);
+            List<Int32> enumerationResult;
+
+            enumerationResult = new List<Int32>(testWeightBalancedTree);
+
+            Assert.AreEqual(0, enumerationResult.Count);
+
+
+            testWeightBalancedTree.Add(1);
+
+            enumerationResult = new List<Int32>(testWeightBalancedTree);
+
+            Assert.AreEqual(1, enumerationResult.Count);
+            Assert.AreEqual(1, enumerationResult[0]);
+
+
+            testWeightBalancedTree.Add(2);
+
+            enumerationResult = new List<Int32>(testWeightBalancedTree);
+
+            Assert.AreEqual(2, enumerationResult.Count);
+            Assert.AreEqual(1, enumerationResult[0]);
+            Assert.AreEqual(2, enumerationResult[1]);
+
+
+            testWeightBalancedTree.Add(3);
+
+            enumerationResult = new List<Int32>(testWeightBalancedTree);
+
+            Assert.AreEqual(3, enumerationResult.Count);
+            Assert.AreEqual(1, enumerationResult[0]);
+            Assert.AreEqual(2, enumerationResult[1]);
+            Assert.AreEqual(3, enumerationResult[2]);
+
+
+            testWeightBalancedTree.Add(4);
+
+            enumerationResult = new List<Int32>(testWeightBalancedTree);
+
+            Assert.AreEqual(4, enumerationResult.Count);
+            Assert.AreEqual(1, enumerationResult[0]);
+            Assert.AreEqual(2, enumerationResult[1]);
+            Assert.AreEqual(3, enumerationResult[2]);
+            Assert.AreEqual(4, enumerationResult[3]);
+        }
+
+        /// <summary>
         /// Success tests for the Contains() method.
         /// </summary>
         [Test]
