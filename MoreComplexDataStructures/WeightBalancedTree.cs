@@ -485,7 +485,7 @@ namespace MoreComplexDataStructures
         /// Gets the next value in the tree less than the specified item.
         /// </summary>
         /// <param name="item">The item to retrieve the next less of.</param>
-        /// <returns>A tuple containing 2 values: a boolean indicating whether a lower value was found (false if no lower value exists), and the next item less than the specified item (or null / type default if no lower item exists).</returns>
+        /// <returns>A tuple containing 2 values: a boolean indicatig whether a lower value was found (false if no lower value exists), and the next item less than the specified item (or null / type default if no lower item exists).</returns>
         public Tuple<Boolean, T> GetNextLessThan(T item)
         {
             if (rootNode == null)
